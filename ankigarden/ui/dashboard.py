@@ -36,22 +36,23 @@ class GardenDashboard(QDialog):
         self.storage = storage
         self.config = config
         self.setWindowTitle("Anki Garden")
-        self.setMinimumSize(1080, 760)
+        self.setMinimumSize(1200, 780)
         self.setStyleSheet("QGroupBox { font-weight: 600; }")
         self._build_ui()
 
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
-
         self.bg_label = QLabel()
         self.bg_label.setFrameShape(QFrame.Shape.Box)
-        self.bg_label.setMinimumHeight(220)
+        self.bg_label.setMinimumHeight(230)
         self.bg_label.setScaledContents(True)
 
         self.streak_label = QLabel()
         self.daily_label = QLabel()
         self.mode_label = QLabel()
         self.event_label = QLabel()
+        self.health_label = QLabel()
+        self.exam_label = QLabel()
         self.growth_bar = QProgressBar()
         self.growth_bar.setFormat("Daily Growth %v/%m")
 
@@ -63,13 +64,15 @@ class GardenDashboard(QDialog):
         layout.addWidget(self.bg_label)
         layout.addLayout(header)
         layout.addWidget(self.mode_label)
+        layout.addWidget(self.health_label)
+        layout.addWidget(self.exam_label)
         layout.addWidget(self.event_label)
         layout.addWidget(self.growth_bar)
 
         splitter = QSplitter()
         splitter.addWidget(self._build_plant_panel())
         splitter.addWidget(self._build_side_panel())
-        splitter.setSizes([700, 360])
+        splitter.setSizes([740, 430])
         layout.addWidget(splitter)
 
     def _build_plant_panel(self) -> QWidget:
@@ -92,7 +95,6 @@ class GardenDashboard(QDialog):
         outer.addLayout(controls)
 
         self.slot_grid = QGridLayout()
-
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         content = QWidget()
@@ -111,6 +113,7 @@ class GardenDashboard(QDialog):
         self.inventory = QListWidget()
         self.shop = QListWidget()
         self.social_list = QListWidget()
+        self.timeline = QListWidget()
 
         shop_btn = QPushButton("Buy Selected Item")
         shop_btn.clicked.connect(self._purchase_selected)
@@ -124,6 +127,34 @@ class GardenDashboard(QDialog):
         cloud_pull_btn.clicked.connect(self._cloud_pull)
         set_name_btn = QPushButton("Set Gardener Name")
         set_name_btn.clicked.connect(self._set_gardener_name)
+        export_btn = QPushButton("Export Summary")
+        export_btn.clicked.connect(self._export_summary)
+
+        focus_box = QGroupBox("Focus Session")
+        focus_layout = QHBoxLayout(focus_box)
+        self.focus_duration = QComboBox()
+        for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
+            self.focus_duration.addItem(f"{minutes} min", int(minutes))
+        start_focus = QPushButton("Start")
+        start_focus.clicked.connect(self._start_focus)
+        complete_focus = QPushButton("Complete")
+        complete_focus.clicked.connect(self._complete_focus)
+        cancel_focus = QPushButton("Cancel")
+        cancel_focus.clicked.connect(self._cancel_focus)
+        focus_layout.addWidget(self.focus_duration)
+        focus_layout.addWidget(start_focus)
+        focus_layout.addWidget(complete_focus)
+        focus_layout.addWidget(cancel_focus)
+
+        exam_box = QGroupBox("Exam Mode")
+        exam_layout = QFormLayout(exam_box)
+        self.exam_date_input = QLineEdit()
+        exam_set = QPushButton("Set Exam Date")
+        exam_set.clicked.connect(self._set_exam_date)
+        exam_off = QPushButton("Disable")
+        exam_off.clicked.connect(self._disable_exam)
+        exam_layout.addRow("Date (YYYY-MM-DD)", self.exam_date_input)
+        exam_layout.addRow(exam_set, exam_off)
 
         journal_box = QGroupBox("Reflection Journal")
         journal_layout = QFormLayout(journal_box)
@@ -140,11 +171,15 @@ class GardenDashboard(QDialog):
         layout.addWidget(self.quests)
         layout.addWidget(QLabel("Achievements"))
         layout.addWidget(self.achievements)
+        layout.addWidget(focus_box)
+        layout.addWidget(exam_box)
         layout.addWidget(QLabel("Inventory"))
         layout.addWidget(self.inventory)
         layout.addWidget(QLabel("Garden Shop"))
         layout.addWidget(self.shop)
         layout.addWidget(shop_btn)
+        layout.addWidget(QLabel("Snapshots / Timeline"))
+        layout.addWidget(self.timeline)
         layout.addWidget(QLabel("Social / Shared Gardens"))
         layout.addWidget(self.social_list)
         layout.addWidget(publish_btn)
@@ -152,19 +187,22 @@ class GardenDashboard(QDialog):
         layout.addWidget(set_name_btn)
         layout.addWidget(cloud_push_btn)
         layout.addWidget(cloud_pull_btn)
+        layout.addWidget(export_btn)
         layout.addWidget(journal_box)
         return panel
 
     def refresh_all(self) -> None:
         state = self.storage.state
         stats = state.daily_stats
+        health = self.engine.garden_health_index()
 
-        self.streak_label.setText(
-            f"Streak: {state.streak_days} days  •  Currency: {state.currency} {self.config.value('currency_name')}"
-        )
+        self.streak_label.setText(f"Streak: {state.streak_days} days • Currency: {state.currency} {self.config.value('currency_name')}")
         self.daily_label.setText(f"Today: {stats.reviewed} cards • Accuracy {int(stats.accuracy * 100)}%")
-        mode = "Recovery mode active: resume a few sessions to revive plant vitality." if state.recovery_mode else "Garden mode: steady growth focus"
-        self.mode_label.setText(mode)
+        self.mode_label.setText("Recovery mode active" if state.recovery_mode else "Steady growth mode")
+        burnout = "⚠ burnout risk" if self.engine.burnout_risk() else "balanced load"
+        self.health_label.setText(f"Garden health index: {health:.2f} • {burnout}")
+        countdown = self.engine.exam_countdown_days()
+        self.exam_label.setText("Exam mode: off" if countdown is None else f"Exam mode active • {countdown} days remaining")
         self.event_label.setText(f"Weekly Event: {self.engine.get_weekly_event_summary()}")
         self.growth_bar.setMaximum(self.config.value("daily_growth_cap", 220))
         self.growth_bar.setValue(stats.growth_earned)
@@ -173,18 +211,20 @@ class GardenDashboard(QDialog):
         if bg:
             self.bg_label.setPixmap(QPixmap(bg))
         else:
-            self.bg_label.setText("Connect an image API key to enable live garden visuals.")
+            self.bg_label.setText("Connect an image API key or use Wikimedia source for live visuals.")
 
         self._refresh_slot_cards()
         self._refresh_quest_list()
         self._refresh_achievements()
         self._refresh_inventory_and_shop()
         self._refresh_social()
+        self._refresh_timeline()
         self._refresh_focus_and_deck_controls()
 
         today = date.today().isoformat()
         self.journal_day.setText(today)
         self.journal_note.setPlainText(state.journal.get(today, ""))
+        self.exam_date_input.setText(state.exam_mode.exam_date or "")
 
     def _refresh_slot_cards(self) -> None:
         state = self.storage.state
@@ -197,10 +237,7 @@ class GardenDashboard(QDialog):
         plants_by_slot = {p.slot_index: p for p in state.plants}
         for slot in range(state.unlocked_slots):
             plant = plants_by_slot.get(slot)
-            if plant:
-                card = self._plant_card(plant)
-            else:
-                card = self._empty_slot_card(slot)
+            card = self._plant_card(plant) if plant else self._empty_slot_card(slot)
             self.slot_grid.addWidget(card, slot // 2, slot % 2)
 
     def _refresh_quest_list(self) -> None:
@@ -232,11 +269,17 @@ class GardenDashboard(QDialog):
         state = self.storage.state
         self.social_list.clear()
         self.social_list.addItem(f"You: {state.gardener_name} ({state.share_code})")
-        sync = state.cloud_last_sync or "never"
-        self.social_list.addItem(f"Cloud sync: {sync}")
+        self.social_list.addItem(f"Cloud sync: {state.cloud_last_sync or 'never'}")
         for code, shared in sorted(state.shared_gardens.items()):
             summary = f"{shared.get('gardener_name', 'Unknown')} • streak {shared.get('streak_days', 0)} • code {code}"
             self.social_list.addItem(summary)
+
+    def _refresh_timeline(self) -> None:
+        self.timeline.clear()
+        for snap in self.storage.state.snapshots[-20:]:
+            self.timeline.addItem(f"{snap.day} • health {snap.health_index:.2f} • streak {snap.streak_days}")
+        for summary in self.storage.state.recent_summaries[-5:]:
+            self.timeline.addItem(f"{summary.day} • {summary.summary}")
 
     def _refresh_focus_and_deck_controls(self) -> None:
         state = self.storage.state
@@ -297,7 +340,7 @@ class GardenDashboard(QDialog):
         layout = QVBoxLayout(frame)
         layout.addWidget(QLabel(f"Slot {slot_idx + 1} is empty"))
         species = QComboBox()
-        species.addItems(["bonsai", "rose", "cactus", "orchid", "moonflower", "sunbloom"])
+        species.addItems(["bonsai", "rose", "cactus", "orchid", "moonflower", "sunbloom", "ivy", "fern"])
         add_btn = QPushButton("Plant Here")
 
         def add() -> None:
@@ -366,3 +409,37 @@ class GardenDashboard(QDialog):
             return
         self.engine.set_gardener_name(name)
         self.refresh_all()
+
+    def _start_focus(self) -> None:
+        ok, msg = self.engine.start_focus_session(int(self.focus_duration.currentData()))
+        QMessageBox.information(self, "Anki Garden", msg)
+        if ok:
+            self.refresh_all()
+
+    def _complete_focus(self) -> None:
+        ok, msg = self.engine.complete_focus_session()
+        QMessageBox.information(self, "Anki Garden", msg)
+        self.refresh_all()
+
+    def _cancel_focus(self) -> None:
+        self.engine.cancel_focus_session()
+        self.refresh_all()
+
+    def _set_exam_date(self) -> None:
+        value = self.exam_date_input.text().strip()
+        deck_ids: list[int] = []
+        try:
+            for deck in mw.col.decks.all_names_and_ids()[:3]:
+                deck_ids.append(deck.id)
+        except Exception:
+            pass
+        self.engine.configure_exam_mode(True, value, deck_ids)
+        self.refresh_all()
+
+    def _disable_exam(self) -> None:
+        self.engine.configure_exam_mode(False, None, [])
+        self.refresh_all()
+
+    def _export_summary(self) -> None:
+        QMessageBox.information(self, "Anki Garden", self.engine.export_progress_summary())
+
