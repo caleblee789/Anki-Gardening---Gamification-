@@ -5,6 +5,15 @@ from typing import Any
 
 from aqt.qt import QLinearGradient, QPainter, QPainterPath, QPen, QRectF, QTimer, QWidget, Qt, QColor
 
+SCENE_TEXT = {
+    "live_garden_label": "Your live study garden",
+    "growth_energy_label": "Daily growth energy: {growth}%",
+    "fallback_message": (
+        "We couldn't render the animated garden view.\n"
+        "Your study progress, growth updates, and rewards are still being tracked."
+    ),
+}
+
 
 class GardenSceneWidget(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -99,8 +108,8 @@ class GardenSceneWidget(QWidget):
                     painter.drawEllipse(QRectF(x, y, 3.5, 3.5))
 
             painter.setPen(QColor(210, 245, 222, glow))
-            painter.drawText(18, 32, "Your live study garden")
-            painter.drawText(18, 52, f"Daily growth energy: {int(growth * 100)}%")
+            painter.drawText(18, 32, SCENE_TEXT["live_garden_label"])
+            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=int(growth * 100)))
         except Exception:
             self._draw_fallback_scene(painter, r)
 
@@ -149,4 +158,8 @@ class GardenSceneWidget(QWidget):
     def _draw_fallback_scene(self, painter: QPainter, rect: Any) -> None:
         painter.fillRect(rect, QColor(27, 48, 44))
         painter.setPen(QColor(223, 237, 223))
-        painter.drawText(rect.adjusted(20, 20, -20, -20), Qt.AlignmentFlag.AlignCenter, "Garden rendering fallback\nYour growth data is still active.")
+        painter.drawText(
+            rect.adjusted(20, 20, -20, -20),
+            Qt.AlignmentFlag.AlignCenter,
+            SCENE_TEXT["fallback_message"],
+        )
