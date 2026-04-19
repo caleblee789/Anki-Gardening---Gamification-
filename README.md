@@ -54,6 +54,7 @@ This add-on is designed to feel rewarding and polished without being noisy, chil
 No static mock image assets are bundled.
 
 Anki Garden uses a live `AssetManager` with:
+- Wikimedia Commons (built-in, no API key required)
 - Unsplash API
 - Pexels API
 - Pixabay API
@@ -99,15 +100,19 @@ ankigarden/
 1. Copy `ankigarden/` into your Anki add-ons directory.
 2. Restart Anki.
 3. Open **Tools → Anki Garden**.
-4. Add at least one image provider API key in add-on config.
+4. Start studying: images download and cache automatically by default (no setup needed).
 
-## API Keys Setup
+## API Keys Setup (Optional)
+
+By default, the add-on uses Wikimedia Commons image search without keys.  
+API keys are optional if you want additional providers.
 
 In Anki: **Tools → Add-ons → Anki Garden → Config**
 
 ```json
 "image_api": {
-  "provider_priority": ["unsplash", "pexels", "pixabay"],
+  "provider_priority": ["wikimedia", "unsplash", "pexels", "pixabay"],
+  "enable_builtin_no_key_sources": true,
   "unsplash_access_key": "YOUR_UNSPLASH_KEY",
   "pexels_api_key": "YOUR_PEXELS_KEY",
   "pixabay_api_key": "YOUR_PIXABAY_KEY",

@@ -55,7 +55,9 @@ class AssetManager:
         for _ in range(attempts):
             self._wait_rate_limit()
             try:
-                if provider == "unsplash":
+                if provider == "wikimedia":
+                    found = self._from_wikimedia(query)
+                elif provider == "unsplash":
                     found = self._from_unsplash(query)
                 elif provider == "pexels":
                     found = self._from_pexels(query)
@@ -75,6 +77,49 @@ class AssetManager:
         if elapsed < min_gap:
             time.sleep(min_gap - elapsed)
         self.last_request_at = time.time()
+
+    def _from_wikimedia(self, query: str) -> Optional[Tuple[str, Dict[str, Any]]]:
+        if not self.config.nested("image_api", "enable_builtin_no_key_sources", default=True):
+            return None
+        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        resp = requests.get(
+            "https://commons.wikimedia.org/w/api.php",
+            params={
+                "action": "query",
+                "generator": "search",
+                "gsrsearch": f"filetype:bitmap {query}",
+                "gsrnamespace": 6,
+                "gsrlimit": 10,
+                "prop": "imageinfo",
+                "iiprop": "url|extmetadata",
+                "iiurlwidth": 1280,
+                "format": "json",
+            },
+            timeout=timeout,
+        )
+        resp.raise_for_status()
+        pages = (resp.json().get("query", {}).get("pages", {}) or {}).values()
+        for page in pages:
+            infos = page.get("imageinfo") or []
+            if not infos:
+                continue
+            info = infos[0]
+            image_url = info.get("thumburl") or info.get("url")
+            if not image_url:
+                continue
+            ext = info.get("extmetadata", {})
+            artist = (ext.get("Artist", {}) or {}).get("value", "")
+            license_name = (ext.get("LicenseShortName", {}) or {}).get("value", "")
+            desc_url = (ext.get("ImageDescription", {}) or {}).get("source", "")
+            return (
+                image_url,
+                {
+                    "author": artist,
+                    "license": license_name,
+                    "page_url": desc_url or f"https://commons.wikimedia.org/wiki/{page.get('title', '')}",
+                },
+            )
+        return None
 
     def _from_unsplash(self, query: str) -> Optional[Tuple[str, Dict[str, Any]]]:
         key = self.config.nested("image_api", "unsplash_access_key", default="")
