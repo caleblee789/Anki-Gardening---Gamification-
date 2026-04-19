@@ -132,7 +132,7 @@ class AnkiGardenApp:
 }}
 .ag-home__stats {{
   display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   padding: 8px 12px 12px;
 }}
@@ -143,6 +143,12 @@ class AnkiGardenApp:
 }}
 .ag-home__label {{ font-size: 11px; opacity: 0.76; text-transform: uppercase; }}
 .ag-home__value {{ font-size: 18px; font-weight: 700; margin-top: 2px; }}
+.ag-home__event {{
+  font-size: 12px;
+  opacity: 0.9;
+  padding: 0 12px 12px;
+  word-break: break-word;
+}}
 .ag-home__bar {{
   height: 10px;
   border-radius: 99px;
@@ -157,11 +163,6 @@ class AnkiGardenApp:
   border-radius: 99px;
   background: linear-gradient(90deg, #61d984 0%, #cbff8e 100%);
   box-shadow: 0 0 16px rgba(168, 255, 173, 0.75);
-}}
-.ag-home__event {{
-  font-size: 12px;
-  opacity: 0.9;
-  padding: 0 12px 12px;
 }}
 </style>
 <div class="ag-home">

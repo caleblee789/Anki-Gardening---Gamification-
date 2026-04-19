@@ -30,6 +30,7 @@ from aqt.qt import (
     Qt,
     QColor,
     QLinearGradient,
+    QSizePolicy,
 )
 
 
@@ -250,7 +251,8 @@ class GardenDashboard(QDialog):
         self.config = config
         self.settings_dialog: GardenSettingsDialog | None = None
         self.setWindowTitle("Anki Garden")
-        self.setMinimumSize(1260, 860)
+        self.setMinimumSize(1080, 720)
+        self.resize(1240, 840)
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -259,10 +261,12 @@ class GardenDashboard(QDialog):
             QDialog { background: #101820; color: #e6f0ea; }
             QFrame[card='true'] { background: #18252e; border: 1px solid #2f4652; border-radius: 14px; }
             QLabel[muted='true'] { color: #91a8ae; }
+            QLabel[title='true'] { font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
             QPushButton { background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; font-weight: 600; }
             QPushButton:hover { background: #2f5468; }
             QProgressBar { border-radius: 7px; border: 1px solid #2f4652; background: #132029; }
             QProgressBar::chunk { background: #56ba7f; border-radius: 6px; }
+            QListWidget { background: #12202a; border-radius: 10px; border: 1px solid #2a404d; padding: 4px; }
             """
         )
         root = QVBoxLayout(self)
@@ -273,6 +277,7 @@ class GardenDashboard(QDialog):
         top.setProperty("card", True)
         t_layout = QHBoxLayout(top)
         self.title_label = QLabel("🌿 Anki Garden")
+        self.title_label.setStyleSheet("font-size: 20px; font-weight: 800; letter-spacing: 0.3px;")
         self.streak_chip = QLabel()
         self.progress_chip = QLabel()
         self.health_chip = QLabel()
@@ -293,6 +298,7 @@ class GardenDashboard(QDialog):
         self.hero_summary = QLabel()
         self.hero_summary.setWordWrap(True)
         self.hero_summary.setProperty("muted", True)
+        self.hero_summary.setStyleSheet("line-height: 1.35;")
         self.hero_growth = QProgressBar()
         self.hero_growth.setMaximum(100)
         self.hero_growth.setFormat("Daily growth %p%")
@@ -308,10 +314,14 @@ class GardenDashboard(QDialog):
         root.addWidget(hero_card, 2)
 
         mid_row = QHBoxLayout()
+        mid_row.setSpacing(10)
         self.quest_list = QListWidget()
+        self.quest_list.setAlternatingRowColors(True)
         self.achievement_list = QListWidget()
+        self.achievement_list.setAlternatingRowColors(True)
         self.focus_card = self._focus_card()
         self.inventory_list = QListWidget()
+        self.inventory_list.setAlternatingRowColors(True)
         mid_row.addWidget(self._simple_card("Daily Quests", self.quest_list), 1)
         mid_row.addWidget(self._simple_card("Achievements", self.achievement_list), 1)
         mid_row.addWidget(self.focus_card, 1)
@@ -322,7 +332,9 @@ class GardenDashboard(QDialog):
         lower.setProperty("card", True)
         l_layout = QVBoxLayout(lower)
         self.roster_title = QLabel("Garden Roster")
+        self.roster_title.setProperty("title", True)
         self.roster_grid = QGridLayout()
+        self.roster_grid.setSpacing(10)
         roster_wrap = QWidget()
         roster_wrap.setLayout(self.roster_grid)
         scroll = QScrollArea()
@@ -337,7 +349,7 @@ class GardenDashboard(QDialog):
         f.setProperty("card", True)
         l = QVBoxLayout(f)
         label = QLabel(title)
-        label.setStyleSheet("font-weight: 700;")
+        label.setProperty("title", True)
         l.addWidget(label)
         l.addWidget(body)
         return f
@@ -346,7 +358,9 @@ class GardenDashboard(QDialog):
         card = QFrame()
         card.setProperty("card", True)
         layout = QVBoxLayout(card)
-        layout.addWidget(QLabel("Focus / Exam"))
+        heading = QLabel("Focus / Exam")
+        heading.setProperty("title", True)
+        layout.addWidget(heading)
         self.focus_duration = QComboBox()
         for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
             self.focus_duration.addItem(f"{minutes} min", int(minutes))
@@ -411,16 +425,22 @@ class GardenDashboard(QDialog):
         for quest in state.daily_quests:
             marker = "✅" if quest.completed else "🌱"
             self.quest_list.addItem(f"{marker} {quest.description}  {quest.progress}/{quest.target}")
+        if self.quest_list.count() == 0:
+            self.quest_list.addItem("No quests yet today. Review a card to generate progress.")
 
         self.achievement_list.clear()
         for ach in state.achievements.values():
             marker = "🏅" if ach.unlocked else "🔒"
             self.achievement_list.addItem(f"{marker} {ach.name}")
+        if self.achievement_list.count() == 0:
+            self.achievement_list.addItem("Achievements will appear as you keep studying.")
 
         self.inventory_list.clear()
         for category, items in state.inventory.items():
             if items:
                 self.inventory_list.addItem(f"{category}: {', '.join(items[:3])}")
+        if self.inventory_list.count() == 0:
+            self.inventory_list.addItem("No active boosts yet.")
 
         self.exam_date_input.setText(state.exam_mode.exam_date or "")
         self._refresh_roster_cards()
@@ -447,6 +467,7 @@ class GardenDashboard(QDialog):
             effect.setColor(QColor(0, 0, 0, 120))
             effect.setOffset(0, 4)
             card.setGraphicsEffect(effect)
+            card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
             l = QVBoxLayout(card)
             deck_label = "All-decks contributor"
             for deck_id, plant_id in state.deck_plant_map.items():
