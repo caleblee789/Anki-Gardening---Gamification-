@@ -5,7 +5,7 @@ import json
 import math
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 try:
     import requests
@@ -63,6 +63,17 @@ class AssetManager:
         "ui": 1.0,
     }
 
+    QUALITY_THRESHOLDS = {
+        "backgrounds": {"min_detail": 0.45, "max_compression": 0.45, "min_quality": 0.64},
+        "plants": {"min_detail": 0.33, "max_compression": 0.58, "min_quality": 0.52},
+        "decorations": {"min_detail": 0.30, "max_compression": 0.62, "min_quality": 0.48},
+        "weather": {"min_detail": 0.28, "max_compression": 0.68, "min_quality": 0.45},
+        "ui": {"min_detail": 0.25, "max_compression": 0.74, "min_quality": 0.4},
+    }
+
+    NO_KEY_PROVIDERS = {"wikimedia"}
+    KEYED_PROVIDERS = {"unsplash", "pexels", "pixabay"}
+
     def __init__(self, config: Any, storage: Any) -> None:
         self.config = config
         self.storage = storage
@@ -87,31 +98,39 @@ class AssetManager:
                 if p.exists():
                     return p
 
-        providers = self.config.nested("image_api", "provider_priority", default=[])
-        if provider_hint and provider_hint in providers:
-            providers = [provider_hint] + [p for p in providers if p != provider_hint]
-
+        providers = self._ordered_providers(provider_hint)
         best_pick: dict[str, Any] | None = None
+        rejected: list[dict[str, Any]] = []
+
         for provider in providers:
             for candidate in self._fetch_candidates_from_provider(provider, query):
                 scored = self.score_asset_candidate(candidate, category, theme=theme)
                 if not scored.get("accepted"):
+                    rejected.append(
+                        {
+                            "provider": provider,
+                            "url": str(candidate.get("url", "")),
+                            "reason": scored.get("reason", "rejected"),
+                            "detail": scored.get("reason_detail", ""),
+                        }
+                    )
                     continue
                 if not best_pick or scored["quality_score"] > best_pick["quality_score"]:
                     best_pick = scored
 
         if not best_pick:
-            return self._fallback_curated_asset(category, key, query)
+            return self._fallback_curated_asset(category, key, query, theme=theme, rejected=rejected)
 
         downloaded = self._download(category, key, str(best_pick.get("url")))
         if not downloaded:
-            return self._fallback_curated_asset(category, key, query)
+            return self._fallback_curated_asset(category, key, query, theme=theme, rejected=rejected)
 
         derivatives = self._generate_derivatives(downloaded, category, key)
         metadata_row = {
             "provider": best_pick.get("provider"),
             "query": query,
             "source_url": best_pick.get("url"),
+            "source_kind": "remote",
             "attribution": best_pick.get("attribution", {}),
             "downloaded_at": int(time.time()),
             "local_path": str(downloaded.relative_to(self.storage.addon_dir)),
@@ -123,6 +142,7 @@ class AssetManager:
             "style_tags": best_pick.get("style_tags", []),
             "theme_compatibility": round(float(best_pick.get("theme_compatibility", 0.0)), 4),
             "derivatives": {k: str(v.relative_to(self.storage.addon_dir)) for k, v in derivatives.items()},
+            "rejection_log": rejected[:15],
         }
         self.metadata[cache_key] = metadata_row
         self.storage.save_asset_metadata(self.metadata)
@@ -136,19 +156,53 @@ class AssetManager:
 
         min_w, min_h = self.MIN_DIMENSIONS.get(category, (512, 512))
         if width < min_w or height < min_h:
-            return {"accepted": False, "reason": "dimensions", "width": width, "height": height}
+            return {
+                "accepted": False,
+                "reason": "dimensions",
+                "reason_detail": f"{width}x{height} < {min_w}x{min_h}",
+                "width": width,
+                "height": height,
+            }
 
+        threshold = self.QUALITY_THRESHOLDS.get(category, self.QUALITY_THRESHOLDS["decorations"])
         detail = float(candidate.get("detail_score", 0.65))
         compression = float(candidate.get("compression_penalty", 0.25))
-        if detail < 0.22 or compression > 0.85:
-            return {"accepted": False, "reason": "detail", "width": width, "height": height}
+
+        if detail < float(threshold["min_detail"]):
+            return {
+                "accepted": False,
+                "reason": "detail",
+                "reason_detail": f"detail_score {detail:.2f} below {threshold['min_detail']}",
+                "width": width,
+                "height": height,
+            }
+
+        if compression > float(threshold["max_compression"]):
+            return {
+                "accepted": False,
+                "reason": "compression",
+                "reason_detail": f"compression_penalty {compression:.2f} above {threshold['max_compression']}",
+                "width": width,
+                "height": height,
+            }
 
         resolution_score = min(1.0, (width * height) / float(min_w * min_h * 4))
         aspect = width / max(1.0, height)
         target_aspect = self.TARGET_ASPECTS.get(category, 1.0)
         aspect_fit = max(0.0, 1.0 - min(1.0, abs(aspect - target_aspect)))
         theme_compat = self._theme_compatibility(candidate, theme)
-        quality_score = (resolution_score * 0.42) + (aspect_fit * 0.28) + (theme_compat * 0.3)
+        quality_score = (resolution_score * 0.4) + (aspect_fit * 0.3) + (theme_compat * 0.3)
+
+        if quality_score < float(threshold["min_quality"]):
+            return {
+                "accepted": False,
+                "reason": "quality",
+                "reason_detail": f"quality_score {quality_score:.2f} below {threshold['min_quality']}",
+                "width": width,
+                "height": height,
+                "quality_score": quality_score,
+            }
+
         return {
             **candidate,
             "accepted": True,
@@ -159,9 +213,27 @@ class AssetManager:
             "quality_score": quality_score,
         }
 
+    def _ordered_providers(self, provider_hint: Optional[str]) -> list[str]:
+        configured = [str(p) for p in self.config.nested("image_api", "provider_priority", default=[]) or []]
+        if provider_hint and provider_hint in configured:
+            configured = [provider_hint] + [p for p in configured if p != provider_hint]
+
+        no_key = [p for p in configured if p in self.NO_KEY_PROVIDERS]
+        keyed = [p for p in configured if p in self.KEYED_PROVIDERS and self._provider_key_available(p)]
+        return no_key + keyed
+
+    def _provider_key_available(self, provider: str) -> bool:
+        if provider == "unsplash":
+            return bool(self.config.nested("image_api", "unsplash_access_key", default=""))
+        if provider == "pexels":
+            return bool(self.config.nested("image_api", "pexels_api_key", default=""))
+        if provider == "pixabay":
+            return bool(self.config.nested("image_api", "pixabay_api_key", default=""))
+        return True
+
     def _fetch_candidates_from_provider(self, provider: str, query: str) -> list[dict[str, Any]]:
-        attempts = self.config.nested("image_api", "max_retries", default=2)
-        for _ in range(attempts):
+        attempts = min(2, int(self.config.nested("image_api", "max_retries", default=2) or 2))
+        for _ in range(max(1, attempts)):
             self._wait_rate_limit()
             try:
                 if provider == "wikimedia":
@@ -177,7 +249,7 @@ class AssetManager:
                 if found:
                     return found
             except requests.RequestException:
-                time.sleep(0.5)
+                time.sleep(0.2)
         return []
 
     def _wait_rate_limit(self) -> None:
@@ -190,7 +262,7 @@ class AssetManager:
     def _from_wikimedia(self, query: str) -> list[dict[str, Any]]:
         if not self.config.nested("image_api", "enable_builtin_no_key_sources", default=True):
             return []
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(
             "https://commons.wikimedia.org/w/api.php",
             params={
@@ -236,7 +308,7 @@ class AssetManager:
         key = self.config.nested("image_api", "unsplash_access_key", default="")
         if not key:
             return []
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(
             "https://api.unsplash.com/search/photos",
             params={"query": query, "orientation": "landscape", "per_page": 30},
@@ -265,7 +337,7 @@ class AssetManager:
         key = self.config.nested("image_api", "pexels_api_key", default="")
         if not key:
             return []
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(
             "https://api.pexels.com/v1/search",
             params={"query": query, "per_page": 30, "orientation": "landscape"},
@@ -295,7 +367,7 @@ class AssetManager:
         key = self.config.nested("image_api", "pixabay_api_key", default="")
         if not key:
             return []
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(
             "https://pixabay.com/api/",
             params={"key": key, "q": query, "image_type": "photo", "per_page": 30, "safesearch": "true"},
@@ -322,7 +394,7 @@ class AssetManager:
     def _download(self, category: str, key: str, url: str) -> Optional[Path]:
         if not url:
             return None
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(url, timeout=timeout)
         resp.raise_for_status()
         digest = hashlib.sha1(url.encode("utf-8")).hexdigest()[:12]
@@ -359,30 +431,85 @@ class AssetManager:
                 clone.save(path, format="JPEG", quality=90)
         return derivatives
 
-    def _fallback_curated_asset(self, category: str, key: str, query: str) -> Optional[Path]:
-        curated_dir = self.storage.assets_root / "starter_pack" / category
-        if not curated_dir.exists():
-            return None
-        matches = sorted(curated_dir.glob("*.svg")) + sorted(curated_dir.glob("*.jpg"))
+    def _fallback_curated_asset(
+        self,
+        category: str,
+        key: str,
+        query: str,
+        theme: Optional[str] = None,
+        rejected: Optional[list[dict[str, Any]]] = None,
+    ) -> Optional[Path]:
+        curated_root = self.storage.assets_root / "starter_pack"
+        curated_dir = curated_root / category
+        matches = self._curated_matches(curated_dir, query=query, theme=theme)
         if not matches:
-            return None
-        picked = matches[hash(f"{key}:{query}") % len(matches)]
+            any_assets = sorted(curated_root.glob("**/*.svg")) + sorted(curated_root.glob("**/*.jpg"))
+            matches = [p for p in any_assets if p.is_file()]
+        if not matches:
+            matches = [self._ensure_placeholder_asset(curated_root)]
+
+        picked = self._deterministic_pick(matches, f"{category}:{key}:{query}:{theme or ''}")
         cache_key = f"{category}:{key}"
+        rel = str(picked.relative_to(self.storage.addon_dir))
         self.metadata[cache_key] = {
             "provider": "starter_pack",
             "query": query,
             "source_url": "local://starter_pack",
+            "source_kind": "starter_pack",
             "attribution": {"author": "Anki Garden", "license": "CC0"},
             "downloaded_at": int(time.time()),
-            "local_path": str(picked.relative_to(self.storage.addon_dir)),
-            "quality_score": 0.85,
+            "local_path": rel,
+            "quality_score": 0.9,
             "dimensions": {"width": 0, "height": 0},
             "style_tags": ["starter_pack", "offline"],
-            "theme_compatibility": 0.85,
-            "derivatives": {"thumbnail": str(picked.relative_to(self.storage.addon_dir)), "preview": str(picked.relative_to(self.storage.addon_dir)), "full": str(picked.relative_to(self.storage.addon_dir))},
+            "theme_compatibility": 0.9,
+            "rejection_log": (rejected or [])[:15],
+            "derivatives": {"thumbnail": rel, "preview": rel, "full": rel},
         }
         self.storage.save_asset_metadata(self.metadata)
         return picked
+
+    def _curated_matches(self, curated_dir: Path, query: str, theme: Optional[str]) -> list[Path]:
+        if not curated_dir.exists():
+            return []
+        matches = sorted(curated_dir.glob("*.svg")) + sorted(curated_dir.glob("*.jpg"))
+        if not matches:
+            return []
+        lowered_query = query.lower()
+        lowered_theme = (theme or self.config.value("visual_theme", "verdant_dusk")).lower()
+        preferred: list[Path] = []
+        for candidate in matches:
+            stem = candidate.stem.lower()
+            if lowered_theme in stem:
+                preferred.append(candidate)
+                continue
+            for term in lowered_query.split():
+                if len(term) > 2 and term in stem:
+                    preferred.append(candidate)
+                    break
+        return preferred or matches
+
+    def _deterministic_pick(self, candidates: list[Path], seed: str) -> Path:
+        if len(candidates) == 1:
+            return candidates[0]
+        digest = hashlib.sha1(seed.encode("utf-8")).hexdigest()
+        idx = int(digest[:8], 16) % len(candidates)
+        return candidates[idx]
+
+    def _ensure_placeholder_asset(self, curated_root: Path) -> Path:
+        placeholder = curated_root / "ui" / "fallback_placeholder.svg"
+        placeholder.parent.mkdir(parents=True, exist_ok=True)
+        if not placeholder.exists():
+            placeholder.write_text(
+                """<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 675'>\n"
+                "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\n"
+                "<stop offset='0%' stop-color='#18252e'/><stop offset='100%' stop-color='#2f6f52'/></linearGradient></defs>\n"
+                "<rect width='1200' height='675' fill='url(#g)'/>\n"
+                "<text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' fill='#e6f0ea' font-size='46'>Anki Garden</text>\n"
+                "</svg>\n""",
+                encoding="utf-8",
+            )
+        return placeholder
 
     def _theme_compatibility(self, candidate: dict[str, Any], theme: Optional[str]) -> float:
         if not theme:
@@ -400,7 +527,7 @@ class AssetManager:
     def _probe_dimensions(self, url: str) -> tuple[int, int]:
         if not url:
             return (0, 0)
-        timeout = self.config.nested("image_api", "request_timeout_sec", default=8)
+        timeout = min(4, int(self.config.nested("image_api", "request_timeout_sec", default=8) or 8))
         resp = requests.get(url, timeout=timeout)
         resp.raise_for_status()
         content = resp.content
