@@ -43,6 +43,8 @@ class GardenStorage:
         self.assets_root.mkdir(parents=True, exist_ok=True)
         for folder in ["plants", "backgrounds", "decorations", "weather", "ui", "cache", "metadata"]:
             (self.assets_root / folder).mkdir(exist_ok=True)
+        for folder in ["plants", "backgrounds", "decorations", "weather", "ui"]:
+            (self.assets_root / "starter_pack" / folder).mkdir(parents=True, exist_ok=True)
         if not self.state.plants:
             starters = [("bonsai", "streak"), ("rose", "accuracy")]
             for idx, species in enumerate(starters[: self.config.value("initial_slots", 2)]):

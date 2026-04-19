@@ -47,6 +47,25 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "exam_mode": {"deck_weight_boost": 1.25},
     "sound_cues": {"growth": "", "achievement": "", "quest": ""},
     "future_features": {"enable_weekly_events": True},
+    "visual_theme": "verdant_dusk",
+    "asset_quality": "balanced",
+    "theme_overrides": {
+        "palette": {
+            "sky_top": "#141e33",
+            "sky_bottom": "#1d4b55",
+            "ground_top": "#3a7a47",
+            "ground_bottom": "#223f2b",
+            "glow": "#95efae",
+            "panel_bg": "#18252e",
+            "panel_border": "#2f4652",
+            "text_primary": "#e6f0ea",
+            "text_muted": "#91a8ae",
+        },
+        "typography_scale": 1.0,
+        "panel_opacity": 0.9,
+        "animation_intensity": 0.7,
+        "weather_particle_density": 1.0,
+    },
 }
 
 

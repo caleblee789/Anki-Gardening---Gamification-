@@ -556,7 +556,12 @@ class GardenGameEngine:
             "flowering": f"flowering {species} botanical garden",
             "rare": f"rare variegated {species} plant specimen",
         }
-        path = self.assets.get_or_fetch("plants", f"{species}_{effective}", query_map[effective])
+        path = self.assets.get_or_fetch(
+            "plants",
+            f"{species}_{effective}",
+            query_map[effective],
+            theme=self.config.value("visual_theme", "verdant_dusk"),
+        )
         return str(path) if path else None
 
     def resolve_background_image(self) -> Optional[str]:
@@ -573,7 +578,18 @@ class GardenGameEngine:
             query = "night garden with fireflies calm"
         elif weather == "gentle_rain":
             query = "soft rainy garden pathway"
-        return str(self.assets.get_or_fetch("backgrounds", f"bg_{seasonal}_{weather}", query) or "") or None
+        return (
+            str(
+                self.assets.get_or_fetch(
+                    "backgrounds",
+                    f"bg_{seasonal}_{weather}",
+                    query,
+                    theme=self.config.value("visual_theme", "verdant_dusk"),
+                )
+                or ""
+            )
+            or None
+        )
 
     def resolve_weather_overlay(self) -> Optional[str]:
         query = {
@@ -583,12 +599,22 @@ class GardenGameEngine:
             "gentle_rain": "gentle rain droplets bokeh",
             "breeze": "soft floating pollen particles",
         }.get(self.state.selected_weather, "soft sunlight bokeh")
-        path = self.assets.get_or_fetch("weather", f"weather_{self.state.selected_weather}", query)
+        path = self.assets.get_or_fetch(
+            "weather",
+            f"weather_{self.state.selected_weather}",
+            query,
+            theme=self.config.value("visual_theme", "verdant_dusk"),
+        )
         return str(path) if path else None
 
     def resolve_decoration_image(self, decoration: str) -> Optional[str]:
         query = f"garden decoration {decoration.replace('_', ' ')}"
-        path = self.assets.get_or_fetch("decorations", f"decor_{decoration}", query)
+        path = self.assets.get_or_fetch(
+            "decorations",
+            f"decor_{decoration}",
+            query,
+            theme=self.config.value("visual_theme", "verdant_dusk"),
+        )
         return str(path) if path else None
 
     def export_progress_summary(self) -> str:
