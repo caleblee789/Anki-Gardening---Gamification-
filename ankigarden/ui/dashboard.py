@@ -63,12 +63,15 @@ class GardenSceneWidget(QWidget):
             sky.setColorAt(0.55, QColor(27, 60, 72))
             sky.setColorAt(1.0, QColor(16, 30, 26))
             painter.fillRect(r, sky)
+            growth = max(0.0, min(1.0, float(self.scene.get("growth", 0.0))))
 
             sun_x = r.width() * (0.75 + 0.02 * math.sin(self.phase / 4))
             sun_y = r.height() * 0.2
             painter.setPen(Qt.PenStyle.NoPen)
             painter.setBrush(QColor(255, 220, 130, 95 if self.scene.get("weather") != "cloudy" else 35))
             painter.drawEllipse(QRectF(sun_x - 55, sun_y - 55, 110, 110))
+            painter.setBrush(QColor(150, 255, 170, int(18 + growth * 40)))
+            painter.drawEllipse(QRectF(sun_x - 80, sun_y - 80, 160, 160))
 
             ground = QLinearGradient(0, r.height() * 0.56, 0, r.height())
             ground.setColorAt(0.0, QColor(45, 90, 54))
@@ -92,6 +95,11 @@ class GardenSceneWidget(QWidget):
                 base_y = r.height() * 0.76
                 sway = 6 * math.sin(self.phase + idx)
                 self._draw_plant(painter, x + sway, base_y, plant, idx)
+                if growth > 0.05:
+                    painter.setPen(Qt.PenStyle.NoPen)
+                    pulse_alpha = int(25 + 40 * (0.5 + 0.5 * math.sin(self.phase * 2 + idx)))
+                    painter.setBrush(QColor(142, 247, 158, pulse_alpha))
+                    painter.drawEllipse(QRectF(x - 26, base_y - 130, 52, 52))
 
             weather = self.scene.get("weather", "breeze")
             if weather in ("gentle_rain", "cloudy"):
@@ -111,6 +119,7 @@ class GardenSceneWidget(QWidget):
 
             painter.setPen(QColor(210, 245, 222, glow))
             painter.drawText(18, 32, "Your live study garden")
+            painter.drawText(18, 52, f"Daily growth energy: {int(growth * 100)}%")
         except Exception:
             self._draw_fallback_scene(painter, r)
 
@@ -250,7 +259,7 @@ class GardenDashboard(QDialog):
             QDialog { background: #101820; color: #e6f0ea; }
             QFrame[card='true'] { background: #18252e; border: 1px solid #2f4652; border-radius: 14px; }
             QLabel[muted='true'] { color: #91a8ae; }
-            QPushButton { background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; }
+            QPushButton { background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; font-weight: 600; }
             QPushButton:hover { background: #2f5468; }
             QProgressBar { border-radius: 7px; border: 1px solid #2f4652; background: #132029; }
             QProgressBar::chunk { background: #56ba7f; border-radius: 6px; }
@@ -284,10 +293,17 @@ class GardenDashboard(QDialog):
         self.hero_summary = QLabel()
         self.hero_summary.setWordWrap(True)
         self.hero_summary.setProperty("muted", True)
+        self.hero_growth = QProgressBar()
+        self.hero_growth.setMaximum(100)
+        self.hero_growth.setFormat("Daily growth %p%")
+        self.hero_growth.setStyleSheet(
+            "QProgressBar{height:18px;font-weight:700;} QProgressBar::chunk{background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #5fd484, stop:1 #d7ff8f);}"
+        )
         self.retrospective_note = QLabel("")
         self.retrospective_note.setStyleSheet("color:#9ef3b0;")
         h_layout.addWidget(self.scene)
         h_layout.addWidget(self.hero_summary)
+        h_layout.addWidget(self.hero_growth)
         h_layout.addWidget(self.retrospective_note)
         root.addWidget(hero_card, 2)
 
@@ -368,8 +384,10 @@ class GardenDashboard(QDialog):
         mode_text = "Unified all-decks" if state.garden_mode == "unified" else "Deck-by-deck"
         self.hero_summary.setText(
             f"{mode_text} mode • Weather: {state.selected_weather} • Event: {self.engine.get_weekly_event_summary()}\n"
-            f"Keep accuracy high and complete quests to unlock flowering and rare forms."
+            f"Keep accuracy high and complete quests to unlock flowering and rare forms. Every review visibly powers your garden."
         )
+        growth_pct = int(min(100, (stats.growth_earned / max(1, self.config.value('daily_growth_cap', 220))) * 100))
+        self.hero_growth.setValue(growth_pct)
 
         self.scene.set_scene(
             {
