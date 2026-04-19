@@ -130,6 +130,7 @@ class GardenStudioWidget(QWidget):
             label = QLabel(f"{slot.title()}: {STUDIO_TEXT['missing_source']}")
             label.setWordWrap(True)
             reroll = QPushButton(STUDIO_TEXT["refresh_asset"].format(slot=slot.title()))
+            reroll.setProperty("variant", "secondary")
             reroll.clicked.connect(lambda _checked=False, s=slot: self._reroll_slot(s))
             card_layout.addWidget(label, 1)
             card_layout.addWidget(reroll)
