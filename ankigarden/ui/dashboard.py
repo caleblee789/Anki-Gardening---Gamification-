@@ -109,6 +109,23 @@ class GardenSettingsDialog(QDialog):
 
 
 class GardenDashboard(QDialog):
+    ROOT_MARGINS = (18, 18, 18, 18)
+    ROOT_SPACING = 12
+    CARD_SPACING = 10
+    CARD_PADDING = (12, 12, 12, 12)
+    CARD_BORDER_RADIUS = 14
+    CHIP_BORDER_RADIUS = 12
+    CHIP_PADDING = (5, 10)
+    CHIP_SPACING = 8
+    MID_ROW_SPACING = 12
+    ROSTER_GRID_SPACING = 12
+    CARD_BG = "#18252e"
+    CARD_BORDER = "#2f4652"
+    APP_BG = "#101820"
+    TEXT_PRIMARY = "#e6f0ea"
+    TEXT_MUTED = "#b2c4c8"
+    CHIP_BG = "#213847"
+
     def __init__(self, mw_window: Any, engine: Any, storage: Any, config: Any) -> None:
         super().__init__(mw_window)
         self.engine = engine
@@ -122,27 +139,31 @@ class GardenDashboard(QDialog):
 
     def _build_ui(self) -> None:
         self.setStyleSheet(
-            """
-            QDialog { background: #101820; color: #e6f0ea; }
-            QFrame[card='true'] { background: #18252e; border: 1px solid #2f4652; border-radius: 14px; }
-            QLabel[muted='true'] { color: #91a8ae; }
-            QLabel[title='true'] { font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
-            QPushButton { background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; font-weight: 600; }
-            QPushButton:hover { background: #2f5468; }
-            QProgressBar { border-radius: 7px; border: 1px solid #2f4652; background: #132029; }
-            QProgressBar::chunk { background: #56ba7f; border-radius: 6px; }
-            QListWidget { background: #12202a; border-radius: 10px; border: 1px solid #2a404d; padding: 4px; }
+            f"""
+            QDialog {{ background: {self.APP_BG}; color: {self.TEXT_PRIMARY}; }}
+            QFrame[card='true'] {{ background: {self.CARD_BG}; border: 1px solid {self.CARD_BORDER}; border-radius: {self.CARD_BORDER_RADIUS}px; }}
+            QLabel[typography='title'] {{ font-size: 20px; font-weight: 800; letter-spacing: 0.3px; }}
+            QLabel[typography='section-title'] {{ font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }}
+            QLabel[typography='muted-body'] {{ font-size: 13px; color: {self.TEXT_MUTED}; }}
+            QLabel[typography='status-chip'] {{ font-size: 12px; font-weight: 600; letter-spacing: 0.1px; }}
+            QLabel[chip='true'] {{ padding: {self.CHIP_PADDING[0]}px {self.CHIP_PADDING[1]}px; background:{self.CHIP_BG}; border-radius:{self.CHIP_BORDER_RADIUS}px; }}
+            QPushButton {{ background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; font-weight: 600; }}
+            QPushButton:hover {{ background: #2f5468; }}
+            QProgressBar {{ border-radius: 7px; border: 1px solid {self.CARD_BORDER}; background: #132029; }}
+            QProgressBar::chunk {{ background: #56ba7f; border-radius: 6px; }}
+            QListWidget {{ background: #12202a; border-radius: 10px; border: 1px solid #2a404d; padding: 4px; }}
             """
         )
         root = QVBoxLayout(self)
-        root.setContentsMargins(18, 18, 18, 18)
-        root.setSpacing(12)
+        root.setContentsMargins(*self.ROOT_MARGINS)
+        root.setSpacing(self.ROOT_SPACING)
 
-        top = QFrame()
-        top.setProperty("card", True)
+        top = self._card_frame()
         t_layout = QHBoxLayout(top)
+        t_layout.setContentsMargins(*self.CARD_PADDING)
+        t_layout.setSpacing(self.CHIP_SPACING)
         self.title_label = QLabel("🌿 Anki Garden")
-        self.title_label.setStyleSheet("font-size: 20px; font-weight: 800; letter-spacing: 0.3px;")
+        self._apply_typography(self.title_label, "title")
         self.streak_chip = QLabel()
         self.progress_chip = QLabel()
         self.health_chip = QLabel()
@@ -151,18 +172,20 @@ class GardenDashboard(QDialog):
         t_layout.addWidget(self.title_label)
         t_layout.addStretch(1)
         for chip in (self.streak_chip, self.progress_chip, self.health_chip):
-            chip.setStyleSheet("padding: 5px 10px; background:#213847; border-radius:12px;")
+            chip.setProperty("chip", True)
+            self._apply_typography(chip, "status-chip")
             t_layout.addWidget(chip)
         t_layout.addWidget(self.settings_btn)
         root.addWidget(top)
 
-        hero_card = QFrame()
-        hero_card.setProperty("card", True)
+        hero_card = self._card_frame()
         h_layout = QVBoxLayout(hero_card)
+        h_layout.setContentsMargins(*self.CARD_PADDING)
+        h_layout.setSpacing(self.CARD_SPACING)
         self.scene = GardenSceneWidget()
         self.hero_summary = QLabel()
         self.hero_summary.setWordWrap(True)
-        self.hero_summary.setProperty("muted", True)
+        self._apply_typography(self.hero_summary, "muted-body")
         self.hero_summary.setStyleSheet("line-height: 1.35;")
         self.hero_growth = QProgressBar()
         self.hero_growth.setMaximum(100)
@@ -171,7 +194,8 @@ class GardenDashboard(QDialog):
             "QProgressBar{height:18px;font-weight:700;} QProgressBar::chunk{background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #5fd484, stop:1 #d7ff8f);}"
         )
         self.retrospective_note = QLabel("")
-        self.retrospective_note.setStyleSheet("color:#9ef3b0;")
+        self._apply_typography(self.retrospective_note, "muted-body")
+        self.retrospective_note.setStyleSheet("color:#9ef3b0; font-size:13px;")
         h_layout.addWidget(self.scene)
         h_layout.addWidget(self.hero_summary)
         h_layout.addWidget(self.hero_growth)
@@ -179,7 +203,7 @@ class GardenDashboard(QDialog):
         root.addWidget(hero_card, 2)
 
         mid_row = QHBoxLayout()
-        mid_row.setSpacing(10)
+        mid_row.setSpacing(self.MID_ROW_SPACING)
         self.quest_list = QListWidget()
         self.quest_list.setAlternatingRowColors(True)
         self.achievement_list = QListWidget()
@@ -193,38 +217,50 @@ class GardenDashboard(QDialog):
         mid_row.addWidget(self._simple_card("Inventory & Boosts", self.inventory_list), 1)
         root.addLayout(mid_row, 1)
 
-        lower = QFrame()
-        lower.setProperty("card", True)
+        lower = self._card_frame()
         l_layout = QVBoxLayout(lower)
+        l_layout.setContentsMargins(*self.CARD_PADDING)
+        l_layout.setSpacing(self.CARD_SPACING)
         self.roster_title = QLabel("Garden Roster")
-        self.roster_title.setProperty("title", True)
+        self._apply_typography(self.roster_title, "section-title")
         self.roster_grid = QGridLayout()
-        self.roster_grid.setSpacing(10)
+        self.roster_grid.setSpacing(self.ROSTER_GRID_SPACING)
         roster_wrap = QWidget()
         roster_wrap.setLayout(self.roster_grid)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setWidget(roster_wrap)
         l_layout.addWidget(self.roster_title)
         l_layout.addWidget(scroll)
         root.addWidget(lower, 2)
 
+    def _card_frame(self) -> QFrame:
+        frame = QFrame()
+        frame.setProperty("card", True)
+        return frame
+
+    def _apply_typography(self, label: QLabel, level: str) -> None:
+        label.setProperty("typography", level)
+
     def _simple_card(self, title: str, body: QWidget) -> QFrame:
-        f = QFrame()
-        f.setProperty("card", True)
+        f = self._card_frame()
         l = QVBoxLayout(f)
+        l.setContentsMargins(*self.CARD_PADDING)
+        l.setSpacing(self.CARD_SPACING)
         label = QLabel(title)
-        label.setProperty("title", True)
+        self._apply_typography(label, "section-title")
         l.addWidget(label)
         l.addWidget(body)
         return f
 
     def _focus_card(self) -> QFrame:
-        card = QFrame()
-        card.setProperty("card", True)
+        card = self._card_frame()
         layout = QVBoxLayout(card)
+        layout.setContentsMargins(*self.CARD_PADDING)
+        layout.setSpacing(self.CARD_SPACING)
         heading = QLabel("Focus / Exam")
-        heading.setProperty("title", True)
+        self._apply_typography(heading, "section-title")
         layout.addWidget(heading)
         self.focus_duration = QComboBox()
         for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
@@ -340,17 +376,17 @@ class GardenDashboard(QDialog):
                     deck_label = f"Deck #{deck_id}"
                     break
             title = QLabel(f"{plant.name} • {plant.species.title()}")
-            title.setStyleSheet("font-weight:700;")
+            self._apply_typography(title, "section-title")
             stage = QLabel(f"Stage: {plant.growth_stage.title()} {'✨' if plant.rare_variant else ''}")
-            stage.setProperty("muted", True)
+            self._apply_typography(stage, "muted-body")
             vit = QProgressBar()
             vit.setMaximum(100)
             vit.setValue(int(plant.vitality * 100))
             vit.setFormat("Vitality %p%")
             growth = QLabel(f"Growth source: {plant.personality} • GP {plant.growth_points}")
-            growth.setProperty("muted", True)
+            self._apply_typography(growth, "muted-body")
             map_info = QLabel(deck_label)
-            map_info.setProperty("muted", True)
+            self._apply_typography(map_info, "muted-body")
             l.addWidget(title)
             l.addWidget(stage)
             l.addWidget(vit)
