@@ -15,6 +15,7 @@ from aqt.qt import (
     QVBoxLayout,
     QWidget,
     Qt,
+    QFontMetrics,
 )
 
 from .scene import GardenSceneWidget
@@ -37,6 +38,9 @@ STUDIO_TEXT = {
 
 
 class GardenStudioWidget(QWidget):
+    ATTRIBUTION_MAX_CHARS = 210
+    ATTRIBUTION_ELIDE_WIDTH = 760
+
     def __init__(self, config: Any, on_reroll: Callable[[str], None] | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.config = config
@@ -177,11 +181,18 @@ class GardenStudioWidget(QWidget):
             source = attr.get("page_url") or attr.get("source_url") or "unknown source"
             author = attr.get("author") or "unknown author"
             license_name = attr.get("license") or "license unknown"
-            label.setText(
-                STUDIO_TEXT["source_label"].format(
-                    slot=slot.title(), author=author, license_name=license_name, source=source
-                )
+            full_text = STUDIO_TEXT["source_label"].format(
+                slot=slot.title(), author=author, license_name=license_name, source=source
             )
+            limited_text = full_text if len(full_text) <= self.ATTRIBUTION_MAX_CHARS else f"{full_text[: self.ATTRIBUTION_MAX_CHARS - 1]}…"
+            metrics = QFontMetrics(label.font())
+            max_width = max(220, label.width() - 12, self.ATTRIBUTION_ELIDE_WIDTH)
+            display_text = metrics.elidedText(limited_text, Qt.TextElideMode.ElideRight, max_width)
+            label.setText(display_text)
+            if display_text != full_text:
+                label.setToolTip(full_text)
+            else:
+                label.setToolTip("")
 
     def _reroll_slot(self, slot: str) -> None:
         if self.on_reroll:

@@ -23,6 +23,8 @@ from aqt.qt import (
     QWidget,
     Qt,
     QColor,
+    QFontMetrics,
+    QListWidgetItem,
     QSizePolicy,
 )
 from .garden_studio import GardenStudioWidget
@@ -62,6 +64,7 @@ UI_TEXT = {
     "no_quests": "No quest progress yet today. Review a card to start progress.",
     "no_achievements": "Achievement progress will appear as you keep studying.",
     "no_boosts": "No active inventory boosts yet.",
+    "no_roster": "No plants in your roster yet. Add reviews to grow your first companion.",
 }
 
 
@@ -161,6 +164,8 @@ class GardenDashboard(QDialog):
     TEXT_PRIMARY = "#e6f0ea"
     TEXT_MUTED = "#b2c4c8"
     CHIP_BG = "#213847"
+    LIST_ELIDE_WIDTH = 340
+    LIST_MAX_LENGTH = 170
 
     def __init__(self, mw_window: Any, engine: Any, storage: Any, config: Any) -> None:
         super().__init__(mw_window)
@@ -221,6 +226,8 @@ class GardenDashboard(QDialog):
         self.scene = GardenSceneWidget()
         self.hero_summary = QLabel()
         self.hero_summary.setWordWrap(True)
+        self.hero_summary.setMinimumHeight(48)
+        self.hero_summary.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
         self._apply_typography(self.hero_summary, "muted-body")
         self.hero_summary.setStyleSheet("line-height: 1.35;")
         self.hero_growth = QProgressBar()
@@ -230,6 +237,9 @@ class GardenDashboard(QDialog):
             "QProgressBar{height:18px;font-weight:700;} QProgressBar::chunk{background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #5fd484, stop:1 #d7ff8f);}"
         )
         self.retrospective_note = QLabel("")
+        self.retrospective_note.setWordWrap(True)
+        self.retrospective_note.setMinimumHeight(24)
+        self.retrospective_note.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
         self._apply_typography(self.retrospective_note, "muted-body")
         self.retrospective_note.setStyleSheet("color:#9ef3b0; font-size:13px;")
         h_layout.addWidget(self.scene)
@@ -242,11 +252,14 @@ class GardenDashboard(QDialog):
         mid_row.setSpacing(self.MID_ROW_SPACING)
         self.quest_list = QListWidget()
         self.quest_list.setAlternatingRowColors(True)
+        self.quest_list.setMinimumHeight(180)
         self.achievement_list = QListWidget()
         self.achievement_list.setAlternatingRowColors(True)
+        self.achievement_list.setMinimumHeight(180)
         self.focus_card = self._focus_card()
         self.inventory_list = QListWidget()
         self.inventory_list.setAlternatingRowColors(True)
+        self.inventory_list.setMinimumHeight(180)
         mid_row.addWidget(self._simple_card(UI_TEXT["quest_progress_title"], self.quest_list), 1)
         mid_row.addWidget(self._simple_card(UI_TEXT["achievement_progress_title"], self.achievement_list), 1)
         mid_row.addWidget(self.focus_card, 1)
@@ -266,6 +279,7 @@ class GardenDashboard(QDialog):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setMinimumHeight(210)
         scroll.setWidget(roster_wrap)
         l_layout.addWidget(self.roster_title)
         l_layout.addWidget(scroll)
@@ -281,6 +295,8 @@ class GardenDashboard(QDialog):
 
     def _simple_card(self, title: str, body: QWidget) -> QFrame:
         f = self._card_frame()
+        f.setMinimumWidth(240)
+        f.setMinimumHeight(240)
         l = QVBoxLayout(f)
         l.setContentsMargins(*self.CARD_PADDING)
         l.setSpacing(self.CARD_SPACING)
@@ -292,6 +308,8 @@ class GardenDashboard(QDialog):
 
     def _focus_card(self) -> QFrame:
         card = self._card_frame()
+        card.setMinimumWidth(280)
+        card.setMinimumHeight(240)
         layout = QVBoxLayout(card)
         layout.setContentsMargins(*self.CARD_PADDING)
         layout.setSpacing(self.CARD_SPACING)
@@ -325,6 +343,19 @@ class GardenDashboard(QDialog):
         layout.addWidget(exam_off)
         layout.addStretch(1)
         return card
+
+    def _add_list_entry(self, widget: QListWidget, text: str, *, empty_state: bool = False) -> None:
+        item = QListWidgetItem()
+        full_text = text if len(text) <= self.LIST_MAX_LENGTH else f"{text[: self.LIST_MAX_LENGTH - 1]}…"
+        max_width = max(140, widget.viewport().width() - 24, self.LIST_ELIDE_WIDTH)
+        metrics = QFontMetrics(widget.font())
+        display_text = metrics.elidedText(full_text, Qt.TextElideMode.ElideRight, max_width)
+        item.setText(display_text)
+        if display_text != full_text:
+            item.setToolTip(full_text)
+        if empty_state:
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+        widget.addItem(item)
 
     def refresh_all(self) -> None:
         state = self.storage.state
@@ -362,23 +393,26 @@ class GardenDashboard(QDialog):
         self.quest_list.clear()
         for quest in state.daily_quests:
             marker = "✅" if quest.completed else "🌱"
-            self.quest_list.addItem(f"{marker} {quest.description}  {quest.progress}/{quest.target}")
+            self._add_list_entry(
+                self.quest_list,
+                f"{marker} {quest.description}  {quest.progress}/{quest.target}",
+            )
         if self.quest_list.count() == 0:
-            self.quest_list.addItem(UI_TEXT["no_quests"])
+            self._add_list_entry(self.quest_list, UI_TEXT["no_quests"], empty_state=True)
 
         self.achievement_list.clear()
         for ach in state.achievements.values():
             marker = "🏅" if ach.unlocked else "🔒"
-            self.achievement_list.addItem(f"{marker} {ach.name}")
+            self._add_list_entry(self.achievement_list, f"{marker} {ach.name}")
         if self.achievement_list.count() == 0:
-            self.achievement_list.addItem(UI_TEXT["no_achievements"])
+            self._add_list_entry(self.achievement_list, UI_TEXT["no_achievements"], empty_state=True)
 
         self.inventory_list.clear()
         for category, items in state.inventory.items():
             if items:
-                self.inventory_list.addItem(f"{category}: {', '.join(items[:3])}")
+                self._add_list_entry(self.inventory_list, f"{category}: {', '.join(items[:3])}")
         if self.inventory_list.count() == 0:
-            self.inventory_list.addItem(UI_TEXT["no_boosts"])
+            self._add_list_entry(self.inventory_list, UI_TEXT["no_boosts"], empty_state=True)
 
         self.exam_date_input.setText(state.exam_mode.exam_date or "")
         self._refresh_roster_cards()
@@ -399,6 +433,12 @@ class GardenDashboard(QDialog):
 
         state = self.storage.state
         self.roster_title.setText("Garden Regions" if state.garden_mode == "unified" else "Deck-Mapped Plants")
+        if not state.plants:
+            empty = QLabel(UI_TEXT["no_roster"])
+            self._apply_typography(empty, "muted-body")
+            empty.setWordWrap(True)
+            self.roster_grid.addWidget(empty, 0, 0, 1, 3)
+            return
         for idx, plant in enumerate(state.plants):
             card = QFrame()
             card.setProperty("card", True)
@@ -407,6 +447,7 @@ class GardenDashboard(QDialog):
             effect.setColor(QColor(0, 0, 0, 120))
             effect.setOffset(0, 4)
             card.setGraphicsEffect(effect)
+            card.setMinimumSize(220, 160)
             card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
             l = QVBoxLayout(card)
             deck_label = "All-Deck Contributor"
