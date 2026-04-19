@@ -117,6 +117,12 @@ class AnkiGardenApp:
             web_content.body = body + html
 
     def _build_home_garden_html(self) -> str:
+        except Exception:
+            pass
+
+    def _inject_home_garden(self, _deck_browser: object, content: object) -> None:
+        self.engine.rollover_if_needed()
+        self._apply_retrospective_growth()
         state = self.storage.state
         stats = state.daily_stats
         health_pct = int(self.engine.garden_health_index() * 100)
@@ -187,6 +193,7 @@ class AnkiGardenApp:
 }}
 </style>
 <div id="ag-home-root" class="ag-home">
+<div class="ag-home">
   <div class="ag-home__head">
     <span>🌿 Anki Garden</span>
     <span>{state.streak_days}d streak</span>
@@ -202,6 +209,8 @@ class AnkiGardenApp:
 </div>
 """
         return html
+        if hasattr(content, "stats") and isinstance(content.stats, str):
+            content.stats += html
 
     def _plant_emoji_for_stage(self, stage: str, rare: bool) -> str:
         if rare:
