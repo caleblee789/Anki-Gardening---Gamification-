@@ -103,6 +103,14 @@ class GardenState:
     last_active_day: str = field(default_factory=lambda: date.today().isoformat())
     focus_plant_id: Optional[str] = None
     deck_plant_map: Dict[str, str] = field(default_factory=dict)
+    cloud_enabled: bool = False
+    cloud_last_sync: Optional[str] = None
+    cloud_device_id: str = "local-device"
+    gardener_name: str = "Gardener"
+    share_code: str = ""
+    shared_gardens: Dict[str, Dict[str, object]] = field(default_factory=dict)
+    weekly_event_id: str = ""
+    weekly_event_applied_for_day: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -128,6 +136,14 @@ class GardenState:
             "last_active_day": self.last_active_day,
             "focus_plant_id": self.focus_plant_id,
             "deck_plant_map": self.deck_plant_map,
+            "cloud_enabled": self.cloud_enabled,
+            "cloud_last_sync": self.cloud_last_sync,
+            "cloud_device_id": self.cloud_device_id,
+            "gardener_name": self.gardener_name,
+            "share_code": self.share_code,
+            "shared_gardens": self.shared_gardens,
+            "weekly_event_id": self.weekly_event_id,
+            "weekly_event_applied_for_day": self.weekly_event_applied_for_day,
         }
 
     @staticmethod
@@ -152,6 +168,14 @@ class GardenState:
             "last_active_day",
             "focus_plant_id",
             "deck_plant_map",
+            "cloud_enabled",
+            "cloud_last_sync",
+            "cloud_device_id",
+            "gardener_name",
+            "share_code",
+            "shared_gardens",
+            "weekly_event_id",
+            "weekly_event_applied_for_day",
         ]:
             if key in data:
                 setattr(state, key, data[key])

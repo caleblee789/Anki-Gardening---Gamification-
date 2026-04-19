@@ -17,6 +17,7 @@ from aqt.qt import (
     QListWidget,
     QListWidgetItem,
     QMessageBox,
+    QInputDialog,
     QPixmap,
     QProgressBar,
     QPushButton,
@@ -50,6 +51,7 @@ class GardenDashboard(QDialog):
         self.streak_label = QLabel()
         self.daily_label = QLabel()
         self.mode_label = QLabel()
+        self.event_label = QLabel()
         self.growth_bar = QProgressBar()
         self.growth_bar.setFormat("Daily Growth %v/%m")
 
@@ -61,6 +63,7 @@ class GardenDashboard(QDialog):
         layout.addWidget(self.bg_label)
         layout.addLayout(header)
         layout.addWidget(self.mode_label)
+        layout.addWidget(self.event_label)
         layout.addWidget(self.growth_bar)
 
         splitter = QSplitter()
@@ -107,9 +110,20 @@ class GardenDashboard(QDialog):
         self.achievements = QListWidget()
         self.inventory = QListWidget()
         self.shop = QListWidget()
+        self.social_list = QListWidget()
 
         shop_btn = QPushButton("Buy Selected Item")
         shop_btn.clicked.connect(self._purchase_selected)
+        publish_btn = QPushButton("Publish Garden")
+        publish_btn.clicked.connect(self._publish_garden)
+        import_btn = QPushButton("Import Shared Garden")
+        import_btn.clicked.connect(self._import_shared_garden)
+        cloud_push_btn = QPushButton("Cloud Push")
+        cloud_push_btn.clicked.connect(self._cloud_push)
+        cloud_pull_btn = QPushButton("Cloud Pull")
+        cloud_pull_btn.clicked.connect(self._cloud_pull)
+        set_name_btn = QPushButton("Set Gardener Name")
+        set_name_btn.clicked.connect(self._set_gardener_name)
 
         journal_box = QGroupBox("Reflection Journal")
         journal_layout = QFormLayout(journal_box)
@@ -131,6 +145,13 @@ class GardenDashboard(QDialog):
         layout.addWidget(QLabel("Garden Shop"))
         layout.addWidget(self.shop)
         layout.addWidget(shop_btn)
+        layout.addWidget(QLabel("Social / Shared Gardens"))
+        layout.addWidget(self.social_list)
+        layout.addWidget(publish_btn)
+        layout.addWidget(import_btn)
+        layout.addWidget(set_name_btn)
+        layout.addWidget(cloud_push_btn)
+        layout.addWidget(cloud_pull_btn)
         layout.addWidget(journal_box)
         return panel
 
@@ -144,6 +165,7 @@ class GardenDashboard(QDialog):
         self.daily_label.setText(f"Today: {stats.reviewed} cards • Accuracy {int(stats.accuracy * 100)}%")
         mode = "Recovery mode active: resume a few sessions to revive plant vitality." if state.recovery_mode else "Garden mode: steady growth focus"
         self.mode_label.setText(mode)
+        self.event_label.setText(f"Weekly Event: {self.engine.get_weekly_event_summary()}")
         self.growth_bar.setMaximum(self.config.value("daily_growth_cap", 220))
         self.growth_bar.setValue(stats.growth_earned)
 
@@ -157,6 +179,7 @@ class GardenDashboard(QDialog):
         self._refresh_quest_list()
         self._refresh_achievements()
         self._refresh_inventory_and_shop()
+        self._refresh_social()
         self._refresh_focus_and_deck_controls()
 
         today = date.today().isoformat()
@@ -202,7 +225,18 @@ class GardenDashboard(QDialog):
         self.shop.clear()
         for key, cost in sorted(self.engine.SHOP_ITEMS.items()):
             purchased = " (owned)" if key in state.purchased_items else ""
-            self.shop.addItem(f"{key} — {cost}{purchased}")
+            effective = self.engine.get_shop_price(key)
+            self.shop.addItem(f"{key} — {effective} (base {cost}){purchased}")
+
+    def _refresh_social(self) -> None:
+        state = self.storage.state
+        self.social_list.clear()
+        self.social_list.addItem(f"You: {state.gardener_name} ({state.share_code})")
+        sync = state.cloud_last_sync or "never"
+        self.social_list.addItem(f"Cloud sync: {sync}")
+        for code, shared in sorted(state.shared_gardens.items()):
+            summary = f"{shared.get('gardener_name', 'Unknown')} • streak {shared.get('streak_days', 0)} • code {code}"
+            self.social_list.addItem(summary)
 
     def _refresh_focus_and_deck_controls(self) -> None:
         state = self.storage.state
@@ -299,3 +333,36 @@ class GardenDashboard(QDialog):
 
     def _save_journal(self) -> None:
         self.engine.set_journal_note(self.journal_day.text(), self.journal_note.toPlainText())
+
+    def _publish_garden(self) -> None:
+        code = self.engine.publish_shared_garden()
+        QMessageBox.information(self, "Anki Garden", f"Garden published with share code: {code}")
+        self.refresh_all()
+
+    def _import_shared_garden(self) -> None:
+        code, ok = QInputDialog.getText(self, "Import Shared Garden", "Enter share code:")
+        if not ok:
+            return
+        success, message = self.engine.import_shared_garden(code)
+        QMessageBox.information(self, "Anki Garden", message)
+        if success:
+            self.refresh_all()
+
+    def _cloud_push(self) -> None:
+        success, message = self.engine.cloud_push()
+        QMessageBox.information(self, "Anki Garden", message)
+        if success:
+            self.refresh_all()
+
+    def _cloud_pull(self) -> None:
+        success, message = self.engine.cloud_pull()
+        QMessageBox.information(self, "Anki Garden", message)
+        if success:
+            self.refresh_all()
+
+    def _set_gardener_name(self) -> None:
+        name, ok = QInputDialog.getText(self, "Gardener Name", "Choose your display name:")
+        if not ok:
+            return
+        self.engine.set_gardener_name(name)
+        self.refresh_all()

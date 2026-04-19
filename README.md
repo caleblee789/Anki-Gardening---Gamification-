@@ -145,14 +145,14 @@ Persisted data includes:
 - journal entries
 - equipped cosmetics/weather
 
-## Future-ready feature flags
+## Cloud sync, social gardens, weekly events
 
-The add-on already ships config flags for planned extensions:
-- cloud sync scaffold
-- social/shared gardens
-- weekly event rotations
+These systems are now fully implemented:
+- **Cloud sync**: push/pull full garden snapshots through the local cloud snapshot file (`cloud_state.json`).
+- **Social/shared gardens**: publish your garden to a local social hub (`social_hub.json`), then import other share codes.
+- **Weekly events**: automatic ISO-week rotation that changes growth bonuses, quest rewards, weather mood, and shop prices.
 
-These are disabled by default and non-invasive.
+All three systems are enabled by default under `future_features`.
 
 ## Packaging
 
