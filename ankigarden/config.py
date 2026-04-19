@@ -30,7 +30,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "burnout_volume_threshold": 500,
     "rare_event_frequency": 1.0,
     "image_api": {
-        "provider_priority": ["wikimedia", "unsplash", "pexels", "pixabay"],
+        "provider_priority": ["wikimedia"],
         "enable_builtin_no_key_sources": True,
         "unsplash_access_key": "",
         "pexels_api_key": "",

@@ -29,7 +29,9 @@
   "burnout_volume_threshold": 500,
   "rare_event_frequency": 1.0,
   "image_api": {
-    "provider_priority": ["wikimedia", "unsplash", "pexels", "pixabay"],
+    "provider_priority": [
+      "wikimedia"
+    ],
     "enable_builtin_no_key_sources": true,
     "unsplash_access_key": "",
     "pexels_api_key": "",
@@ -43,7 +45,11 @@
   "currency_name": "dew drops",
   "focus_target_bonus": 1.2,
   "focus_mode": {
-    "durations": [25, 45, 60],
+    "durations": [
+      25,
+      45,
+      60
+    ],
     "growth_multiplier": 1.15
   },
   "exam_mode": {

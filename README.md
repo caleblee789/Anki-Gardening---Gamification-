@@ -26,7 +26,7 @@ The system is designed to support serious learners with calm reinforcement, reco
 - Rare event system (golden bloom, meteor shower, rainfall blessing, etc.).
 - Journal notes and timeline snapshots.
 - Local cloud snapshot readiness + share/export summary.
-- Real online image sourcing + persistent local caching.
+- Real online image sourcing + deterministic starter-pack fallback + persistent local caching.
 
 ---
 
@@ -105,42 +105,44 @@ Primary config keys include:
   - `rare_event_frequency`
   - `daily_snapshot`
   - `snapshot_frequency_days`
-- Provider setup:
-  - `image_api.provider_priority`
-  - `image_api.unsplash_access_key`
-  - `image_api.pexels_api_key`
-  - `image_api.pixabay_api_key`
+- Default no-setup images:
+  - `image_api.provider_priority` (defaults to Wikimedia only)
+  - `image_api.enable_builtin_no_key_sources`
 
 Use `sample_config.json` as a full reference.
 
 ---
 
-## Image API setup
+## Image behavior (no setup required)
 
-The add-on supports Wikimedia (no API key), Unsplash, Pexels, Pixabay.
+By default, image rendering works out of the box with **zero API keys**:
 
-1. Open add-on config in Anki.
-2. Add API keys under `image_api`.
-3. Set preferred order in `provider_priority`.
+1. Cache-first reuse of existing image assets.
+2. No-key remote fetch via Wikimedia Commons.
+3. Deterministic fallback to curated local `assets/starter_pack/*` art if network fetch fails.
 
-Example:
+This default path is deterministic and offline-resilient. Metadata records whether an image came from a remote source or the starter pack for future upgrade/refresh logic.
+
+### Optional advanced providers (opt-in)
+
+Unsplash, Pexels, and Pixabay are available but disabled in default first-run behavior unless you explicitly add them to `image_api.provider_priority` and provide keys.
 
 ```json
 "image_api": {
-  "provider_priority": ["wikimedia", "unsplash", "pexels", "pixabay"],
+  "provider_priority": ["wikimedia", "unsplash"],
   "unsplash_access_key": "YOUR_KEY",
-  "pexels_api_key": "YOUR_KEY",
-  "pixabay_api_key": "YOUR_KEY"
+  "pexels_api_key": "",
+  "pixabay_api_key": ""
 }
 ```
 
 ### Caching behavior
 
-- First request downloads a real image for semantic query + category key.
+- First request attempts remote no-key fetch and then stores local copies.
 - File is cached under `assets/<category>/`.
 - Metadata is written to `assets/metadata/asset_metadata.json`.
 - Future requests reuse cached files.
-- Offline fallback uses cache only.
+- If remote fetch is unavailable, curated starter-pack assets are used automatically.
 
 ---
 
@@ -179,9 +181,9 @@ Writes are atomic (`NamedTemporaryFile` + replace) for resilience.
 
 ## Troubleshooting
 
-- **No images showing**: verify internet access and provider keys; Wikimedia may still work without keys.
+- **No images showing**: starter-pack fallback should always display something even offline; if not, check add-on asset paths and `assets/starter_pack/` contents.
 - **Config ignored**: reload Anki after editing add-on config.
-- **Slow downloads**: increase `request_timeout_sec`, reduce provider list, rely on cache after first fetch.
+- **Slow downloads**: defaults already use bounded retries/timeouts; keep provider list short (Wikimedia-only is recommended for no-key mode).
 - **Import/share unavailable**: ensure `future_features.enable_social_gardens` is true.
 
 ---
