@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import random
 from datetime import date, datetime
-from hashlib import sha1
 from typing import Any, Dict, Optional
 
 from .asset_manager import AssetManager
@@ -55,7 +54,6 @@ class GardenGameEngine:
         self.storage = storage
         self.state: GardenState = storage.state
         self.assets = AssetManager(config, storage)
-        self._ensure_share_identity()
         self._apply_weekly_event(force=True)
         self._ensure_achievements()
         self._ensure_daily_quests(force_refresh=True)
@@ -186,7 +184,7 @@ class GardenGameEngine:
 
     def _eligible_plants(self, deck_id: Optional[int]) -> list[Plant]:
         plants = self.state.plants
-        if self.config.value("deck_specific_growth_mode") and deck_id is not None:
+        if self.state.garden_mode == "deck-by-deck" and deck_id is not None:
             mapped = self.state.deck_plant_map.get(str(deck_id))
             if mapped:
                 selected = [p for p in plants if p.plant_id == mapped]
@@ -317,6 +315,56 @@ class GardenGameEngine:
         self.state.deck_plant_map[str(deck_id)] = plant_id
         self.storage.save()
 
+    def set_garden_mode(self, mode: str) -> None:
+        self.state.garden_mode = "deck-by-deck" if mode == "deck-by-deck" else "unified"
+        self.storage.save()
+
+    def apply_retrospective_reviews(self, reviews: list[Dict[str, Any]]) -> int:
+        if not reviews:
+            return 0
+        self.rollover_if_needed()
+        total_growth = 0
+        for review in reviews:
+            ease = int(review.get("ease", 1))
+            deck_id = review.get("deck_id")
+            difficulty = float(review.get("difficulty", 0.45))
+            lapse_count = int(review.get("lapse_count", 0))
+            queue = int(review.get("queue", 2))
+            is_correct = ease > 1
+            stats = self.state.daily_stats
+            stats.reviewed += 1
+            self.state.total_reviews += 1
+            if is_correct:
+                stats.correct += 1
+                self.state.total_correct += 1
+                if lapse_count > 0:
+                    stats.recovered_lapses += 1
+            else:
+                stats.wrong += 1
+                self.state.total_wrong += 1
+                stats.difficult_count += 1
+            if queue == 0:
+                card_type = "new"
+                stats.new_count += 1
+            elif queue in (1, 3):
+                card_type = "learning"
+                stats.learning_count += 1
+            else:
+                card_type = "review"
+                stats.review_count += 1
+            growth = self._calculate_growth(card_type, is_correct, difficulty, lapse_count, deck_id)
+            if growth > 0:
+                self._apply_growth(growth, deck_id)
+                stats.growth_earned += growth
+                total_growth += growth
+        self._update_quests()
+        self._update_achievements()
+        self._update_mastery()
+        self._maybe_unlock_slot()
+        self._update_weather()
+        self.storage.save()
+        return total_growth
+
     def set_deck_difficulty(self, deck_id: int, weight: float) -> None:
         self.state.deck_difficulty_map[str(deck_id)] = max(0.6, min(weight, 2.0))
         self.storage.save()
@@ -411,72 +459,11 @@ class GardenGameEngine:
         discount = float(self.current_weekly_event().get("shop_discount", 0.0))
         return max(1, int(round(base * (1.0 - discount))))
 
-    def _ensure_share_identity(self) -> None:
-        if not self.state.share_code:
-            token = sha1(f"{date.today().isoformat()}-{random.random()}".encode("utf-8")).hexdigest()[:8]
-            self.state.share_code = f"AG-{token.upper()}"
-
     def set_gardener_name(self, name: str) -> None:
         cleaned = name.strip()
         if cleaned:
             self.state.gardener_name = cleaned[:40]
             self.storage.save()
-
-    def publish_shared_garden(self) -> str:
-        if not self.config.nested("future_features", "enable_social_gardens", default=False):
-            return "SOCIAL_DISABLED"
-        hub = self.storage.load_social_hub()
-        hub["gardens"][self.state.share_code] = {
-            "share_code": self.state.share_code,
-            "gardener_name": self.state.gardener_name,
-            "streak_days": self.state.streak_days,
-            "total_reviews": self.state.total_reviews,
-            "weather": self.state.selected_weather,
-            "health_index": round(self.garden_health_index(), 2),
-            "plants": [{"species": p.species, "name": p.name, "stage": p.growth_stage, "vitality": int(p.vitality * 100), "rare_variant": p.rare_variant} for p in self.state.plants],
-            "published_at": datetime.now().isoformat(),
-        }
-        self.storage.save_social_hub(hub)
-        return self.state.share_code
-
-    def import_shared_garden(self, share_code: str) -> tuple[bool, str]:
-        if not self.config.nested("future_features", "enable_social_gardens", default=False):
-            return False, "Social gardens are disabled in config."
-        code = share_code.strip().upper()
-        if not code:
-            return False, "Enter a share code."
-        hub = self.storage.load_social_hub()
-        data = hub.get("gardens", {}).get(code)
-        if not data:
-            return False, "Garden not found for this share code."
-        self.state.shared_gardens[code] = data
-        self.storage.save()
-        return True, f"Added {data.get('gardener_name', 'shared garden')}"
-
-    def cloud_push(self) -> tuple[bool, str]:
-        if not self.config.nested("future_features", "enable_cloud_sync", default=False):
-            return False, "Cloud sync is disabled in config."
-        self.state.cloud_enabled = True
-        self.storage.save_cloud_snapshot(self.state.to_dict(), reason="push")
-        self.state.cloud_last_sync = datetime.now().isoformat()
-        self.storage.save()
-        return True, "Uploaded garden state to cloud snapshot."
-
-    def cloud_pull(self) -> tuple[bool, str]:
-        if not self.config.nested("future_features", "enable_cloud_sync", default=False):
-            return False, "Cloud sync is disabled in config."
-        snapshot = self.storage.load_cloud_snapshot()
-        if not snapshot or "state" not in snapshot:
-            return False, "No cloud snapshot available."
-        remote = snapshot["state"]
-        local = self.state.to_dict()
-        if remote.get("total_reviews", 0) < local.get("total_reviews", 0):
-            return False, "Cloud snapshot is older than local data."
-        self.storage.state = self.state = GardenState.from_dict(remote)
-        self.state.cloud_enabled = True
-        self.state.cloud_last_sync = datetime.now().isoformat()
-        self.storage.save()
-        return True, "Downloaded garden state from cloud snapshot."
 
     def add_plant_to_slot(self, species: str, slot_index: int) -> bool:
         if slot_index >= self.state.unlocked_slots:
@@ -721,4 +708,3 @@ class GardenGameEngine:
             return
         self.state.passive_reward_days.append(today)
         self.state.currency += 2
-

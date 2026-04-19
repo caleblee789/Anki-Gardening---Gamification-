@@ -15,7 +15,7 @@
   "session_quality_weight": 0.25,
   "streak_grace_period_days": 1,
   "quest_difficulty": "normal",
-  "deck_specific_growth_mode": false,
+  "default_garden_mode": "unified",
   "show_reviewer_button": true,
   "show_toolbar_button": true,
   "vitality_decay_sensitivity": 0.08,
@@ -54,9 +54,5 @@
     "achievement": "",
     "quest": ""
   },
-  "future_features": {
-    "enable_cloud_sync": true,
-    "enable_social_gardens": true,
-    "enable_weekly_events": true
-  }
+  "future_features": {"enable_weekly_events": true}
 }
