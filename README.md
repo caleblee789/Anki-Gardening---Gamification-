@@ -1,142 +1,74 @@
 # Anki Garden 🌿
 
-Anki Garden is a production-ready Anki add-on that gamifies study consistency with a calm garden progression loop:
+Anki Garden is a complete Anki add-on that turns daily studying into a calm, long-term garden habit loop:
 
-**review cards consistently → earn growth energy → grow plants and unlock a richer garden**.
+**study cards consistently → earn growth energy → grow a multi-slot garden with real photographic assets**.
 
-It is designed for students and professionals who want motivation without distraction.
+This add-on is designed to feel rewarding and polished without being noisy, childish, or manipulative.
 
-## Key Features
+## What’s Implemented
 
-- **Daily growth loop** tied to real Anki reviews.
-- **Multi-slot garden** with unlocking slots over long-term milestones.
-- **Plant species personalities** and stage progression:
+### Core gameplay loop
+- Real review activity drives growth points (new/learning/review configurable values).
+- Daily growth cap prevents unhealthy over-grinding.
+- Daily goal and focus-plant bonus support exam periods.
+- Gentle missed-day handling with streak grace and recovery mode.
+
+### Garden simulation
+- Multiple plant slots with milestone slot unlocks.
+- Plant growth stages:
   - seed
   - sprout
-  - young plant
-  - mature plant
-  - flowering plant
+  - young
+  - mature
+  - flowering
   - rare variant
-- **Gentle vitality decay** and recovery mode feel (missed days reduce vitality but do not wipe progress).
-- **Daily quests** with growth/currency rewards.
-- **Achievement system** (streak, volume, retention, due-clear, morning/night unlocks).
-- **Currency and unlockables** (pots, weather, decorations).
-- **Optional deck-specific growth mode**.
-- **Seasonal background visuals**.
-- **Optional reflection journal** stored locally.
-- **Real image sourcing and caching** (no placeholder graphics):
-  - Unsplash API
-  - Pexels API
-  - Pixabay API
+- Species personalities (streak / accuracy / volume / difficult / morning / night) influence growth patterns.
+- Plant vitality rises with consistency and decays gently with missed days.
+
+### Quests, achievements, progression
+- 1–3 daily quests selected from a quest pool based on difficulty.
+- Achievement milestones:
+  - 7 day streak
+  - 100 reviews/day
+  - 1000 total reviews
+  - 90% daily retention
+  - finish all due cards
+  - moonflower (late-night studying)
+  - sunbloom (early study)
+- Currency (“dew drops”) and shop unlockables.
+
+### Deck integration and focus tools
+- Optional deck-specific mode.
+- Deck-to-plant assignment UI.
+- Focus plant assignment UI.
+
+### Recovery and sustainable design
+- Missed days do not reset progress.
+- Streak freeze token support.
+- Recovery mode messaging for fast comeback.
+- Weather mood adapts to study consistency (sunny/cloudy/fireflies/rain/breeze).
 
 ## Real Image Sourcing (No Placeholders)
 
-Anki Garden includes an **AssetManager** that:
+No static mock image assets are bundled.
 
-1. Receives semantic queries (e.g. `young bonsai potted plant`).
-2. Tries APIs in configured priority order.
-3. Applies rate-limiting and retry logic.
-4. Downloads real photos on first use.
-5. Caches them in local `assets/` folders.
-6. Saves attribution/source metadata in `assets/asset_metadata.json`.
-7. Reuses cached files for fast/offline rendering.
-8. Falls back gracefully to cache-only mode when APIs are unavailable.
+Anki Garden uses a live `AssetManager` with:
+- Unsplash API
+- Pexels API
+- Pixabay API
 
-### Asset Folder Structure
+System behavior:
+1. Build semantic search query for requested visual (plant stage/background/decoration/weather).
+2. Query providers in configured priority order.
+3. Apply request rate limiting.
+4. Retry failed requests.
+5. Download first matching real image.
+6. Cache locally and reuse offline.
+7. Save attribution/source metadata to `assets/asset_metadata.json`.
+8. Never re-download same source URL unnecessarily.
 
-```text
-ankigarden/assets/
-  plants/
-  backgrounds/
-  decorations/
-  weather/
-  ui/
-  asset_metadata.json   # created after first successful download
-```
-
-## Installation
-
-1. Copy the `ankigarden/` folder into your Anki add-ons directory.
-2. Restart Anki.
-3. Open **Tools → Anki Garden**.
-4. Add API keys in add-on config (recommended at least one provider).
-
-## API Key Setup
-
-Open Anki → **Tools → Add-ons → Anki Garden → Config** and set keys:
-
-```json
-"image_api": {
-  "provider_priority": ["unsplash", "pexels", "pixabay"],
-  "unsplash_access_key": "YOUR_UNSPLASH_KEY",
-  "pexels_api_key": "YOUR_PEXELS_KEY",
-  "pixabay_api_key": "YOUR_PIXABAY_KEY"
-}
-```
-
-You can use one provider, or several with fallback priority.
-
-## Config Options
-
-`ankigarden/config.json` (and Anki add-on config) supports:
-
-- `enable_sounds`
-- `enable_animations`
-- `daily_growth_cap`
-- `daily_goal`
-- `points_per_card.new|learning|review`
-- `streak_grace_period_days`
-- `quest_difficulty` (`easy|normal|hard`)
-- `deck_specific_growth_mode`
-- `show_reviewer_button`
-- `vitality_decay_sensitivity`
-- `seasonal_visuals`
-- `image_api.*`
-- `initial_slots`
-- `max_slots`
-- `currency_name`
-- `focus_target_bonus`
-
-## How Systems Work
-
-### Review Event Integration
-
-The add-on hooks into `reviewer_did_answer_card` and records:
-
-- cards reviewed
-- correctness
-- queue type (new/learning/review)
-- deck ID
-
-These values feed growth points, quests, achievements, vitality, and streak updates.
-
-### Progression & Balance
-
-- Daily growth has a configurable **cap** to discourage unhealthy grinding.
-- Correct answers give full growth; incorrect answers give reduced growth.
-- Missed days reduce vitality/streak gently.
-- Quest and achievement rewards provide extra growth and currency.
-- Rare plant variants can appear during strong consistency periods.
-
-### Persistence
-
-All progress persists locally in `ankigarden/garden_state.json`, including:
-
-- plants and slots
-- growth and vitality
-- streaks/history rollovers
-- quests and achievements
-- unlockables/currency
-- journal entries
-- totals and daily stats
-
-### Error Handling
-
-- Corrupt/missing state files auto-recover to defaults.
-- API/image fetch failures fail gracefully and keep cached assets.
-- UI remains usable even when offline.
-
-## File Tree
+## Add-on Structure
 
 ```text
 ankigarden/
@@ -149,13 +81,10 @@ ankigarden/
   storage.py
   meta.json
   hooks/
-    __init__.py
     reviewer.py
   models/
-    __init__.py
     state.py
   ui/
-    __init__.py
     dashboard.py
   assets/
     plants/
@@ -165,8 +94,61 @@ ankigarden/
     ui/
 ```
 
-## Notes
+## Installation
 
-- This add-on intentionally uses a calm, minimal UI and progression pacing.
-- If no API key is configured and no cached image exists, the UI shows informative text and continues functioning.
-- For distribution, zip the `ankigarden/` folder as your add-on package.
+1. Copy `ankigarden/` into your Anki add-ons directory.
+2. Restart Anki.
+3. Open **Tools → Anki Garden**.
+4. Add at least one image provider API key in add-on config.
+
+## API Keys Setup
+
+In Anki: **Tools → Add-ons → Anki Garden → Config**
+
+```json
+"image_api": {
+  "provider_priority": ["unsplash", "pexels", "pixabay"],
+  "unsplash_access_key": "YOUR_UNSPLASH_KEY",
+  "pexels_api_key": "YOUR_PEXELS_KEY",
+  "pixabay_api_key": "YOUR_PIXABAY_KEY",
+  "request_timeout_sec": 8,
+  "max_retries": 3,
+  "rate_limit_seconds": 1.2
+}
+```
+
+## Config Overview
+
+`config.json` includes:
+- visual toggles (`enable_animations`, `seasonal_visuals`, `show_reviewer_button`, `show_toolbar_button`)
+- growth balancing (`daily_growth_cap`, `daily_goal`, `points_per_card`, `focus_target_bonus`)
+- habit safety (`streak_grace_period_days`, `allow_streak_freeze`, `vitality_decay_sensitivity`)
+- progression (`quest_difficulty`, `max_daily_quests`, `initial_slots`, `max_slots`)
+- asset settings (`image_api.*`)
+- optional future flags (`future_features.*`)
+
+## Persistence
+
+Local state file: `ankigarden/garden_state.json`
+
+Persisted data includes:
+- plant inventory and slot placements
+- growth, vitality, rare variants
+- streak history and daily stats
+- quests, achievements, currency, purchases
+- deck mappings, focus plant
+- journal entries
+- equipped cosmetics/weather
+
+## Future-ready feature flags
+
+The add-on already ships config flags for planned extensions:
+- cloud sync scaffold
+- social/shared gardens
+- weekly event rotations
+
+These are disabled by default and non-invasive.
+
+## Packaging
+
+Zip the `ankigarden/` directory to distribute/test as an Anki add-on package.

@@ -25,7 +25,8 @@ class AnkiGardenApp:
 
     def setup(self) -> None:
         self._setup_menu()
-        self._setup_toolbar()
+        if self.config.value("show_toolbar_button", True):
+            self._setup_toolbar()
         self._setup_reviewer_button()
         reviewer_did_answer_card.append(self.reviewer_hooks.on_answer)
 

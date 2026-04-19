@@ -12,8 +12,11 @@
   "quest_difficulty": "normal",
   "deck_specific_growth_mode": false,
   "show_reviewer_button": true,
+  "show_toolbar_button": true,
   "vitality_decay_sensitivity": 0.08,
   "seasonal_visuals": true,
+  "allow_streak_freeze": true,
+  "max_daily_quests": 3,
   "image_api": {
     "provider_priority": ["unsplash", "pexels", "pixabay"],
     "unsplash_access_key": "",
@@ -26,5 +29,15 @@
   "initial_slots": 2,
   "max_slots": 6,
   "currency_name": "dew drops",
-  "focus_target_bonus": 1.2
+  "focus_target_bonus": 1.2,
+  "sound_cues": {
+    "growth": "",
+    "achievement": "",
+    "quest": ""
+  },
+  "future_features": {
+    "enable_cloud_sync": false,
+    "enable_social_gardens": false,
+    "enable_weekly_events": false
+  }
 }

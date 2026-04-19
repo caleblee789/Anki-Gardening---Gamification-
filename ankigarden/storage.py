@@ -36,14 +36,16 @@ class GardenStorage:
         for folder in ["plants", "backgrounds", "decorations", "weather", "ui"]:
             (self.assets_root / folder).mkdir(exist_ok=True)
         if not self.state.plants:
-            starters = ["bonsai", "rose"]
+            starters = [("bonsai", "streak"), ("rose", "accuracy")]
             for idx, species in enumerate(starters[: self.config.value("initial_slots", 2)]):
+                name, personality = species
                 self.state.plants.append(
                     Plant(
                         plant_id=f"plant_{idx+1}",
-                        species=species,
-                        name=species.capitalize(),
+                        species=name,
+                        name=name.capitalize(),
                         slot_index=idx,
+                        personality=personality,
                     )
                 )
         self.save()

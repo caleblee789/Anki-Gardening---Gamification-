@@ -13,8 +13,11 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "quest_difficulty": "normal",
     "deck_specific_growth_mode": False,
     "show_reviewer_button": True,
+    "show_toolbar_button": True,
     "vitality_decay_sensitivity": 0.08,
     "seasonal_visuals": True,
+    "allow_streak_freeze": True,
+    "max_daily_quests": 3,
     "image_api": {
         "provider_priority": ["unsplash", "pexels", "pixabay"],
         "unsplash_access_key": "",
@@ -28,6 +31,16 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "max_slots": 6,
     "currency_name": "dew drops",
     "focus_target_bonus": 1.2,
+    "sound_cues": {
+        "growth": "",
+        "achievement": "",
+        "quest": "",
+    },
+    "future_features": {
+        "enable_cloud_sync": False,
+        "enable_social_gardens": False,
+        "enable_weekly_events": False,
+    },
 }
 
 

@@ -17,6 +17,7 @@ class Plant:
     vitality: float = 1.0
     rare_variant: bool = False
     assigned_deck_id: Optional[int] = None
+    personality: str = "balanced"
 
     @property
     def growth_stage(self) -> str:
@@ -36,6 +37,7 @@ class DailyStats:
     new_count: int = 0
     learning_count: int = 0
     review_count: int = 0
+    difficult_count: int = 0
     growth_earned: int = 0
     completed_due_cards: bool = False
 
@@ -50,6 +52,7 @@ class Quest:
     quest_id: str
     description: str
     target: int
+    metric: str
     progress: int = 0
     reward_growth: int = 0
     reward_currency: int = 0
@@ -67,9 +70,11 @@ class Achievement:
 
 @dataclass
 class GardenState:
-    version: int = 1
+    version: int = 2
     streak_days: int = 0
     total_reviews: int = 0
+    total_correct: int = 0
+    total_wrong: int = 0
     currency: int = 0
     unlocked_slots: int = 2
     selected_background: str = "default"
@@ -79,14 +84,33 @@ class GardenState:
     daily_quests: List[Quest] = field(default_factory=list)
     daily_stats: DailyStats = field(default_factory=DailyStats)
     journal: Dict[str, str] = field(default_factory=dict)
+    inventory: Dict[str, List[str]] = field(default_factory=lambda: {
+        "plants": ["bonsai", "rose"],
+        "pots": ["ceramic_minimal"],
+        "backgrounds": ["default"],
+        "decorations": ["stone_lantern"],
+        "weather": ["sunny"],
+    })
+    equipped: Dict[str, str] = field(default_factory=lambda: {
+        "pot": "ceramic_minimal",
+        "background": "default",
+        "decoration": "stone_lantern",
+        "weather": "sunny",
+    })
+    purchased_items: List[str] = field(default_factory=list)
+    streak_freeze_tokens: int = 1
+    recovery_mode: bool = False
     last_active_day: str = field(default_factory=lambda: date.today().isoformat())
     focus_plant_id: Optional[str] = None
+    deck_plant_map: Dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
             "version": self.version,
             "streak_days": self.streak_days,
             "total_reviews": self.total_reviews,
+            "total_correct": self.total_correct,
+            "total_wrong": self.total_wrong,
             "currency": self.currency,
             "unlocked_slots": self.unlocked_slots,
             "selected_background": self.selected_background,
@@ -96,8 +120,14 @@ class GardenState:
             "daily_quests": [q.__dict__ for q in self.daily_quests],
             "daily_stats": self.daily_stats.__dict__,
             "journal": self.journal,
+            "inventory": self.inventory,
+            "equipped": self.equipped,
+            "purchased_items": self.purchased_items,
+            "streak_freeze_tokens": self.streak_freeze_tokens,
+            "recovery_mode": self.recovery_mode,
             "last_active_day": self.last_active_day,
             "focus_plant_id": self.focus_plant_id,
+            "deck_plant_map": self.deck_plant_map,
         }
 
     @staticmethod
@@ -107,12 +137,21 @@ class GardenState:
             "version",
             "streak_days",
             "total_reviews",
+            "total_correct",
+            "total_wrong",
             "currency",
             "unlocked_slots",
             "selected_background",
             "selected_weather",
+            "journal",
+            "inventory",
+            "equipped",
+            "purchased_items",
+            "streak_freeze_tokens",
+            "recovery_mode",
             "last_active_day",
             "focus_plant_id",
+            "deck_plant_map",
         ]:
             if key in data:
                 setattr(state, key, data[key])
@@ -120,8 +159,12 @@ class GardenState:
         state.achievements = {
             k: Achievement(**v) for k, v in data.get("achievements", {}).items()
         }
-        state.daily_quests = [Quest(**q) for q in data.get("daily_quests", [])]
+        parsed_quests: List[Quest] = []
+        for q in data.get("daily_quests", []):
+            if "metric" not in q:
+                q["metric"] = q.get("quest_id", "reviewed")
+            parsed_quests.append(Quest(**q))
+        state.daily_quests = parsed_quests
         if "daily_stats" in data:
             state.daily_stats = DailyStats(**data["daily_stats"])
-        state.journal = data.get("journal", {})
         return state
