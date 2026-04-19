@@ -61,6 +61,9 @@ UI_TEXT = {
     "disable_exam": "Turn Off Exam Mode",
     "garden_mode_updated": "Garden mode updated.",
     "deck_mapping_updated": "Deck mapping updated.",
+    "deck_mapping_missing_selection": "Pick both a deck and a plant before assigning a mapping.",
+    "deck_mapping_unavailable": "Deck mapping is unavailable right now because deck data could not be loaded.",
+    "deck_load_unavailable_option": "Unable to load decks (open a collection and retry)",
     "no_quests": "No quest progress yet today. Review a card to start progress.",
     "no_achievements": "Achievement progress will appear as you keep studying.",
     "no_boosts": "No active inventory boosts yet.",
@@ -95,6 +98,7 @@ class GardenSettingsDialog(QDialog):
         m_layout = QVBoxLayout(mapping)
         self.deck_combo = QComboBox()
         self.deck_combo.addItem(UI_TEXT["select_deck"], None)
+        self._deck_load_failed = False
         self.plant_combo = QComboBox()
         for plant in self.engine.state.plants:
             self.plant_combo.addItem(plant.name, plant.plant_id)
@@ -102,7 +106,8 @@ class GardenSettingsDialog(QDialog):
             for deck in mw.col.decks.all_names_and_ids():
                 self.deck_combo.addItem(deck.name, deck.id)
         except Exception:
-            pass
+            self._deck_load_failed = True
+            self.deck_combo.addItem(UI_TEXT["deck_load_unavailable_option"], None)
         map_btn = QPushButton(UI_TEXT["assign_deck"])
         map_btn.clicked.connect(self._map_deck)
         m_layout.addWidget(self.deck_combo)
@@ -129,9 +134,14 @@ class GardenSettingsDialog(QDialog):
     def _map_deck(self) -> None:
         deck_id = self.deck_combo.currentData()
         plant_id = self.plant_combo.currentData()
-        if deck_id and plant_id:
-            self.engine.assign_deck_to_plant(int(deck_id), str(plant_id))
-            QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["deck_mapping_updated"])
+        if self._deck_load_failed:
+            QMessageBox.warning(self, UI_TEXT["app_title"], UI_TEXT["deck_mapping_unavailable"])
+            return
+        if not deck_id or not plant_id:
+            QMessageBox.warning(self, UI_TEXT["app_title"], UI_TEXT["deck_mapping_missing_selection"])
+            return
+        self.engine.assign_deck_to_plant(int(deck_id), str(plant_id))
+        QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["deck_mapping_updated"])
 
     def _reroll_asset_slot(self, slot: str) -> None:
         try:
