@@ -89,6 +89,34 @@ class AnkiGardenApp:
 
             if hasattr(gui_hooks, "deck_browser_will_render_content"):
                 gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
+            if hasattr(gui_hooks, "overview_will_render_content"):
+                gui_hooks.overview_will_render_content.append(self._inject_home_garden)
+            if hasattr(gui_hooks, "webview_will_set_content"):
+                gui_hooks.webview_will_set_content.append(self._inject_home_garden_webview)
+        except Exception:
+            pass
+
+    def _inject_home_garden(self, _page: object, content: object) -> None:
+        self.engine.rollover_if_needed()
+        html = self._build_home_garden_html()
+        if hasattr(content, "stats") and isinstance(content.stats, str):
+            if "ag-home-root" not in content.stats:
+                content.stats += html
+            return
+        if hasattr(content, "table") and isinstance(content.table, str):
+            if "ag-home-root" not in content.table:
+                content.table += html
+
+    def _inject_home_garden_webview(self, web_content: object, context: object) -> None:
+        context_name = type(context).__name__.lower()
+        if "deckbrowser" not in context_name and "overview" not in context_name:
+            return
+        html = self._build_home_garden_html()
+        body = getattr(web_content, "body", None)
+        if isinstance(body, str) and "ag-home-root" not in body:
+            web_content.body = body + html
+
+    def _build_home_garden_html(self) -> str:
         except Exception:
             pass
 
@@ -165,6 +193,7 @@ class AnkiGardenApp:
   box-shadow: 0 0 16px rgba(168, 255, 173, 0.75);
 }}
 </style>
+<div id="ag-home-root" class="ag-home">
 <div class="ag-home">
   <div class="ag-home__head">
     <span>🌿 Anki Garden</span>
@@ -180,6 +209,7 @@ class AnkiGardenApp:
   <div class="ag-home__event">Growth today: {stats.growth_earned}/{growth_cap} • Event: {event}</div>
 </div>
 """
+        return html
         if hasattr(content, "stats") and isinstance(content.stats, str):
             content.stats += html
 
