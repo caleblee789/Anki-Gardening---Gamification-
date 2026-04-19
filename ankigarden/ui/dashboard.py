@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+from datetime import date
 from typing import Any
 
 from aqt import mw
@@ -68,7 +70,43 @@ UI_TEXT = {
     "no_achievements": "Achievement progress will appear as you keep studying.",
     "no_boosts": "No active inventory boosts yet.",
     "no_roster": "No plants in your roster yet. Add reviews to grow your first companion.",
+    "focus_started": "Focus session started.",
+    "focus_completed": "Focus session completed.",
+    "focus_cancelled": "Focus session cancelled.",
+    "focus_cancel_noop": "No active focus session to cancel.",
+    "exam_updated": "Exam mode updated.",
+    "exam_disabled": "Exam mode disabled.",
+    "exam_disable_noop": "Exam mode is already off.",
+    "exam_invalid_format": "Enter exam date in YYYY-MM-DD format.",
+    "exam_invalid_date": "Enter a valid calendar date in YYYY-MM-DD format.",
+    "reroll_success": "Asset refreshed for preview.",
 }
+
+BUTTON_VARIANT_PRIMARY = "primary"
+BUTTON_VARIANT_SECONDARY = "secondary"
+BUTTON_VARIANT_DESTRUCTIVE = "destructive"
+DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _set_button_variant(button: QPushButton, variant: str) -> None:
+    button.setProperty("variant", variant)
+    style = button.style()
+    if style is not None:
+        style.unpolish(button)
+        style.polish(button)
+
+
+def _button_stylesheet() -> str:
+    return """
+            QPushButton { border-radius: 10px; padding: 7px 12px; font-weight: 600; }
+            QPushButton[variant='primary'] { background: #2f6f48; border: 1px solid #4f9a67; color: #f2fff6; }
+            QPushButton[variant='primary']:hover { background: #3d8559; }
+            QPushButton[variant='secondary'] { background: #264456; border: 1px solid #3d6174; color: #e6f0ea; }
+            QPushButton[variant='secondary']:hover { background: #2f5468; }
+            QPushButton[variant='destructive'] { background: #6d2d2d; border: 1px solid #a44a4a; color: #ffecec; }
+            QPushButton[variant='destructive']:hover { background: #823636; }
+            QPushButton:disabled { background: #1c2a32; border: 1px solid #2c3b44; color: #7a8a92; }
+    """
 
 
 class GardenSettingsDialog(QDialog):
@@ -78,6 +116,7 @@ class GardenSettingsDialog(QDialog):
         self.config = config
         self.setWindowTitle(UI_TEXT["settings_window_title"])
         self.setMinimumSize(760, 520)
+        self.setStyleSheet(_button_stylesheet())
         root = QHBoxLayout(self)
         tabs = QTabWidget()
         root.addWidget(tabs)
@@ -90,6 +129,7 @@ class GardenSettingsDialog(QDialog):
         current_mode = "deck-by-deck" if self.engine.state.garden_mode == "deck-by-deck" else "unified"
         self.mode_combo.setCurrentIndex(1 if current_mode == "deck-by-deck" else 0)
         save_mode = QPushButton(UI_TEXT["save_mode"])
+        _set_button_variant(save_mode, BUTTON_VARIANT_PRIMARY)
         save_mode.clicked.connect(self._apply_mode)
         g_layout.addRow(UI_TEXT["growth_mode_label"], self.mode_combo)
         g_layout.addRow(save_mode)
@@ -109,6 +149,7 @@ class GardenSettingsDialog(QDialog):
             self._deck_load_failed = True
             self.deck_combo.addItem(UI_TEXT["deck_load_unavailable_option"], None)
         map_btn = QPushButton(UI_TEXT["assign_deck"])
+        _set_button_variant(map_btn, BUTTON_VARIANT_PRIMARY)
         map_btn.clicked.connect(self._map_deck)
         m_layout.addWidget(self.deck_combo)
         m_layout.addWidget(self.plant_combo)
@@ -153,8 +194,9 @@ class GardenSettingsDialog(QDialog):
                 first = self.engine.state.plants[0] if self.engine.state.plants else None
                 if first:
                     self.engine.resolve_plant_image(first.species, first.growth_stage, first.rare_variant)
+            QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["reroll_success"])
         except Exception:
-            pass
+            QMessageBox.warning(self, UI_TEXT["app_title"], "Unable to refresh asset right now.")
 
 
 class GardenDashboard(QDialog):
@@ -198,8 +240,7 @@ class GardenDashboard(QDialog):
             QLabel[typography='muted-body'] {{ font-size: 13px; color: {self.TEXT_MUTED}; }}
             QLabel[typography='status-chip'] {{ font-size: 12px; font-weight: 600; letter-spacing: 0.1px; }}
             QLabel[chip='true'] {{ padding: {self.CHIP_PADDING[0]}px {self.CHIP_PADDING[1]}px; background:{self.CHIP_BG}; border-radius:{self.CHIP_BORDER_RADIUS}px; }}
-            QPushButton {{ background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; font-weight: 600; }}
-            QPushButton:hover {{ background: #2f5468; }}
+            {_button_stylesheet()}
             QProgressBar {{ border-radius: 7px; border: 1px solid {self.CARD_BORDER}; background: #132029; }}
             QProgressBar::chunk {{ background: #56ba7f; border-radius: 6px; }}
             QListWidget {{ background: #12202a; border-radius: 10px; border: 1px solid #2a404d; padding: 4px; }}
@@ -219,6 +260,7 @@ class GardenDashboard(QDialog):
         self.progress_chip = QLabel()
         self.health_chip = QLabel()
         self.settings_btn = QPushButton(UI_TEXT["open_settings"])
+        _set_button_variant(self.settings_btn, BUTTON_VARIANT_SECONDARY)
         self.settings_btn.clicked.connect(self._open_settings)
         t_layout.addWidget(self.title_label)
         t_layout.addStretch(1)
@@ -330,27 +372,33 @@ class GardenDashboard(QDialog):
         for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
             self.focus_duration.addItem(f"{minutes} min", int(minutes))
         btn_row = QHBoxLayout()
-        start_focus = QPushButton(UI_TEXT["start_focus"])
-        complete_focus = QPushButton(UI_TEXT["complete_focus"])
-        cancel_focus = QPushButton(UI_TEXT["cancel_focus"])
-        start_focus.clicked.connect(self._start_focus)
-        complete_focus.clicked.connect(self._complete_focus)
-        cancel_focus.clicked.connect(self._cancel_focus)
-        btn_row.addWidget(start_focus)
-        btn_row.addWidget(complete_focus)
-        btn_row.addWidget(cancel_focus)
+        self.start_focus_btn = QPushButton(UI_TEXT["start_focus"])
+        self.complete_focus_btn = QPushButton(UI_TEXT["complete_focus"])
+        self.cancel_focus_btn = QPushButton(UI_TEXT["cancel_focus"])
+        _set_button_variant(self.start_focus_btn, BUTTON_VARIANT_PRIMARY)
+        _set_button_variant(self.complete_focus_btn, BUTTON_VARIANT_SECONDARY)
+        _set_button_variant(self.cancel_focus_btn, BUTTON_VARIANT_DESTRUCTIVE)
+        self.start_focus_btn.clicked.connect(self._start_focus)
+        self.complete_focus_btn.clicked.connect(self._complete_focus)
+        self.cancel_focus_btn.clicked.connect(self._cancel_focus)
+        btn_row.addWidget(self.start_focus_btn)
+        btn_row.addWidget(self.complete_focus_btn)
+        btn_row.addWidget(self.cancel_focus_btn)
         self.exam_date_input = QLineEdit()
         self.exam_date_input.setPlaceholderText(UI_TEXT["exam_placeholder"])
         self.exam_date_input.setToolTip(UI_TEXT["exam_tooltip"])
-        exam_set = QPushButton(UI_TEXT["set_exam"])
-        exam_off = QPushButton(UI_TEXT["disable_exam"])
-        exam_set.clicked.connect(self._set_exam_date)
-        exam_off.clicked.connect(self._disable_exam)
+        self.exam_date_input.textChanged.connect(self._validate_exam_input)
+        self.exam_set_btn = QPushButton(UI_TEXT["set_exam"])
+        self.exam_off_btn = QPushButton(UI_TEXT["disable_exam"])
+        _set_button_variant(self.exam_set_btn, BUTTON_VARIANT_PRIMARY)
+        _set_button_variant(self.exam_off_btn, BUTTON_VARIANT_DESTRUCTIVE)
+        self.exam_set_btn.clicked.connect(self._set_exam_date)
+        self.exam_off_btn.clicked.connect(self._disable_exam)
         layout.addWidget(self.focus_duration)
         layout.addLayout(btn_row)
         layout.addWidget(self.exam_date_input)
-        layout.addWidget(exam_set)
-        layout.addWidget(exam_off)
+        layout.addWidget(self.exam_set_btn)
+        layout.addWidget(self.exam_off_btn)
         layout.addStretch(1)
         return card
 
@@ -425,6 +473,8 @@ class GardenDashboard(QDialog):
             self._add_list_entry(self.inventory_list, UI_TEXT["no_boosts"], empty_state=True)
 
         self.exam_date_input.setText(state.exam_mode.exam_date or "")
+        self._sync_focus_controls()
+        self._validate_exam_input()
         self._refresh_roster_cards()
 
     def show_retrospective_feedback(self, review_count: int, growth_gain: int) -> None:
@@ -492,21 +542,38 @@ class GardenDashboard(QDialog):
 
     def _start_focus(self) -> None:
         ok, msg = self.engine.start_focus_session(int(self.focus_duration.currentData()))
-        QMessageBox.information(self, UI_TEXT["app_title"], msg)
+        if ok:
+            QMessageBox.information(self, UI_TEXT["app_title"], f"{UI_TEXT['focus_started']} {msg}")
+        else:
+            QMessageBox.warning(self, UI_TEXT["app_title"], msg)
         if ok:
             self.refresh_all()
+        else:
+            self._sync_focus_controls()
 
     def _complete_focus(self) -> None:
-        _ok, msg = self.engine.complete_focus_session()
-        QMessageBox.information(self, UI_TEXT["app_title"], msg)
+        ok, msg = self.engine.complete_focus_session()
+        if ok:
+            QMessageBox.information(self, UI_TEXT["app_title"], f"{UI_TEXT['focus_completed']} {msg}")
+        else:
+            QMessageBox.warning(self, UI_TEXT["app_title"], msg)
         self.refresh_all()
 
     def _cancel_focus(self) -> None:
+        if not self.storage.state.focus_session.active:
+            QMessageBox.warning(self, UI_TEXT["app_title"], UI_TEXT["focus_cancel_noop"])
+            self._sync_focus_controls()
+            return
         self.engine.cancel_focus_session()
+        QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["focus_cancelled"])
         self.refresh_all()
 
     def _set_exam_date(self) -> None:
         value = self.exam_date_input.text().strip()
+        valid, err = self._validate_exam_value(value)
+        if not valid:
+            QMessageBox.warning(self, UI_TEXT["app_title"], err)
+            return
         deck_ids: list[int] = []
         try:
             for deck in mw.col.decks.all_names_and_ids()[:3]:
@@ -514,8 +581,46 @@ class GardenDashboard(QDialog):
         except Exception:
             pass
         self.engine.configure_exam_mode(True, value, deck_ids)
+        QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["exam_updated"])
         self.refresh_all()
 
     def _disable_exam(self) -> None:
+        if not self.storage.state.exam_mode.enabled:
+            QMessageBox.warning(self, UI_TEXT["app_title"], UI_TEXT["exam_disable_noop"])
+            return
         self.engine.configure_exam_mode(False, None, [])
+        QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["exam_disabled"])
         self.refresh_all()
+
+    def _sync_focus_controls(self) -> None:
+        active = self.storage.state.focus_session.active
+        self.start_focus_btn.setEnabled(not active)
+        self.focus_duration.setEnabled(not active)
+        self.complete_focus_btn.setEnabled(active)
+        self.cancel_focus_btn.setEnabled(active)
+
+    def _validate_exam_value(self, value: str) -> tuple[bool, str]:
+        if not DATE_PATTERN.match(value):
+            return False, UI_TEXT["exam_invalid_format"]
+        try:
+            date.fromisoformat(value)
+        except ValueError:
+            return False, UI_TEXT["exam_invalid_date"]
+        return True, ""
+
+    def _validate_exam_input(self) -> None:
+        value = self.exam_date_input.text().strip()
+        if not value:
+            self.exam_date_input.setStyleSheet("")
+            self.exam_date_input.setToolTip(UI_TEXT["exam_tooltip"])
+            self.exam_set_btn.setEnabled(False)
+            return
+        valid, err = self._validate_exam_value(value)
+        if valid:
+            self.exam_date_input.setStyleSheet("")
+            self.exam_date_input.setToolTip(UI_TEXT["exam_tooltip"])
+            self.exam_set_btn.setEnabled(True)
+            return
+        self.exam_date_input.setStyleSheet("border: 1px solid #d96b6b;")
+        self.exam_date_input.setToolTip(err)
+        self.exam_set_btn.setEnabled(False)
