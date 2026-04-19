@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from .models.state import GardenState, Plant
 
@@ -19,8 +18,6 @@ class GardenStorage:
         self.metadata_dir = self.assets_root / "metadata"
         self.cache_dir = self.assets_root / "cache"
         self.asset_metadata = self.metadata_dir / "asset_metadata.json"
-        self.cloud_state_path = self.addon_dir / "cloud_state.json"
-        self.social_hub_path = self.addon_dir / "social_hub.json"
         self.state = self._load()
         self._ensure_defaults()
 
@@ -72,32 +69,21 @@ class GardenStorage:
     def save_asset_metadata(self, data: dict) -> None:
         self._atomic_write_json(self.asset_metadata, data)
 
-    def load_cloud_snapshot(self) -> Optional[Dict[str, Any]]:
-        if not self.cloud_state_path.exists():
-            return None
+    def max_revlog_id(self) -> int:
         try:
-            return json.loads(self.cloud_state_path.read_text("utf-8"))
-        except Exception:
-            return None
-
-    def save_cloud_snapshot(self, state_dict: Dict[str, Any], reason: str = "manual") -> None:
-        payload = {
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-            "reason": reason,
-            "state": state_dict,
-        }
-        self._atomic_write_json(self.cloud_state_path, payload)
-
-    def load_social_hub(self) -> Dict[str, Any]:
-        if not self.social_hub_path.exists():
-            return {"gardens": {}}
-        try:
-            data = json.loads(self.social_hub_path.read_text("utf-8"))
-            if isinstance(data, dict) and isinstance(data.get("gardens"), dict):
-                return data
+            rows = self.mw.col.db.first("select max(id) from revlog")
+            if rows and rows[0]:
+                return int(rows[0])
         except Exception:
             pass
-        return {"gardens": {}}
+        return 0
 
-    def save_social_hub(self, data: Dict[str, Any]) -> None:
-        self._atomic_write_json(self.social_hub_path, data)
+    def load_new_revlog_entries(self, after_id: int, limit: int = 6000) -> list[tuple[Any, ...]]:
+        try:
+            return self.mw.col.db.all(
+                "select id, cid, ease, ivl, lastIvl, factor, time, type from revlog where id > ? order by id asc limit ?",
+                int(after_id),
+                int(limit),
+            )
+        except Exception:
+            return []

@@ -16,7 +16,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "session_quality_weight": 0.25,
     "streak_grace_period_days": 1,
     "quest_difficulty": "normal",
-    "deck_specific_growth_mode": False,
+    "default_garden_mode": "unified",
     "show_reviewer_button": True,
     "show_toolbar_button": True,
     "vitality_decay_sensitivity": 0.08,
@@ -46,11 +46,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "focus_mode": {"durations": [25, 45, 60], "growth_multiplier": 1.15},
     "exam_mode": {"deck_weight_boost": 1.25},
     "sound_cues": {"growth": "", "achievement": "", "quest": ""},
-    "future_features": {
-        "enable_cloud_sync": True,
-        "enable_social_gardens": True,
-        "enable_weekly_events": True,
-    },
+    "future_features": {"enable_weekly_events": True},
 }
 
 

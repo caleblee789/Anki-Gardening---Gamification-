@@ -106,7 +106,7 @@ class Snapshot:
 
 @dataclass
 class GardenState:
-    version: int = 3
+    version: int = 4
     streak_days: int = 0
     total_reviews: int = 0
     total_correct: int = 0
@@ -144,12 +144,9 @@ class GardenState:
     focus_plant_id: Optional[str] = None
     deck_plant_map: Dict[str, str] = field(default_factory=dict)
     deck_difficulty_map: Dict[str, float] = field(default_factory=dict)
-    cloud_enabled: bool = False
-    cloud_last_sync: Optional[str] = None
-    cloud_device_id: str = "local-device"
     gardener_name: str = "Gardener"
-    share_code: str = ""
-    shared_gardens: Dict[str, Dict[str, object]] = field(default_factory=dict)
+    garden_mode: str = "unified"
+    retrospective_last_revlog_id: int = 0
     weekly_event_id: str = ""
     weekly_event_applied_for_day: str = ""
     mastery_tree: Dict[str, int] = field(default_factory=lambda: {
@@ -192,12 +189,9 @@ class GardenState:
             "focus_plant_id": self.focus_plant_id,
             "deck_plant_map": self.deck_plant_map,
             "deck_difficulty_map": self.deck_difficulty_map,
-            "cloud_enabled": self.cloud_enabled,
-            "cloud_last_sync": self.cloud_last_sync,
-            "cloud_device_id": self.cloud_device_id,
             "gardener_name": self.gardener_name,
-            "share_code": self.share_code,
-            "shared_gardens": self.shared_gardens,
+            "garden_mode": self.garden_mode,
+            "retrospective_last_revlog_id": self.retrospective_last_revlog_id,
             "weekly_event_id": self.weekly_event_id,
             "weekly_event_applied_for_day": self.weekly_event_applied_for_day,
             "mastery_tree": self.mastery_tree,
@@ -221,8 +215,8 @@ class GardenState:
             "version", "streak_days", "total_reviews", "total_correct", "total_wrong", "total_focus_sessions",
             "currency", "unlocked_slots", "selected_background", "selected_weather", "journal", "inventory",
             "equipped", "purchased_items", "streak_freeze_tokens", "recovery_mode", "last_active_day",
-            "focus_plant_id", "deck_plant_map", "deck_difficulty_map", "cloud_enabled", "cloud_last_sync",
-            "cloud_device_id", "gardener_name", "share_code", "shared_gardens", "weekly_event_id",
+            "focus_plant_id", "deck_plant_map", "deck_difficulty_map", "gardener_name", "garden_mode",
+            "retrospective_last_revlog_id", "weekly_event_id",
             "weekly_event_applied_for_day", "mastery_tree", "rare_event_log", "quest_history", "passive_reward_days",
         ]:
             if key in data:

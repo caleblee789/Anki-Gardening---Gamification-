@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date
+import math
 from typing import Any
 
 from aqt import mw
@@ -9,24 +9,228 @@ from aqt.qt import (
     QDialog,
     QFormLayout,
     QFrame,
+    QGraphicsDropShadowEffect,
     QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QListWidget,
-    QListWidgetItem,
     QMessageBox,
-    QInputDialog,
-    QPixmap,
+    QPainter,
+    QPainterPath,
+    QPen,
     QProgressBar,
     QPushButton,
+    QRectF,
     QScrollArea,
-    QSplitter,
-    QTextEdit,
+    QTabWidget,
+    QTimer,
     QVBoxLayout,
     QWidget,
+    Qt,
+    QColor,
+    QLinearGradient,
 )
+
+
+class GardenSceneWidget(QWidget):
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setMinimumHeight(320)
+        self.phase = 0.0
+        self.scene: dict[str, Any] = {"plants": [], "weather": "breeze", "health": 0.7, "growth": 0.2}
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self._tick)
+        self.timer.start(42)
+
+    def set_scene(self, payload: dict[str, Any]) -> None:
+        self.scene = payload
+        self.update()
+
+    def _tick(self) -> None:
+        self.phase += 0.06
+        self.update()
+
+    def paintEvent(self, _event: Any) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        r = self.rect()
+        try:
+            sky = QLinearGradient(0, 0, 0, r.height())
+            health = float(self.scene.get("health", 0.7))
+            glow = min(255, 90 + int(120 * health))
+            sky.setColorAt(0.0, QColor(18, 26, 46))
+            sky.setColorAt(0.55, QColor(27, 60, 72))
+            sky.setColorAt(1.0, QColor(16, 30, 26))
+            painter.fillRect(r, sky)
+
+            sun_x = r.width() * (0.75 + 0.02 * math.sin(self.phase / 4))
+            sun_y = r.height() * 0.2
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(QColor(255, 220, 130, 95 if self.scene.get("weather") != "cloudy" else 35))
+            painter.drawEllipse(QRectF(sun_x - 55, sun_y - 55, 110, 110))
+
+            ground = QLinearGradient(0, r.height() * 0.56, 0, r.height())
+            ground.setColorAt(0.0, QColor(45, 90, 54))
+            ground.setColorAt(1.0, QColor(26, 54, 32))
+            painter.setBrush(ground)
+            painter.drawRoundedRect(QRectF(0, r.height() * 0.56, r.width(), r.height() * 0.44), 0, 0)
+
+            for i in range(26):
+                x = (i * 67 + int(self.phase * 15)) % max(1, r.width())
+                y = r.height() * 0.7 + 26 * math.sin(self.phase + i / 2)
+                painter.setBrush(QColor(255, 255, 255, 18))
+                painter.drawEllipse(QRectF(x, y, 2.5, 2.5))
+
+            plants = self.scene.get("plants", [])
+            if not plants:
+                self._draw_fallback_scene(painter, r)
+                return
+
+            for idx, plant in enumerate(plants):
+                x = (idx + 1) * (r.width() / (len(plants) + 1))
+                base_y = r.height() * 0.76
+                sway = 6 * math.sin(self.phase + idx)
+                self._draw_plant(painter, x + sway, base_y, plant, idx)
+
+            weather = self.scene.get("weather", "breeze")
+            if weather in ("gentle_rain", "cloudy"):
+                pen = QPen(QColor(170, 205, 255, 90), 1)
+                painter.setPen(pen)
+                for i in range(34):
+                    x = (i * 41 + int(self.phase * 65)) % max(1, r.width())
+                    y = (i * 17 + int(self.phase * 95)) % max(1, r.height())
+                    painter.drawLine(int(x), int(y), int(x - 5), int(y + 12))
+            elif weather == "fireflies":
+                painter.setPen(Qt.PenStyle.NoPen)
+                for i in range(22):
+                    x = (i * 59 + int(self.phase * 28)) % max(1, r.width())
+                    y = r.height() * 0.22 + ((i * 31) % int(r.height() * 0.58))
+                    painter.setBrush(QColor(247, 237, 130, 125))
+                    painter.drawEllipse(QRectF(x, y, 3.5, 3.5))
+
+            painter.setPen(QColor(210, 245, 222, glow))
+            painter.drawText(18, 32, "Your live study garden")
+        except Exception:
+            self._draw_fallback_scene(painter, r)
+
+    def _draw_plant(self, painter: QPainter, x: float, y: float, plant: dict[str, Any], idx: int) -> None:
+        stage_scale = {"seed": 0.35, "sprout": 0.5, "young": 0.72, "mature": 0.93, "flowering": 1.08, "rare": 1.15}
+        stage = plant.get("stage", "seed")
+        scale = stage_scale.get(stage, 0.6)
+        vitality = max(0.2, float(plant.get("vitality", 0.8)))
+
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(62, 45, 38))
+        painter.drawEllipse(QRectF(x - 27, y - 14, 54, 23))
+
+        painter.setPen(QPen(QColor(72, 138, 72), 3))
+        stem_h = 95 * scale
+        painter.drawLine(int(x), int(y), int(x), int(y - stem_h))
+
+        leaf_color = QColor(45, 160, 96)
+        leaf_color.setAlphaF(vitality)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(leaf_color)
+        for side in (-1, 1):
+            path = QPainterPath()
+            path.moveTo(x, y - stem_h * 0.58)
+            path.quadTo(x + side * 34 * scale, y - stem_h * 0.5, x + side * 16 * scale, y - stem_h * 0.28)
+            path.quadTo(x + side * 6 * scale, y - stem_h * 0.38, x, y - stem_h * 0.58)
+            painter.drawPath(path)
+
+        if stage in ("mature", "flowering", "rare"):
+            painter.setBrush(QColor(106, 186, 88, 190))
+            painter.drawEllipse(QRectF(x - 18 * scale, y - stem_h - 26 * scale, 36 * scale, 34 * scale))
+        if stage in ("flowering", "rare"):
+            painter.setBrush(QColor(246, 126 + (idx * 20) % 85, 180, 220))
+            for a in range(6):
+                angle = (math.pi * 2 * a / 6.0) + self.phase / 5
+                fx = x + math.cos(angle) * 11 * scale
+                fy = y - stem_h - 14 * scale + math.sin(angle) * 11 * scale
+                painter.drawEllipse(QRectF(fx - 5, fy - 5, 10, 10))
+            painter.setBrush(QColor(255, 232, 148, 230))
+            painter.drawEllipse(QRectF(x - 4, y - stem_h - 18 * scale, 8, 8))
+        if stage == "rare" or plant.get("rare_variant"):
+            painter.setPen(QPen(QColor(255, 230, 138, 190), 1.7))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawEllipse(QRectF(x - 30 * scale, y - stem_h - 42 * scale, 60 * scale, 54 * scale))
+
+    def _draw_fallback_scene(self, painter: QPainter, rect: Any) -> None:
+        painter.fillRect(rect, QColor(27, 48, 44))
+        painter.setPen(QColor(223, 237, 223))
+        painter.drawText(rect.adjusted(20, 20, -20, -20), Qt.AlignmentFlag.AlignCenter, "Garden rendering fallback\nYour growth data is still active.")
+
+
+class GardenSettingsDialog(QDialog):
+    def __init__(self, parent: QWidget, engine: Any, config: Any) -> None:
+        super().__init__(parent)
+        self.engine = engine
+        self.config = config
+        self.setWindowTitle("Anki Garden Settings")
+        self.setMinimumSize(760, 520)
+        root = QHBoxLayout(self)
+        tabs = QTabWidget()
+        root.addWidget(tabs)
+
+        general = QWidget()
+        g_layout = QFormLayout(general)
+        self.mode_combo = QComboBox()
+        self.mode_combo.addItem("Unified All Decks", "unified")
+        self.mode_combo.addItem("Deck-by-Deck", "deck-by-deck")
+        current_mode = "deck-by-deck" if self.engine.state.garden_mode == "deck-by-deck" else "unified"
+        self.mode_combo.setCurrentIndex(1 if current_mode == "deck-by-deck" else 0)
+        save_mode = QPushButton("Apply Garden Mode")
+        save_mode.clicked.connect(self._apply_mode)
+        g_layout.addRow("Growth mode", self.mode_combo)
+        g_layout.addRow(save_mode)
+
+        mapping = QWidget()
+        m_layout = QVBoxLayout(mapping)
+        self.deck_combo = QComboBox()
+        self.deck_combo.addItem("Choose deck", None)
+        self.plant_combo = QComboBox()
+        for plant in self.engine.state.plants:
+            self.plant_combo.addItem(plant.name, plant.plant_id)
+        try:
+            for deck in mw.col.decks.all_names_and_ids():
+                self.deck_combo.addItem(deck.name, deck.id)
+        except Exception:
+            pass
+        map_btn = QPushButton("Map selected deck to plant")
+        map_btn.clicked.connect(self._map_deck)
+        m_layout.addWidget(self.deck_combo)
+        m_layout.addWidget(self.plant_combo)
+        m_layout.addWidget(map_btn)
+        m_layout.addStretch(1)
+
+        behavior = QWidget()
+        b_layout = QVBoxLayout(behavior)
+        b_layout.addWidget(QLabel("Visual pipeline: Procedural Qt rendering is enabled by default."))
+        b_layout.addWidget(QLabel("External image APIs are optional enhancements only."))
+        b_layout.addWidget(QLabel("Notifications, focus mode, and exam mode remain configurable from this dashboard."))
+        b_layout.addStretch(1)
+
+        advanced = QWidget()
+        a_layout = QVBoxLayout(advanced)
+        a_layout.addWidget(QLabel("Advanced / debug controls stay here to keep the home screen clean."))
+        a_layout.addStretch(1)
+
+        tabs.addTab(general, "General")
+        tabs.addTab(mapping, "Deck Mapping")
+        tabs.addTab(behavior, "Visuals & Behavior")
+        tabs.addTab(advanced, "Advanced")
+
+    def _apply_mode(self) -> None:
+        self.engine.set_garden_mode(str(self.mode_combo.currentData()))
+        QMessageBox.information(self, "Anki Garden", "Garden mode updated.")
+
+    def _map_deck(self) -> None:
+        deck_id = self.deck_combo.currentData()
+        plant_id = self.plant_combo.currentData()
+        if deck_id and plant_id:
+            self.engine.assign_deck_to_plant(int(deck_id), str(plant_id))
+            QMessageBox.information(self, "Anki Garden", "Deck mapping updated.")
 
 
 class GardenDashboard(QDialog):
@@ -35,380 +239,226 @@ class GardenDashboard(QDialog):
         self.engine = engine
         self.storage = storage
         self.config = config
+        self.settings_dialog: GardenSettingsDialog | None = None
         self.setWindowTitle("Anki Garden")
-        self.setMinimumSize(1200, 780)
-        self.setStyleSheet("QGroupBox { font-weight: 600; }")
+        self.setMinimumSize(1260, 860)
         self._build_ui()
 
     def _build_ui(self) -> None:
-        layout = QVBoxLayout(self)
-        self.bg_label = QLabel()
-        self.bg_label.setFrameShape(QFrame.Shape.Box)
-        self.bg_label.setMinimumHeight(230)
-        self.bg_label.setScaledContents(True)
+        self.setStyleSheet(
+            """
+            QDialog { background: #101820; color: #e6f0ea; }
+            QFrame[card='true'] { background: #18252e; border: 1px solid #2f4652; border-radius: 14px; }
+            QLabel[muted='true'] { color: #91a8ae; }
+            QPushButton { background: #264456; border: 1px solid #3d6174; border-radius: 10px; padding: 7px 12px; }
+            QPushButton:hover { background: #2f5468; }
+            QProgressBar { border-radius: 7px; border: 1px solid #2f4652; background: #132029; }
+            QProgressBar::chunk { background: #56ba7f; border-radius: 6px; }
+            """
+        )
+        root = QVBoxLayout(self)
+        root.setContentsMargins(18, 18, 18, 18)
+        root.setSpacing(12)
 
-        self.streak_label = QLabel()
-        self.daily_label = QLabel()
-        self.mode_label = QLabel()
-        self.event_label = QLabel()
-        self.health_label = QLabel()
-        self.exam_label = QLabel()
-        self.growth_bar = QProgressBar()
-        self.growth_bar.setFormat("Daily Growth %v/%m")
+        top = QFrame()
+        top.setProperty("card", True)
+        t_layout = QHBoxLayout(top)
+        self.title_label = QLabel("🌿 Anki Garden")
+        self.streak_chip = QLabel()
+        self.progress_chip = QLabel()
+        self.health_chip = QLabel()
+        self.settings_btn = QPushButton("⚙ Settings")
+        self.settings_btn.clicked.connect(self._open_settings)
+        t_layout.addWidget(self.title_label)
+        t_layout.addStretch(1)
+        for chip in (self.streak_chip, self.progress_chip, self.health_chip):
+            chip.setStyleSheet("padding: 5px 10px; background:#213847; border-radius:12px;")
+            t_layout.addWidget(chip)
+        t_layout.addWidget(self.settings_btn)
+        root.addWidget(top)
 
-        header = QHBoxLayout()
-        header.addWidget(self.streak_label)
-        header.addStretch(1)
-        header.addWidget(self.daily_label)
+        hero_card = QFrame()
+        hero_card.setProperty("card", True)
+        h_layout = QVBoxLayout(hero_card)
+        self.scene = GardenSceneWidget()
+        self.hero_summary = QLabel()
+        self.hero_summary.setWordWrap(True)
+        self.hero_summary.setProperty("muted", True)
+        self.retrospective_note = QLabel("")
+        self.retrospective_note.setStyleSheet("color:#9ef3b0;")
+        h_layout.addWidget(self.scene)
+        h_layout.addWidget(self.hero_summary)
+        h_layout.addWidget(self.retrospective_note)
+        root.addWidget(hero_card, 2)
 
-        layout.addWidget(self.bg_label)
-        layout.addLayout(header)
-        layout.addWidget(self.mode_label)
-        layout.addWidget(self.health_label)
-        layout.addWidget(self.exam_label)
-        layout.addWidget(self.event_label)
-        layout.addWidget(self.growth_bar)
+        mid_row = QHBoxLayout()
+        self.quest_list = QListWidget()
+        self.achievement_list = QListWidget()
+        self.focus_card = self._focus_card()
+        self.inventory_list = QListWidget()
+        mid_row.addWidget(self._simple_card("Daily Quests", self.quest_list), 1)
+        mid_row.addWidget(self._simple_card("Achievements", self.achievement_list), 1)
+        mid_row.addWidget(self.focus_card, 1)
+        mid_row.addWidget(self._simple_card("Inventory & Boosts", self.inventory_list), 1)
+        root.addLayout(mid_row, 1)
 
-        splitter = QSplitter()
-        splitter.addWidget(self._build_plant_panel())
-        splitter.addWidget(self._build_side_panel())
-        splitter.setSizes([740, 430])
-        layout.addWidget(splitter)
-
-    def _build_plant_panel(self) -> QWidget:
-        box = QGroupBox("Garden Slots")
-        outer = QVBoxLayout(box)
-
-        controls = QHBoxLayout()
-        self.focus_combo = QComboBox()
-        self.focus_combo.currentIndexChanged.connect(self._on_focus_change)
-        controls.addWidget(QLabel("Focus Plant"))
-        controls.addWidget(self.focus_combo)
-
-        self.deck_combo = QComboBox()
-        self.plant_combo = QComboBox()
-        map_button = QPushButton("Map Deck → Plant")
-        map_button.clicked.connect(self._map_deck_to_plant)
-        controls.addWidget(self.deck_combo)
-        controls.addWidget(self.plant_combo)
-        controls.addWidget(map_button)
-        outer.addLayout(controls)
-
-        self.slot_grid = QGridLayout()
+        lower = QFrame()
+        lower.setProperty("card", True)
+        l_layout = QVBoxLayout(lower)
+        self.roster_title = QLabel("Garden Roster")
+        self.roster_grid = QGridLayout()
+        roster_wrap = QWidget()
+        roster_wrap.setLayout(self.roster_grid)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        content = QWidget()
-        grid_wrap = QVBoxLayout(content)
-        grid_wrap.addLayout(self.slot_grid)
-        scroll.setWidget(content)
-        outer.addWidget(scroll)
-        return box
+        scroll.setWidget(roster_wrap)
+        l_layout.addWidget(self.roster_title)
+        l_layout.addWidget(scroll)
+        root.addWidget(lower, 2)
 
-    def _build_side_panel(self) -> QWidget:
-        panel = QWidget()
-        layout = QVBoxLayout(panel)
+    def _simple_card(self, title: str, body: QWidget) -> QFrame:
+        f = QFrame()
+        f.setProperty("card", True)
+        l = QVBoxLayout(f)
+        label = QLabel(title)
+        label.setStyleSheet("font-weight: 700;")
+        l.addWidget(label)
+        l.addWidget(body)
+        return f
 
-        self.quests = QListWidget()
-        self.achievements = QListWidget()
-        self.inventory = QListWidget()
-        self.shop = QListWidget()
-        self.social_list = QListWidget()
-        self.timeline = QListWidget()
-
-        shop_btn = QPushButton("Buy Selected Item")
-        shop_btn.clicked.connect(self._purchase_selected)
-        publish_btn = QPushButton("Publish Garden")
-        publish_btn.clicked.connect(self._publish_garden)
-        import_btn = QPushButton("Import Shared Garden")
-        import_btn.clicked.connect(self._import_shared_garden)
-        cloud_push_btn = QPushButton("Cloud Push")
-        cloud_push_btn.clicked.connect(self._cloud_push)
-        cloud_pull_btn = QPushButton("Cloud Pull")
-        cloud_pull_btn.clicked.connect(self._cloud_pull)
-        set_name_btn = QPushButton("Set Gardener Name")
-        set_name_btn.clicked.connect(self._set_gardener_name)
-        export_btn = QPushButton("Export Summary")
-        export_btn.clicked.connect(self._export_summary)
-
-        focus_box = QGroupBox("Focus Session")
-        focus_layout = QHBoxLayout(focus_box)
+    def _focus_card(self) -> QFrame:
+        card = QFrame()
+        card.setProperty("card", True)
+        layout = QVBoxLayout(card)
+        layout.addWidget(QLabel("Focus / Exam"))
         self.focus_duration = QComboBox()
         for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
             self.focus_duration.addItem(f"{minutes} min", int(minutes))
+        btn_row = QHBoxLayout()
         start_focus = QPushButton("Start")
-        start_focus.clicked.connect(self._start_focus)
         complete_focus = QPushButton("Complete")
-        complete_focus.clicked.connect(self._complete_focus)
         cancel_focus = QPushButton("Cancel")
+        start_focus.clicked.connect(self._start_focus)
+        complete_focus.clicked.connect(self._complete_focus)
         cancel_focus.clicked.connect(self._cancel_focus)
-        focus_layout.addWidget(self.focus_duration)
-        focus_layout.addWidget(start_focus)
-        focus_layout.addWidget(complete_focus)
-        focus_layout.addWidget(cancel_focus)
-
-        exam_box = QGroupBox("Exam Mode")
-        exam_layout = QFormLayout(exam_box)
+        btn_row.addWidget(start_focus)
+        btn_row.addWidget(complete_focus)
+        btn_row.addWidget(cancel_focus)
         self.exam_date_input = QLineEdit()
-        exam_set = QPushButton("Set Exam Date")
+        self.exam_date_input.setPlaceholderText("YYYY-MM-DD")
+        exam_set = QPushButton("Set Exam")
+        exam_off = QPushButton("Disable Exam")
         exam_set.clicked.connect(self._set_exam_date)
-        exam_off = QPushButton("Disable")
         exam_off.clicked.connect(self._disable_exam)
-        exam_layout.addRow("Date (YYYY-MM-DD)", self.exam_date_input)
-        exam_layout.addRow(exam_set, exam_off)
-
-        journal_box = QGroupBox("Reflection Journal")
-        journal_layout = QFormLayout(journal_box)
-        self.journal_day = QLineEdit(date.today().isoformat())
-        self.journal_note = QTextEdit()
-        self.journal_note.setPlaceholderText("Optional: one sentence about today's study session.")
-        save_note = QPushButton("Save Note")
-        save_note.clicked.connect(self._save_journal)
-        journal_layout.addRow("Day", self.journal_day)
-        journal_layout.addRow("Note", self.journal_note)
-        journal_layout.addRow(save_note)
-
-        layout.addWidget(QLabel("Daily Quests"))
-        layout.addWidget(self.quests)
-        layout.addWidget(QLabel("Achievements"))
-        layout.addWidget(self.achievements)
-        layout.addWidget(focus_box)
-        layout.addWidget(exam_box)
-        layout.addWidget(QLabel("Inventory"))
-        layout.addWidget(self.inventory)
-        layout.addWidget(QLabel("Garden Shop"))
-        layout.addWidget(self.shop)
-        layout.addWidget(shop_btn)
-        layout.addWidget(QLabel("Snapshots / Timeline"))
-        layout.addWidget(self.timeline)
-        layout.addWidget(QLabel("Social / Shared Gardens"))
-        layout.addWidget(self.social_list)
-        layout.addWidget(publish_btn)
-        layout.addWidget(import_btn)
-        layout.addWidget(set_name_btn)
-        layout.addWidget(cloud_push_btn)
-        layout.addWidget(cloud_pull_btn)
-        layout.addWidget(export_btn)
-        layout.addWidget(journal_box)
-        return panel
+        layout.addWidget(self.focus_duration)
+        layout.addLayout(btn_row)
+        layout.addWidget(self.exam_date_input)
+        layout.addWidget(exam_set)
+        layout.addWidget(exam_off)
+        layout.addStretch(1)
+        return card
 
     def refresh_all(self) -> None:
         state = self.storage.state
         stats = state.daily_stats
         health = self.engine.garden_health_index()
+        self.streak_chip.setText(f"Streak {state.streak_days}d")
+        self.progress_chip.setText(f"Today {stats.reviewed} • {int(stats.accuracy * 100)}%")
+        self.health_chip.setText(f"Health {int(health * 100)}")
+        mode_text = "Unified all-decks" if state.garden_mode == "unified" else "Deck-by-deck"
+        self.hero_summary.setText(
+            f"{mode_text} mode • Weather: {state.selected_weather} • Event: {self.engine.get_weekly_event_summary()}\n"
+            f"Keep accuracy high and complete quests to unlock flowering and rare forms."
+        )
 
-        self.streak_label.setText(f"Streak: {state.streak_days} days • Currency: {state.currency} {self.config.value('currency_name')}")
-        self.daily_label.setText(f"Today: {stats.reviewed} cards • Accuracy {int(stats.accuracy * 100)}%")
-        self.mode_label.setText("Recovery mode active" if state.recovery_mode else "Steady growth mode")
-        burnout = "⚠ burnout risk" if self.engine.burnout_risk() else "balanced load"
-        self.health_label.setText(f"Garden health index: {health:.2f} • {burnout}")
-        countdown = self.engine.exam_countdown_days()
-        self.exam_label.setText("Exam mode: off" if countdown is None else f"Exam mode active • {countdown} days remaining")
-        self.event_label.setText(f"Weekly Event: {self.engine.get_weekly_event_summary()}")
-        self.growth_bar.setMaximum(self.config.value("daily_growth_cap", 220))
-        self.growth_bar.setValue(stats.growth_earned)
+        self.scene.set_scene(
+            {
+                "weather": state.selected_weather,
+                "health": health,
+                "growth": min(1.0, stats.growth_earned / max(1, self.config.value("daily_growth_cap", 220))),
+                "plants": [
+                    {
+                        "name": p.name,
+                        "species": p.species,
+                        "stage": p.growth_stage,
+                        "vitality": p.vitality,
+                        "rare_variant": p.rare_variant,
+                    }
+                    for p in state.plants
+                ],
+            }
+        )
 
-        bg = self.engine.resolve_background_image()
-        if bg:
-            self.bg_label.setPixmap(QPixmap(bg))
-        else:
-            self.bg_label.setText("Connect an image API key or use Wikimedia source for live visuals.")
+        self.quest_list.clear()
+        for quest in state.daily_quests:
+            marker = "✅" if quest.completed else "🌱"
+            self.quest_list.addItem(f"{marker} {quest.description}  {quest.progress}/{quest.target}")
 
-        self._refresh_slot_cards()
-        self._refresh_quest_list()
-        self._refresh_achievements()
-        self._refresh_inventory_and_shop()
-        self._refresh_social()
-        self._refresh_timeline()
-        self._refresh_focus_and_deck_controls()
+        self.achievement_list.clear()
+        for ach in state.achievements.values():
+            marker = "🏅" if ach.unlocked else "🔒"
+            self.achievement_list.addItem(f"{marker} {ach.name}")
 
-        today = date.today().isoformat()
-        self.journal_day.setText(today)
-        self.journal_note.setPlainText(state.journal.get(today, ""))
-        self.exam_date_input.setText(state.exam_mode.exam_date or "")
-
-    def _refresh_slot_cards(self) -> None:
-        state = self.storage.state
-        while self.slot_grid.count():
-            item = self.slot_grid.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()
-
-        plants_by_slot = {p.slot_index: p for p in state.plants}
-        for slot in range(state.unlocked_slots):
-            plant = plants_by_slot.get(slot)
-            card = self._plant_card(plant) if plant else self._empty_slot_card(slot)
-            self.slot_grid.addWidget(card, slot // 2, slot % 2)
-
-    def _refresh_quest_list(self) -> None:
-        self.quests.clear()
-        for quest in self.storage.state.daily_quests:
-            marker = "✅" if quest.completed else "•"
-            self.quests.addItem(QListWidgetItem(f"{marker} {quest.description} ({quest.progress}/{quest.target})"))
-
-    def _refresh_achievements(self) -> None:
-        self.achievements.clear()
-        for ach in self.storage.state.achievements.values():
-            marker = "🏅" if ach.unlocked else "○"
-            self.achievements.addItem(QListWidgetItem(f"{marker} {ach.name} — {ach.description}"))
-
-    def _refresh_inventory_and_shop(self) -> None:
-        state = self.storage.state
-        self.inventory.clear()
+        self.inventory_list.clear()
         for category, items in state.inventory.items():
-            for item in items:
-                self.inventory.addItem(f"{category}: {item}")
+            if items:
+                self.inventory_list.addItem(f"{category}: {', '.join(items[:3])}")
 
-        self.shop.clear()
-        for key, cost in sorted(self.engine.SHOP_ITEMS.items()):
-            purchased = " (owned)" if key in state.purchased_items else ""
-            effective = self.engine.get_shop_price(key)
-            self.shop.addItem(f"{key} — {effective} (base {cost}){purchased}")
+        self.exam_date_input.setText(state.exam_mode.exam_date or "")
+        self._refresh_roster_cards()
 
-    def _refresh_social(self) -> None:
+    def show_retrospective_feedback(self, review_count: int, growth_gain: int) -> None:
+        if review_count <= 0:
+            self.retrospective_note.setText("")
+            return
+        self.retrospective_note.setText(f"✨ Catch-up applied from synced reviews: +{growth_gain} growth from {review_count} reviews.")
+
+    def _refresh_roster_cards(self) -> None:
+        while self.roster_grid.count():
+            item = self.roster_grid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
         state = self.storage.state
-        self.social_list.clear()
-        self.social_list.addItem(f"You: {state.gardener_name} ({state.share_code})")
-        self.social_list.addItem(f"Cloud sync: {state.cloud_last_sync or 'never'}")
-        for code, shared in sorted(state.shared_gardens.items()):
-            summary = f"{shared.get('gardener_name', 'Unknown')} • streak {shared.get('streak_days', 0)} • code {code}"
-            self.social_list.addItem(summary)
-
-    def _refresh_timeline(self) -> None:
-        self.timeline.clear()
-        for snap in self.storage.state.snapshots[-20:]:
-            self.timeline.addItem(f"{snap.day} • health {snap.health_index:.2f} • streak {snap.streak_days}")
-        for summary in self.storage.state.recent_summaries[-5:]:
-            self.timeline.addItem(f"{summary.day} • {summary.summary}")
-
-    def _refresh_focus_and_deck_controls(self) -> None:
-        state = self.storage.state
-        self.focus_combo.blockSignals(True)
-        self.focus_combo.clear()
-        self.focus_combo.addItem("None", None)
-        for plant in state.plants:
-            self.focus_combo.addItem(f"{plant.name} ({plant.personality})", plant.plant_id)
-        selected_idx = 0
-        if state.focus_plant_id:
-            for i in range(self.focus_combo.count()):
-                if self.focus_combo.itemData(i) == state.focus_plant_id:
-                    selected_idx = i
+        self.roster_title.setText("Garden Regions" if state.garden_mode == "unified" else "Deck Mapped Plants")
+        for idx, plant in enumerate(state.plants):
+            card = QFrame()
+            card.setProperty("card", True)
+            effect = QGraphicsDropShadowEffect(card)
+            effect.setBlurRadius(16)
+            effect.setColor(QColor(0, 0, 0, 120))
+            effect.setOffset(0, 4)
+            card.setGraphicsEffect(effect)
+            l = QVBoxLayout(card)
+            deck_label = "All-decks contributor"
+            for deck_id, plant_id in state.deck_plant_map.items():
+                if plant_id == plant.plant_id:
+                    deck_label = f"Deck #{deck_id}"
                     break
-        self.focus_combo.setCurrentIndex(selected_idx)
-        self.focus_combo.blockSignals(False)
+            title = QLabel(f"{plant.name} • {plant.species.title()}")
+            title.setStyleSheet("font-weight:700;")
+            stage = QLabel(f"Stage: {plant.growth_stage.title()} {'✨' if plant.rare_variant else ''}")
+            stage.setProperty("muted", True)
+            vit = QProgressBar()
+            vit.setMaximum(100)
+            vit.setValue(int(plant.vitality * 100))
+            vit.setFormat("Vitality %p%")
+            growth = QLabel(f"Growth source: {plant.personality} • GP {plant.growth_points}")
+            growth.setProperty("muted", True)
+            map_info = QLabel(deck_label)
+            map_info.setProperty("muted", True)
+            l.addWidget(title)
+            l.addWidget(stage)
+            l.addWidget(vit)
+            l.addWidget(growth)
+            l.addWidget(map_info)
+            self.roster_grid.addWidget(card, idx // 3, idx % 3)
 
-        self.plant_combo.clear()
-        for plant in state.plants:
-            self.plant_combo.addItem(plant.name, plant.plant_id)
-
-        self.deck_combo.clear()
-        self.deck_combo.addItem("Choose deck", None)
-        try:
-            for deck in mw.col.decks.all_names_and_ids():
-                self.deck_combo.addItem(deck.name, deck.id)
-        except Exception:
-            pass
-
-    def _plant_card(self, plant: Any) -> QWidget:
-        frame = QFrame()
-        frame.setFrameShape(QFrame.Shape.StyledPanel)
-        layout = QVBoxLayout(frame)
-
-        img_label = QLabel()
-        img_label.setMinimumHeight(140)
-        img_label.setScaledContents(True)
-        image = self.engine.resolve_plant_image(plant.species, plant.growth_stage, plant.rare_variant)
-        if image:
-            img_label.setPixmap(QPixmap(image))
-        else:
-            img_label.setText(f"{plant.species} ({plant.growth_stage})\nNo cached image yet")
-
-        vitality = QProgressBar()
-        vitality.setMaximum(100)
-        vitality.setValue(int(plant.vitality * 100))
-        vitality.setFormat("Vitality %p%")
-
-        layout.addWidget(QLabel(f"{plant.name} • {plant.growth_stage.title()} • {plant.personality}"))
-        layout.addWidget(img_label)
-        layout.addWidget(QLabel(f"Growth: {plant.growth_points}"))
-        layout.addWidget(vitality)
-        return frame
-
-    def _empty_slot_card(self, slot_idx: int) -> QWidget:
-        frame = QFrame()
-        frame.setFrameShape(QFrame.Shape.StyledPanel)
-        layout = QVBoxLayout(frame)
-        layout.addWidget(QLabel(f"Slot {slot_idx + 1} is empty"))
-        species = QComboBox()
-        species.addItems(["bonsai", "rose", "cactus", "orchid", "moonflower", "sunbloom", "ivy", "fern"])
-        add_btn = QPushButton("Plant Here")
-
-        def add() -> None:
-            ok = self.engine.add_plant_to_slot(species.currentText(), slot_idx)
-            if not ok:
-                QMessageBox.information(self, "Anki Garden", "Unable to plant in this slot.")
-            self.refresh_all()
-
-        add_btn.clicked.connect(add)
-        layout.addWidget(species)
-        layout.addWidget(add_btn)
-        return frame
-
-    def _on_focus_change(self) -> None:
-        self.engine.assign_focus_plant(self.focus_combo.currentData())
-
-    def _map_deck_to_plant(self) -> None:
-        deck_id = self.deck_combo.currentData()
-        plant_id = self.plant_combo.currentData()
-        if deck_id and plant_id:
-            self.engine.assign_deck_to_plant(int(deck_id), str(plant_id))
-            QMessageBox.information(self, "Anki Garden", "Deck mapping saved.")
-
-    def _purchase_selected(self) -> None:
-        item = self.shop.currentItem()
-        if not item:
-            return
-        key = item.text().split(" — ")[0]
-        ok, msg = self.engine.purchase_item(key)
-        QMessageBox.information(self, "Anki Garden", msg)
-        if ok:
-            self.refresh_all()
-
-    def _save_journal(self) -> None:
-        self.engine.set_journal_note(self.journal_day.text(), self.journal_note.toPlainText())
-
-    def _publish_garden(self) -> None:
-        code = self.engine.publish_shared_garden()
-        QMessageBox.information(self, "Anki Garden", f"Garden published with share code: {code}")
-        self.refresh_all()
-
-    def _import_shared_garden(self) -> None:
-        code, ok = QInputDialog.getText(self, "Import Shared Garden", "Enter share code:")
-        if not ok:
-            return
-        success, message = self.engine.import_shared_garden(code)
-        QMessageBox.information(self, "Anki Garden", message)
-        if success:
-            self.refresh_all()
-
-    def _cloud_push(self) -> None:
-        success, message = self.engine.cloud_push()
-        QMessageBox.information(self, "Anki Garden", message)
-        if success:
-            self.refresh_all()
-
-    def _cloud_pull(self) -> None:
-        success, message = self.engine.cloud_pull()
-        QMessageBox.information(self, "Anki Garden", message)
-        if success:
-            self.refresh_all()
-
-    def _set_gardener_name(self) -> None:
-        name, ok = QInputDialog.getText(self, "Gardener Name", "Choose your display name:")
-        if not ok:
-            return
-        self.engine.set_gardener_name(name)
-        self.refresh_all()
+    def _open_settings(self) -> None:
+        if self.settings_dialog is None:
+            self.settings_dialog = GardenSettingsDialog(self, self.engine, self.config)
+        self.settings_dialog.show()
+        self.settings_dialog.raise_()
 
     def _start_focus(self) -> None:
         ok, msg = self.engine.start_focus_session(int(self.focus_duration.currentData()))
@@ -417,7 +467,7 @@ class GardenDashboard(QDialog):
             self.refresh_all()
 
     def _complete_focus(self) -> None:
-        ok, msg = self.engine.complete_focus_session()
+        _ok, msg = self.engine.complete_focus_session()
         QMessageBox.information(self, "Anki Garden", msg)
         self.refresh_all()
 
@@ -439,7 +489,3 @@ class GardenDashboard(QDialog):
     def _disable_exam(self) -> None:
         self.engine.configure_exam_mode(False, None, [])
         self.refresh_all()
-
-    def _export_summary(self) -> None:
-        QMessageBox.information(self, "Anki Garden", self.engine.export_progress_summary())
-

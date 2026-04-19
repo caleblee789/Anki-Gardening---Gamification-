@@ -21,6 +21,9 @@ class ReviewerHookHandler:
             "lapse_count": int(getattr(card, "lapses", 0)),
         }
         self.engine.register_review(payload)
+        latest = self.storage.max_revlog_id() if hasattr(self.storage, "max_revlog_id") else 0
+        self.storage.state.retrospective_last_revlog_id = max(int(self.storage.state.retrospective_last_revlog_id or 0), int(latest or 0))
+        self.storage.save()
 
         try:
             due = mw.col.sched.counts()
