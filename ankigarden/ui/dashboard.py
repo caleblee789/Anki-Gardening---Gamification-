@@ -28,13 +28,49 @@ from aqt.qt import (
 from .garden_studio import GardenStudioWidget
 from .scene import GardenSceneWidget
 
+UI_TEXT = {
+    "settings_window_title": "Anki Garden Settings",
+    "mode_unified": "Unified All Decks",
+    "mode_deck": "Deck-by-Deck",
+    "save_mode": "Save Garden Mode",
+    "growth_mode_label": "Garden growth mode",
+    "select_deck": "Select a deck",
+    "assign_deck": "Assign Deck to Plant",
+    "advanced_hint": "Use advanced and debug controls here to keep the dashboard focused.",
+    "tab_general": "General",
+    "tab_mapping": "Deck Mapping",
+    "tab_behavior": "Visuals & Behavior",
+    "tab_advanced": "Advanced",
+    "app_title": "Anki Garden",
+    "title_banner": "🌿 Anki Garden",
+    "open_settings": "⚙ Open Settings",
+    "hero_growth_format": "Daily growth %p%",
+    "quest_progress_title": "Quest Progress",
+    "achievement_progress_title": "Achievement Progress",
+    "focus_exam_title": "Focus and Exam Controls",
+    "inventory_boosts_title": "Inventory Boosts",
+    "garden_roster_title": "Garden Roster",
+    "start_focus": "Start Focus Session",
+    "complete_focus": "Complete Focus Session",
+    "cancel_focus": "Cancel Focus Session",
+    "exam_placeholder": "YYYY-MM-DD (interpreted in your Anki local date)",
+    "exam_tooltip": "Enter an exam date like 2026-05-18. The add-on interprets this as your local Anki date and uses it for exam-mode pacing.",
+    "set_exam": "Set Exam Date",
+    "disable_exam": "Turn Off Exam Mode",
+    "garden_mode_updated": "Garden mode updated.",
+    "deck_mapping_updated": "Deck mapping updated.",
+    "no_quests": "No quest progress yet today. Review a card to start progress.",
+    "no_achievements": "Achievement progress will appear as you keep studying.",
+    "no_boosts": "No active inventory boosts yet.",
+}
+
 
 class GardenSettingsDialog(QDialog):
     def __init__(self, parent: QWidget, engine: Any, config: Any) -> None:
         super().__init__(parent)
         self.engine = engine
         self.config = config
-        self.setWindowTitle("Anki Garden Settings")
+        self.setWindowTitle(UI_TEXT["settings_window_title"])
         self.setMinimumSize(760, 520)
         root = QHBoxLayout(self)
         tabs = QTabWidget()
@@ -43,19 +79,19 @@ class GardenSettingsDialog(QDialog):
         general = QWidget()
         g_layout = QFormLayout(general)
         self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Unified All Decks", "unified")
-        self.mode_combo.addItem("Deck-by-Deck", "deck-by-deck")
+        self.mode_combo.addItem(UI_TEXT["mode_unified"], "unified")
+        self.mode_combo.addItem(UI_TEXT["mode_deck"], "deck-by-deck")
         current_mode = "deck-by-deck" if self.engine.state.garden_mode == "deck-by-deck" else "unified"
         self.mode_combo.setCurrentIndex(1 if current_mode == "deck-by-deck" else 0)
-        save_mode = QPushButton("Apply Garden Mode")
+        save_mode = QPushButton(UI_TEXT["save_mode"])
         save_mode.clicked.connect(self._apply_mode)
-        g_layout.addRow("Growth mode", self.mode_combo)
+        g_layout.addRow(UI_TEXT["growth_mode_label"], self.mode_combo)
         g_layout.addRow(save_mode)
 
         mapping = QWidget()
         m_layout = QVBoxLayout(mapping)
         self.deck_combo = QComboBox()
-        self.deck_combo.addItem("Choose deck", None)
+        self.deck_combo.addItem(UI_TEXT["select_deck"], None)
         self.plant_combo = QComboBox()
         for plant in self.engine.state.plants:
             self.plant_combo.addItem(plant.name, plant.plant_id)
@@ -64,7 +100,7 @@ class GardenSettingsDialog(QDialog):
                 self.deck_combo.addItem(deck.name, deck.id)
         except Exception:
             pass
-        map_btn = QPushButton("Map selected deck to plant")
+        map_btn = QPushButton(UI_TEXT["assign_deck"])
         map_btn.clicked.connect(self._map_deck)
         m_layout.addWidget(self.deck_combo)
         m_layout.addWidget(self.plant_combo)
@@ -75,24 +111,24 @@ class GardenSettingsDialog(QDialog):
 
         advanced = QWidget()
         a_layout = QVBoxLayout(advanced)
-        a_layout.addWidget(QLabel("Advanced / debug controls stay here to keep the home screen clean."))
+        a_layout.addWidget(QLabel(UI_TEXT["advanced_hint"]))
         a_layout.addStretch(1)
 
-        tabs.addTab(general, "General")
-        tabs.addTab(mapping, "Deck Mapping")
-        tabs.addTab(behavior, "Visuals & Behavior")
-        tabs.addTab(advanced, "Advanced")
+        tabs.addTab(general, UI_TEXT["tab_general"])
+        tabs.addTab(mapping, UI_TEXT["tab_mapping"])
+        tabs.addTab(behavior, UI_TEXT["tab_behavior"])
+        tabs.addTab(advanced, UI_TEXT["tab_advanced"])
 
     def _apply_mode(self) -> None:
         self.engine.set_garden_mode(str(self.mode_combo.currentData()))
-        QMessageBox.information(self, "Anki Garden", "Garden mode updated.")
+        QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["garden_mode_updated"])
 
     def _map_deck(self) -> None:
         deck_id = self.deck_combo.currentData()
         plant_id = self.plant_combo.currentData()
         if deck_id and plant_id:
             self.engine.assign_deck_to_plant(int(deck_id), str(plant_id))
-            QMessageBox.information(self, "Anki Garden", "Deck mapping updated.")
+            QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["deck_mapping_updated"])
 
     def _reroll_asset_slot(self, slot: str) -> None:
         try:
@@ -132,7 +168,7 @@ class GardenDashboard(QDialog):
         self.storage = storage
         self.config = config
         self.settings_dialog: GardenSettingsDialog | None = None
-        self.setWindowTitle("Anki Garden")
+        self.setWindowTitle(UI_TEXT["app_title"])
         self.setMinimumSize(1080, 720)
         self.resize(1240, 840)
         self._build_ui()
@@ -162,12 +198,12 @@ class GardenDashboard(QDialog):
         t_layout = QHBoxLayout(top)
         t_layout.setContentsMargins(*self.CARD_PADDING)
         t_layout.setSpacing(self.CHIP_SPACING)
-        self.title_label = QLabel("🌿 Anki Garden")
+        self.title_label = QLabel(UI_TEXT["title_banner"])
         self._apply_typography(self.title_label, "title")
         self.streak_chip = QLabel()
         self.progress_chip = QLabel()
         self.health_chip = QLabel()
-        self.settings_btn = QPushButton("⚙ Settings")
+        self.settings_btn = QPushButton(UI_TEXT["open_settings"])
         self.settings_btn.clicked.connect(self._open_settings)
         t_layout.addWidget(self.title_label)
         t_layout.addStretch(1)
@@ -189,7 +225,7 @@ class GardenDashboard(QDialog):
         self.hero_summary.setStyleSheet("line-height: 1.35;")
         self.hero_growth = QProgressBar()
         self.hero_growth.setMaximum(100)
-        self.hero_growth.setFormat("Daily growth %p%")
+        self.hero_growth.setFormat(UI_TEXT["hero_growth_format"])
         self.hero_growth.setStyleSheet(
             "QProgressBar{height:18px;font-weight:700;} QProgressBar::chunk{background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #5fd484, stop:1 #d7ff8f);}"
         )
@@ -211,17 +247,17 @@ class GardenDashboard(QDialog):
         self.focus_card = self._focus_card()
         self.inventory_list = QListWidget()
         self.inventory_list.setAlternatingRowColors(True)
-        mid_row.addWidget(self._simple_card("Daily Quests", self.quest_list), 1)
-        mid_row.addWidget(self._simple_card("Achievements", self.achievement_list), 1)
+        mid_row.addWidget(self._simple_card(UI_TEXT["quest_progress_title"], self.quest_list), 1)
+        mid_row.addWidget(self._simple_card(UI_TEXT["achievement_progress_title"], self.achievement_list), 1)
         mid_row.addWidget(self.focus_card, 1)
-        mid_row.addWidget(self._simple_card("Inventory & Boosts", self.inventory_list), 1)
+        mid_row.addWidget(self._simple_card(UI_TEXT["inventory_boosts_title"], self.inventory_list), 1)
         root.addLayout(mid_row, 1)
 
         lower = self._card_frame()
         l_layout = QVBoxLayout(lower)
         l_layout.setContentsMargins(*self.CARD_PADDING)
         l_layout.setSpacing(self.CARD_SPACING)
-        self.roster_title = QLabel("Garden Roster")
+        self.roster_title = QLabel(UI_TEXT["garden_roster_title"])
         self._apply_typography(self.roster_title, "section-title")
         self.roster_grid = QGridLayout()
         self.roster_grid.setSpacing(self.ROSTER_GRID_SPACING)
@@ -259,16 +295,16 @@ class GardenDashboard(QDialog):
         layout = QVBoxLayout(card)
         layout.setContentsMargins(*self.CARD_PADDING)
         layout.setSpacing(self.CARD_SPACING)
-        heading = QLabel("Focus / Exam")
+        heading = QLabel(UI_TEXT["focus_exam_title"])
         self._apply_typography(heading, "section-title")
         layout.addWidget(heading)
         self.focus_duration = QComboBox()
         for minutes in self.config.nested("focus_mode", "durations", default=[25, 45, 60]):
             self.focus_duration.addItem(f"{minutes} min", int(minutes))
         btn_row = QHBoxLayout()
-        start_focus = QPushButton("Start")
-        complete_focus = QPushButton("Complete")
-        cancel_focus = QPushButton("Cancel")
+        start_focus = QPushButton(UI_TEXT["start_focus"])
+        complete_focus = QPushButton(UI_TEXT["complete_focus"])
+        cancel_focus = QPushButton(UI_TEXT["cancel_focus"])
         start_focus.clicked.connect(self._start_focus)
         complete_focus.clicked.connect(self._complete_focus)
         cancel_focus.clicked.connect(self._cancel_focus)
@@ -276,9 +312,10 @@ class GardenDashboard(QDialog):
         btn_row.addWidget(complete_focus)
         btn_row.addWidget(cancel_focus)
         self.exam_date_input = QLineEdit()
-        self.exam_date_input.setPlaceholderText("YYYY-MM-DD")
-        exam_set = QPushButton("Set Exam")
-        exam_off = QPushButton("Disable Exam")
+        self.exam_date_input.setPlaceholderText(UI_TEXT["exam_placeholder"])
+        self.exam_date_input.setToolTip(UI_TEXT["exam_tooltip"])
+        exam_set = QPushButton(UI_TEXT["set_exam"])
+        exam_off = QPushButton(UI_TEXT["disable_exam"])
         exam_set.clicked.connect(self._set_exam_date)
         exam_off.clicked.connect(self._disable_exam)
         layout.addWidget(self.focus_duration)
@@ -327,21 +364,21 @@ class GardenDashboard(QDialog):
             marker = "✅" if quest.completed else "🌱"
             self.quest_list.addItem(f"{marker} {quest.description}  {quest.progress}/{quest.target}")
         if self.quest_list.count() == 0:
-            self.quest_list.addItem("No quests yet today. Review a card to generate progress.")
+            self.quest_list.addItem(UI_TEXT["no_quests"])
 
         self.achievement_list.clear()
         for ach in state.achievements.values():
             marker = "🏅" if ach.unlocked else "🔒"
             self.achievement_list.addItem(f"{marker} {ach.name}")
         if self.achievement_list.count() == 0:
-            self.achievement_list.addItem("Achievements will appear as you keep studying.")
+            self.achievement_list.addItem(UI_TEXT["no_achievements"])
 
         self.inventory_list.clear()
         for category, items in state.inventory.items():
             if items:
                 self.inventory_list.addItem(f"{category}: {', '.join(items[:3])}")
         if self.inventory_list.count() == 0:
-            self.inventory_list.addItem("No active boosts yet.")
+            self.inventory_list.addItem(UI_TEXT["no_boosts"])
 
         self.exam_date_input.setText(state.exam_mode.exam_date or "")
         self._refresh_roster_cards()
@@ -350,7 +387,9 @@ class GardenDashboard(QDialog):
         if review_count <= 0:
             self.retrospective_note.setText("")
             return
-        self.retrospective_note.setText(f"✨ Catch-up applied from synced reviews: +{growth_gain} growth from {review_count} reviews.")
+        self.retrospective_note.setText(
+            f"✨ Applied catch-up from synced reviews: +{growth_gain} growth from {review_count} reviews."
+        )
 
     def _refresh_roster_cards(self) -> None:
         while self.roster_grid.count():
@@ -359,7 +398,7 @@ class GardenDashboard(QDialog):
                 item.widget().deleteLater()
 
         state = self.storage.state
-        self.roster_title.setText("Garden Regions" if state.garden_mode == "unified" else "Deck Mapped Plants")
+        self.roster_title.setText("Garden Regions" if state.garden_mode == "unified" else "Deck-Mapped Plants")
         for idx, plant in enumerate(state.plants):
             card = QFrame()
             card.setProperty("card", True)
@@ -370,7 +409,7 @@ class GardenDashboard(QDialog):
             card.setGraphicsEffect(effect)
             card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
             l = QVBoxLayout(card)
-            deck_label = "All-decks contributor"
+            deck_label = "All-Deck Contributor"
             for deck_id, plant_id in state.deck_plant_map.items():
                 if plant_id == plant.plant_id:
                     deck_label = f"Deck #{deck_id}"
@@ -383,7 +422,7 @@ class GardenDashboard(QDialog):
             vit.setMaximum(100)
             vit.setValue(int(plant.vitality * 100))
             vit.setFormat("Vitality %p%")
-            growth = QLabel(f"Growth source: {plant.personality} • GP {plant.growth_points}")
+            growth = QLabel(f"Growth Source: {plant.personality} • GP {plant.growth_points}")
             self._apply_typography(growth, "muted-body")
             map_info = QLabel(deck_label)
             self._apply_typography(map_info, "muted-body")
@@ -402,13 +441,13 @@ class GardenDashboard(QDialog):
 
     def _start_focus(self) -> None:
         ok, msg = self.engine.start_focus_session(int(self.focus_duration.currentData()))
-        QMessageBox.information(self, "Anki Garden", msg)
+        QMessageBox.information(self, UI_TEXT["app_title"], msg)
         if ok:
             self.refresh_all()
 
     def _complete_focus(self) -> None:
         _ok, msg = self.engine.complete_focus_session()
-        QMessageBox.information(self, "Anki Garden", msg)
+        QMessageBox.information(self, UI_TEXT["app_title"], msg)
         self.refresh_all()
 
     def _cancel_focus(self) -> None:

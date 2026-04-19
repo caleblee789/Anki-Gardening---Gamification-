@@ -19,6 +19,22 @@ from aqt.qt import (
 
 from .scene import GardenSceneWidget
 
+STUDIO_TEXT = {
+    "preview_plant_name": "Preview Plant",
+    "night_mode_preview": "Preview Night Mode",
+    "theme_label": "Select visual theme",
+    "asset_quality_label": "Select asset quality",
+    "day_night_label": "Toggle day/night preview",
+    "weather_label": "Select preview weather",
+    "growth_stage_label": "Select preview growth stage",
+    "animation_label": "Set animation intensity",
+    "particle_label": "Set weather particle density",
+    "asset_sources": "Asset Sources",
+    "missing_source": "Source details unavailable. Default built-in artwork is still active.",
+    "refresh_asset": "Refresh {slot} Asset",
+    "source_label": "{slot} source: {author} • {license_name} • {source}. If this source is unavailable, the preview still uses a built-in fallback.",
+}
+
 
 class GardenStudioWidget(QWidget):
     def __init__(self, config: Any, on_reroll: Callable[[str], None] | None = None, parent: QWidget | None = None) -> None:
@@ -66,7 +82,7 @@ class GardenStudioWidget(QWidget):
         idx = max(0, self.asset_quality_combo.findData(current_quality))
         self.asset_quality_combo.setCurrentIndex(idx)
 
-        self.day_night = QCheckBox("Night mode preview")
+        self.day_night = QCheckBox(STUDIO_TEXT["night_mode_preview"])
         self.day_night.toggled.connect(self._on_preview_toggle)
 
         self.weather_combo = QComboBox()
@@ -90,26 +106,26 @@ class GardenStudioWidget(QWidget):
         self.particle_slider.setValue(int(self.preview["weather_particle_density"] * 100))
         self.particle_slider.valueChanged.connect(self._on_slider_changed)
 
-        form.addRow("Visual theme", self.theme_combo)
-        form.addRow("Asset quality", self.asset_quality_combo)
-        form.addRow("Preview day/night", self.day_night)
-        form.addRow("Preview weather", self.weather_combo)
-        form.addRow("Preview growth stage", self.growth_stage_combo)
-        form.addRow("Animation intensity", self.anim_slider)
-        form.addRow("Weather particle density", self.particle_slider)
+        form.addRow(STUDIO_TEXT["theme_label"], self.theme_combo)
+        form.addRow(STUDIO_TEXT["asset_quality_label"], self.asset_quality_combo)
+        form.addRow(STUDIO_TEXT["day_night_label"], self.day_night)
+        form.addRow(STUDIO_TEXT["weather_label"], self.weather_combo)
+        form.addRow(STUDIO_TEXT["growth_stage_label"], self.growth_stage_combo)
+        form.addRow(STUDIO_TEXT["animation_label"], self.anim_slider)
+        form.addRow(STUDIO_TEXT["particle_label"], self.particle_slider)
 
         root.addWidget(controls)
         root.addWidget(self.scene, 1)
 
         attribution_frame = QFrame()
         attribution_layout = QVBoxLayout(attribution_frame)
-        attribution_layout.addWidget(QLabel("Asset attribution"))
+        attribution_layout.addWidget(QLabel(STUDIO_TEXT["asset_sources"]))
         for slot in ["background", "plant", "weather"]:
             card = QFrame()
             card_layout = QHBoxLayout(card)
-            label = QLabel(f"{slot.title()}: source unavailable")
+            label = QLabel(f"{slot.title()}: {STUDIO_TEXT['missing_source']}")
             label.setWordWrap(True)
-            reroll = QPushButton(f"Re-roll {slot}")
+            reroll = QPushButton(STUDIO_TEXT["refresh_asset"].format(slot=slot.title()))
             reroll.clicked.connect(lambda _checked=False, s=slot: self._reroll_slot(s))
             card_layout.addWidget(label, 1)
             card_layout.addWidget(reroll)
@@ -146,7 +162,7 @@ class GardenStudioWidget(QWidget):
             "weather_particle_density": self.preview["weather_particle_density"],
             "plants": [
                 {
-                    "name": "Preview Plant",
+                    "name": STUDIO_TEXT["preview_plant_name"],
                     "species": "rose",
                     "stage": self.preview["growth_stage"],
                     "vitality": 0.95,
@@ -161,7 +177,11 @@ class GardenStudioWidget(QWidget):
             source = attr.get("page_url") or attr.get("source_url") or "unknown source"
             author = attr.get("author") or "unknown author"
             license_name = attr.get("license") or "license unknown"
-            label.setText(f"{slot.title()}: {author} • {license_name} • {source}")
+            label.setText(
+                STUDIO_TEXT["source_label"].format(
+                    slot=slot.title(), author=author, license_name=license_name, source=source
+                )
+            )
 
     def _reroll_slot(self, slot: str) -> None:
         if self.on_reroll:
