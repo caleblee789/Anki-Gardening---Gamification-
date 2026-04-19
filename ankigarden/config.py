@@ -38,9 +38,9 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "quest": "",
     },
     "future_features": {
-        "enable_cloud_sync": False,
-        "enable_social_gardens": False,
-        "enable_weekly_events": False,
+        "enable_cloud_sync": True,
+        "enable_social_gardens": True,
+        "enable_weekly_events": True,
     },
 }
 

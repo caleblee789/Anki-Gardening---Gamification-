@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from datetime import date, datetime
+from hashlib import sha1
 from typing import Any, Dict, Optional
 
 from .asset_manager import AssetManager
@@ -28,12 +29,52 @@ class GardenGameEngine:
         "decorations:butterflies": 130,
         "weather:fireflies": 160,
     }
+    WEEKLY_EVENTS = [
+        {
+            "event_id": "growth_festival",
+            "name": "Growth Festival",
+            "description": "All review growth is boosted by 25%.",
+            "growth_multiplier": 1.25,
+            "quest_currency_bonus": 0,
+            "shop_discount": 0.0,
+            "weather_override": None,
+        },
+        {
+            "event_id": "dew_market",
+            "name": "Dew Market",
+            "description": "Shop items are 15% cheaper this week.",
+            "growth_multiplier": 1.0,
+            "quest_currency_bonus": 0,
+            "shop_discount": 0.15,
+            "weather_override": None,
+        },
+        {
+            "event_id": "community_bloom",
+            "name": "Community Bloom",
+            "description": "Completed quests grant +4 bonus currency.",
+            "growth_multiplier": 1.0,
+            "quest_currency_bonus": 4,
+            "shop_discount": 0.0,
+            "weather_override": "fireflies",
+        },
+        {
+            "event_id": "storm_recovery",
+            "name": "Storm Recovery",
+            "description": "Recovery mode vitality decay is gentler and skies stay breezy.",
+            "growth_multiplier": 1.1,
+            "quest_currency_bonus": 2,
+            "shop_discount": 0.0,
+            "weather_override": "breeze",
+        },
+    ]
 
     def __init__(self, config: Any, storage: Any) -> None:
         self.config = config
         self.storage = storage
         self.state: GardenState = storage.state
         self.assets = AssetManager(config, storage)
+        self._ensure_share_identity()
+        self._apply_weekly_event(force=True)
         self._ensure_achievements()
         self._ensure_daily_quests()
 
@@ -41,6 +82,7 @@ class GardenGameEngine:
         today = date.today().isoformat()
         if self.state.daily_stats.day == today:
             return
+        self._apply_weekly_event(force=True)
         self._apply_streak_rollover(today)
         self.state.daily_stats.day = today
         self.state.daily_stats.reviewed = 0
@@ -69,6 +111,8 @@ class GardenGameEngine:
             else:
                 self.state.streak_days = max(0, self.state.streak_days - min(missed, 4))
                 decay = float(self.config.value("vitality_decay_sensitivity", 0.08))
+                if self.current_weekly_event()["event_id"] == "storm_recovery":
+                    decay *= 0.6
                 for plant in self.state.plants:
                     plant.vitality = max(0.42, plant.vitality - decay * missed)
                 self.state.recovery_mode = True
@@ -124,6 +168,7 @@ class GardenGameEngine:
             return 0
         mapping = self.config.value("points_per_card", {})
         base = int(mapping.get(card_type, 2))
+        base = int(round(base * self.current_weekly_event().get("growth_multiplier", 1.0)))
         if not is_correct:
             base = max(1, int(base * 0.5))
 
@@ -221,7 +266,8 @@ class GardenGameEngine:
             quest.progress = self._metric_value(quest.metric)
             if quest.progress >= quest.target:
                 quest.completed = True
-                self.state.currency += quest.reward_currency
+                reward = quest.reward_currency + int(self.current_weekly_event().get("quest_currency_bonus", 0))
+                self.state.currency += reward
                 self._apply_growth(quest.reward_growth, None)
 
     def set_due_completion(self, completed: bool) -> None:
@@ -247,9 +293,10 @@ class GardenGameEngine:
             return False, "Item not found"
         if item_key in self.state.purchased_items:
             return False, "Already purchased"
-        if self.state.currency < cost:
+        effective_cost = self.get_shop_price(item_key)
+        if self.state.currency < effective_cost:
             return False, "Not enough currency"
-        self.state.currency -= cost
+        self.state.currency -= effective_cost
         self.state.purchased_items.append(item_key)
         category, item = item_key.split(":", 1)
         self.state.inventory.setdefault(category, [])
@@ -257,6 +304,113 @@ class GardenGameEngine:
             self.state.inventory[category].append(item)
         self.storage.save()
         return True, "Purchased"
+
+    def current_weekly_event(self) -> Dict[str, Any]:
+        if not self.config.nested("future_features", "enable_weekly_events", default=False):
+            return {
+                "event_id": "none",
+                "name": "No Active Event",
+                "description": "Weekly events are disabled.",
+                "growth_multiplier": 1.0,
+                "quest_currency_bonus": 0,
+                "shop_discount": 0.0,
+                "weather_override": None,
+            }
+        idx = date.today().isocalendar().week % len(self.WEEKLY_EVENTS)
+        return self.WEEKLY_EVENTS[idx]
+
+    def _apply_weekly_event(self, force: bool = False) -> None:
+        event = self.current_weekly_event()
+        today = date.today().isoformat()
+        if force or self.state.weekly_event_applied_for_day != today:
+            self.state.weekly_event_applied_for_day = today
+            self.state.weekly_event_id = event["event_id"]
+
+    def get_weekly_event_summary(self) -> str:
+        event = self.current_weekly_event()
+        return f"{event['name']}: {event['description']}"
+
+    def get_shop_price(self, item_key: str) -> int:
+        base = self.SHOP_ITEMS[item_key]
+        discount = float(self.current_weekly_event().get("shop_discount", 0.0))
+        return max(1, int(round(base * (1.0 - discount))))
+
+    def _ensure_share_identity(self) -> None:
+        if not self.state.share_code:
+            token = sha1(f"{date.today().isoformat()}-{random.random()}".encode("utf-8")).hexdigest()[:8]
+            self.state.share_code = f"AG-{token.upper()}"
+
+    def set_gardener_name(self, name: str) -> None:
+        cleaned = name.strip()
+        if cleaned:
+            self.state.gardener_name = cleaned[:40]
+            self.storage.save()
+
+    def publish_shared_garden(self) -> str:
+        if not self.config.nested("future_features", "enable_social_gardens", default=False):
+            return "SOCIAL_DISABLED"
+        hub = self.storage.load_social_hub()
+        hub["gardens"][self.state.share_code] = {
+            "share_code": self.state.share_code,
+            "gardener_name": self.state.gardener_name,
+            "streak_days": self.state.streak_days,
+            "total_reviews": self.state.total_reviews,
+            "weather": self.state.selected_weather,
+            "plants": [
+                {
+                    "species": p.species,
+                    "name": p.name,
+                    "stage": p.growth_stage,
+                    "vitality": int(p.vitality * 100),
+                    "rare_variant": p.rare_variant,
+                }
+                for p in self.state.plants
+            ],
+            "published_at": datetime.utcnow().isoformat(),
+        }
+        self.storage.save_social_hub(hub)
+        return self.state.share_code
+
+    def import_shared_garden(self, share_code: str) -> tuple[bool, str]:
+        if not self.config.nested("future_features", "enable_social_gardens", default=False):
+            return False, "Social gardens are disabled in config."
+        code = share_code.strip().upper()
+        if not code:
+            return False, "Enter a share code."
+        hub = self.storage.load_social_hub()
+        data = hub.get("gardens", {}).get(code)
+        if not data:
+            return False, "Garden not found for this share code."
+        self.state.shared_gardens[code] = data
+        self.storage.save()
+        return True, f"Added {data.get('gardener_name', 'shared garden')}"
+
+    def cloud_push(self) -> tuple[bool, str]:
+        enabled = self.config.nested("future_features", "enable_cloud_sync", default=False)
+        if not enabled:
+            return False, "Cloud sync is disabled in config."
+        self.state.cloud_enabled = True
+        self.storage.save_cloud_snapshot(self.state.to_dict(), reason="push")
+        self.state.cloud_last_sync = datetime.utcnow().isoformat()
+        self.storage.save()
+        return True, "Uploaded garden state to cloud snapshot."
+
+    def cloud_pull(self) -> tuple[bool, str]:
+        enabled = self.config.nested("future_features", "enable_cloud_sync", default=False)
+        if not enabled:
+            return False, "Cloud sync is disabled in config."
+        snapshot = self.storage.load_cloud_snapshot()
+        if not snapshot or "state" not in snapshot:
+            return False, "No cloud snapshot available."
+        remote = snapshot["state"]
+        local = self.state.to_dict()
+        if remote.get("total_reviews", 0) < local.get("total_reviews", 0):
+            return False, "Cloud snapshot is older than local data."
+        self.storage.state = self.state = GardenState.from_dict(remote)
+        self.state.cloud_enabled = True
+        self.state.cloud_last_sync = datetime.utcnow().isoformat()
+        self.storage.save()
+        return True, "Downloaded garden state from cloud snapshot."
 
     def add_plant_to_slot(self, species: str, slot_index: int) -> bool:
         if slot_index >= self.state.unlocked_slots:
@@ -308,7 +462,10 @@ class GardenGameEngine:
 
     def _update_weather(self) -> None:
         s = self.state.daily_stats
-        if self.state.recovery_mode:
+        override = self.current_weekly_event().get("weather_override")
+        if override:
+            self.state.selected_weather = str(override)
+        elif self.state.recovery_mode:
             self.state.selected_weather = "gentle_rain"
         elif s.reviewed >= 120:
             self.state.selected_weather = "sunny"

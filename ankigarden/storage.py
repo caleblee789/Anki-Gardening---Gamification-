@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Optional
 
 from .models.state import GardenState, Plant
 
@@ -15,6 +16,8 @@ class GardenStorage:
         self.data_path = self.addon_dir / "garden_state.json"
         self.assets_root = self.addon_dir / "assets"
         self.asset_metadata = self.assets_root / "asset_metadata.json"
+        self.cloud_state_path = self.addon_dir / "cloud_state.json"
+        self.social_hub_path = self.addon_dir / "social_hub.json"
         self.state = self._load()
         self._ensure_defaults()
 
@@ -60,3 +63,33 @@ class GardenStorage:
 
     def save_asset_metadata(self, data: dict) -> None:
         self.asset_metadata.write_text(json.dumps(data, indent=2), "utf-8")
+
+    def load_cloud_snapshot(self) -> Optional[Dict[str, Any]]:
+        if not self.cloud_state_path.exists():
+            return None
+        try:
+            return json.loads(self.cloud_state_path.read_text("utf-8"))
+        except Exception:
+            return None
+
+    def save_cloud_snapshot(self, state_dict: Dict[str, Any], reason: str = "manual") -> None:
+        payload = {
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "reason": reason,
+            "state": state_dict,
+        }
+        self.cloud_state_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), "utf-8")
+
+    def load_social_hub(self) -> Dict[str, Any]:
+        if not self.social_hub_path.exists():
+            return {"gardens": {}}
+        try:
+            data = json.loads(self.social_hub_path.read_text("utf-8"))
+            if isinstance(data, dict) and isinstance(data.get("gardens"), dict):
+                return data
+        except Exception:
+            pass
+        return {"gardens": {}}
+
+    def save_social_hub(self, data: Dict[str, Any]) -> None:
+        self.social_hub_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), "utf-8")

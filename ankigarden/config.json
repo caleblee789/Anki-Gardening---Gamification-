@@ -37,8 +37,8 @@
     "quest": ""
   },
   "future_features": {
-    "enable_cloud_sync": false,
-    "enable_social_gardens": false,
-    "enable_weekly_events": false
+    "enable_cloud_sync": true,
+    "enable_social_gardens": true,
+    "enable_weekly_events": true
   }
 }
