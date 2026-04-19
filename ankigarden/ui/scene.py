@@ -26,11 +26,34 @@ class GardenSceneWidget(QWidget):
         self.timer.start(42)
 
     def set_scene(self, payload: dict[str, Any]) -> None:
-        self.scene = payload
+        self.scene = self._sanitize_scene_payload(payload)
         self.update()
 
+    def _coerce_float(self, value: Any, default: float) -> float:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return default
+
+    def _clamp(self, value: float, low: float, high: float) -> float:
+        return max(low, min(high, value))
+
+    def _sanitize_scene_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        safe_scene = dict(payload or {})
+        safe_scene["growth"] = self._clamp(self._coerce_float(safe_scene.get("growth", 0.0), 0.0), 0.0, 1.0)
+        safe_scene["health"] = self._clamp(self._coerce_float(safe_scene.get("health", 0.7), 0.7), 0.0, 1.0)
+        safe_scene["animation_intensity"] = self._clamp(
+            self._coerce_float(safe_scene.get("animation_intensity", 0.7), 0.7), 0.1, 1.6
+        )
+        safe_scene["weather_particle_density"] = self._clamp(
+            self._coerce_float(safe_scene.get("weather_particle_density", 1.0), 1.0), 0.2, 1.25
+        )
+        plants = safe_scene.get("plants", [])
+        safe_scene["plants"] = plants if isinstance(plants, list) else []
+        return safe_scene
+
     def _tick(self) -> None:
-        intensity = max(0.1, float(self.scene.get("animation_intensity", 0.7)))
+        intensity = self._clamp(self._coerce_float(self.scene.get("animation_intensity", 0.7), 0.7), 0.1, 1.6)
         self.phase += 0.02 + (0.06 * intensity)
         self.update()
 
@@ -40,7 +63,7 @@ class GardenSceneWidget(QWidget):
         r = self.rect()
         try:
             sky = QLinearGradient(0, 0, 0, r.height())
-            health = float(self.scene.get("health", 0.7))
+            health = self._clamp(self._coerce_float(self.scene.get("health", 0.7), 0.7), 0.0, 1.0)
             glow = min(255, 90 + int(120 * health))
             night = bool(self.scene.get("night_mode", False))
             if night:
@@ -52,7 +75,7 @@ class GardenSceneWidget(QWidget):
                 sky.setColorAt(0.55, QColor(27, 60, 72))
                 sky.setColorAt(1.0, QColor(16, 30, 26))
             painter.fillRect(r, sky)
-            growth = max(0.0, min(1.0, float(self.scene.get("growth", 0.0))))
+            growth = self._clamp(self._coerce_float(self.scene.get("growth", 0.0), 0.0), 0.0, 1.0)
 
             sun_x = r.width() * (0.75 + 0.02 * math.sin(self.phase / 4))
             sun_y = r.height() * 0.2
@@ -91,9 +114,10 @@ class GardenSceneWidget(QWidget):
                     painter.drawEllipse(QRectF(x - 26, base_y - 130, 52, 52))
 
             weather = self.scene.get("weather", "breeze")
-            density = max(0.2, float(self.scene.get("weather_particle_density", 1.0)))
+            density = self._clamp(self._coerce_float(self.scene.get("weather_particle_density", 1.0), 1.0), 0.2, 1.25)
             if weather in ("gentle_rain", "cloudy"):
-                pen = QPen(QColor(170, 205, 255, 90), 1)
+                weather_alpha = int(56 + (26 * density))
+                pen = QPen(QColor(170, 205, 255, weather_alpha), 1)
                 painter.setPen(pen)
                 for i in range(int(34 * density)):
                     x = (i * 41 + int(self.phase * 65)) % max(1, r.width())
@@ -104,10 +128,15 @@ class GardenSceneWidget(QWidget):
                 for i in range(int(22 * density)):
                     x = (i * 59 + int(self.phase * 28)) % max(1, r.width())
                     y = r.height() * 0.22 + ((i * 31) % int(r.height() * 0.58))
-                    painter.setBrush(QColor(247, 237, 130, 125))
+                    firefly_alpha = int(75 + (25 * density))
+                    painter.setBrush(QColor(247, 237, 130, firefly_alpha))
                     painter.drawEllipse(QRectF(x, y, 3.5, 3.5))
 
-            painter.setPen(QColor(210, 245, 222, glow))
+            text_outline = QColor(6, 18, 15, 185 if night else 165)
+            painter.setPen(QPen(text_outline, 2.2))
+            painter.drawText(18, 32, SCENE_TEXT["live_garden_label"])
+            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=int(growth * 100)))
+            painter.setPen(QColor(222, 249, 233, glow))
             painter.drawText(18, 32, SCENE_TEXT["live_garden_label"])
             painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=int(growth * 100)))
         except Exception:
@@ -117,17 +146,27 @@ class GardenSceneWidget(QWidget):
         stage_scale = {"seed": 0.35, "sprout": 0.5, "young": 0.72, "mature": 0.93, "flowering": 1.08, "rare": 1.15}
         stage = plant.get("stage", "seed")
         scale = stage_scale.get(stage, 0.6)
-        vitality = max(0.2, float(plant.get("vitality", 0.8)))
+        vitality = self._clamp(self._coerce_float(plant.get("vitality", 0.8), 0.8), 0.2, 1.0)
 
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(QColor(62, 45, 38))
         painter.drawEllipse(QRectF(x - 27, y - 14, 54, 23))
 
-        painter.setPen(QPen(QColor(72, 138, 72), 3))
+        stem_width = 2.2 + (1.7 * scale)
+        stem_color = QColor(72, 138, 72) if stage != "seed" else QColor(104, 120, 88)
+        painter.setPen(QPen(stem_color, stem_width))
         stem_h = 95 * scale
         painter.drawLine(int(x), int(y), int(x), int(y - stem_h))
 
-        leaf_color = QColor(45, 160, 96)
+        leaf_palette = {
+            "seed": QColor(126, 114, 90),
+            "sprout": QColor(86, 162, 102),
+            "young": QColor(54, 168, 102),
+            "mature": QColor(42, 158, 94),
+            "flowering": QColor(52, 176, 108),
+            "rare": QColor(86, 198, 126),
+        }
+        leaf_color = leaf_palette.get(stage, QColor(45, 160, 96))
         leaf_color.setAlphaF(vitality)
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(leaf_color)
@@ -139,7 +178,8 @@ class GardenSceneWidget(QWidget):
             painter.drawPath(path)
 
         if stage in ("mature", "flowering", "rare"):
-            painter.setBrush(QColor(106, 186, 88, 190))
+            canopy_color = QColor(106, 186, 88, 190) if stage != "rare" else QColor(98, 203, 126, 205)
+            painter.setBrush(canopy_color)
             painter.drawEllipse(QRectF(x - 18 * scale, y - stem_h - 26 * scale, 36 * scale, 34 * scale))
         if stage in ("flowering", "rare"):
             painter.setBrush(QColor(246, 126 + (idx * 20) % 85, 180, 220))
@@ -156,7 +196,17 @@ class GardenSceneWidget(QWidget):
             painter.drawEllipse(QRectF(x - 30 * scale, y - stem_h - 42 * scale, 60 * scale, 54 * scale))
 
     def _draw_fallback_scene(self, painter: QPainter, rect: Any) -> None:
-        painter.fillRect(rect, QColor(27, 48, 44))
+        fallback_gradient = QLinearGradient(0, 0, 0, rect.height())
+        fallback_gradient.setColorAt(0.0, QColor(18, 35, 48))
+        fallback_gradient.setColorAt(0.65, QColor(24, 55, 56))
+        fallback_gradient.setColorAt(1.0, QColor(19, 44, 38))
+        painter.fillRect(rect, fallback_gradient)
+        painter.setPen(QPen(QColor(6, 18, 15, 170), 2))
+        painter.drawText(
+            rect.adjusted(20, 20, -20, -20),
+            Qt.AlignmentFlag.AlignCenter,
+            SCENE_TEXT["fallback_message"],
+        )
         painter.setPen(QColor(223, 237, 223))
         painter.drawText(
             rect.adjusted(20, 20, -20, -20),
