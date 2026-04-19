@@ -28,6 +28,7 @@ class AnkiGardenApp:
         if self.config.value("show_toolbar_button", True):
             self._setup_toolbar()
         self._setup_reviewer_button()
+        self._setup_home_screen_widget()
         reviewer_did_answer_card.append(self.reviewer_hooks.on_answer)
         self._setup_sync_hooks()
         self._apply_retrospective_growth()
@@ -81,6 +82,117 @@ class AnkiGardenApp:
                 gui_hooks.sync_did_finish.append(lambda *_args, **_kwargs: self._apply_retrospective_growth())
         except Exception:
             pass
+
+    def _setup_home_screen_widget(self) -> None:
+        try:
+            from aqt import gui_hooks
+
+            if hasattr(gui_hooks, "deck_browser_will_render_content"):
+                gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
+        except Exception:
+            pass
+
+    def _inject_home_garden(self, _deck_browser: object, content: object) -> None:
+        self.engine.rollover_if_needed()
+        self._apply_retrospective_growth()
+        state = self.storage.state
+        stats = state.daily_stats
+        health_pct = int(self.engine.garden_health_index() * 100)
+        growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
+        growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
+        weather = str(state.selected_weather).replace("_", " ").title()
+        plants = state.plants[:3]
+        plant_visual = " ".join(self._plant_emoji_for_stage(p.growth_stage, p.rare_variant) for p in plants) or "🌱"
+        event = self.engine.get_weekly_event_summary()
+        html = f"""
+<style>
+.ag-home {{
+  margin: 12px 0;
+  border-radius: 16px;
+  border: 1px solid #2f4652;
+  background: linear-gradient(135deg, #0f1e2c 0%, #143b2f 65%, #1f4737 100%);
+  color: #ecf8ef;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  overflow: hidden;
+}}
+.ag-home__head {{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.2);
+  font-weight: 700;
+}}
+.ag-home__plants {{
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 6px;
+  padding: 8px 12px 0;
+  text-shadow: 0 0 12px rgba(154, 251, 177, 0.4);
+}}
+.ag-home__stats {{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 8px;
+  padding: 8px 12px 12px;
+}}
+.ag-home__pill {{
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  padding: 8px 10px;
+}}
+.ag-home__label {{ font-size: 11px; opacity: 0.76; text-transform: uppercase; }}
+.ag-home__value {{ font-size: 18px; font-weight: 700; margin-top: 2px; }}
+.ag-home__bar {{
+  height: 10px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.14);
+  margin: 2px 12px 12px;
+  overflow: hidden;
+}}
+.ag-home__bar span {{
+  display: block;
+  height: 100%;
+  width: {growth_pct}%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #61d984 0%, #cbff8e 100%);
+  box-shadow: 0 0 16px rgba(168, 255, 173, 0.75);
+}}
+.ag-home__event {{
+  font-size: 12px;
+  opacity: 0.9;
+  padding: 0 12px 12px;
+}}
+</style>
+<div class="ag-home">
+  <div class="ag-home__head">
+    <span>🌿 Anki Garden</span>
+    <span>{state.streak_days}d streak</span>
+  </div>
+  <div class="ag-home__plants">{plant_visual}</div>
+  <div class="ag-home__stats">
+    <div class="ag-home__pill"><div class="ag-home__label">Cards Today</div><div class="ag-home__value">{stats.reviewed}</div></div>
+    <div class="ag-home__pill"><div class="ag-home__label">Garden Health</div><div class="ag-home__value">{health_pct}%</div></div>
+    <div class="ag-home__pill"><div class="ag-home__label">Weather</div><div class="ag-home__value">{weather}</div></div>
+  </div>
+  <div class="ag-home__bar"><span></span></div>
+  <div class="ag-home__event">Growth today: {stats.growth_earned}/{growth_cap} • Event: {event}</div>
+</div>
+"""
+        if hasattr(content, "stats") and isinstance(content.stats, str):
+            content.stats += html
+
+    def _plant_emoji_for_stage(self, stage: str, rare: bool) -> str:
+        if rare:
+            return "🌟"
+        return {
+            "seed": "🟤",
+            "sprout": "🌱",
+            "young": "🌿",
+            "mature": "🌳",
+            "flowering": "🌸",
+            "rare": "✨",
+        }.get(stage, "🌱")
 
     def _apply_retrospective_growth(self) -> None:
         last_id = int(self.storage.state.retrospective_last_revlog_id or 0)
