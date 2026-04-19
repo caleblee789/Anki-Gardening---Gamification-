@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any, Dict, Optional
 
 from .models.state import GardenState, Plant
@@ -15,7 +16,9 @@ class GardenStorage:
         self.addon_dir = Path(__file__).parent
         self.data_path = self.addon_dir / "garden_state.json"
         self.assets_root = self.addon_dir / "assets"
-        self.asset_metadata = self.assets_root / "asset_metadata.json"
+        self.metadata_dir = self.assets_root / "metadata"
+        self.cache_dir = self.assets_root / "cache"
+        self.asset_metadata = self.metadata_dir / "asset_metadata.json"
         self.cloud_state_path = self.addon_dir / "cloud_state.json"
         self.social_hub_path = self.addon_dir / "social_hub.json"
         self.state = self._load()
@@ -29,14 +32,19 @@ class GardenStorage:
             pass
         return GardenState()
 
+    def _atomic_write_json(self, path: Path, payload: Dict[str, Any]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile("w", delete=False, dir=path.parent, encoding="utf-8") as tf:
+            json.dump(payload, tf, indent=2, ensure_ascii=False)
+            temp_name = tf.name
+        Path(temp_name).replace(path)
+
     def save(self) -> None:
-        self.data_path.write_text(
-            json.dumps(self.state.to_dict(), indent=2, ensure_ascii=False), "utf-8"
-        )
+        self._atomic_write_json(self.data_path, self.state.to_dict())
 
     def _ensure_defaults(self) -> None:
         self.assets_root.mkdir(parents=True, exist_ok=True)
-        for folder in ["plants", "backgrounds", "decorations", "weather", "ui"]:
+        for folder in ["plants", "backgrounds", "decorations", "weather", "ui", "cache", "metadata"]:
             (self.assets_root / folder).mkdir(exist_ok=True)
         if not self.state.plants:
             starters = [("bonsai", "streak"), ("rose", "accuracy")]
@@ -62,7 +70,7 @@ class GardenStorage:
             return {}
 
     def save_asset_metadata(self, data: dict) -> None:
-        self.asset_metadata.write_text(json.dumps(data, indent=2), "utf-8")
+        self._atomic_write_json(self.asset_metadata, data)
 
     def load_cloud_snapshot(self) -> Optional[Dict[str, Any]]:
         if not self.cloud_state_path.exists():
@@ -78,7 +86,7 @@ class GardenStorage:
             "reason": reason,
             "state": state_dict,
         }
-        self.cloud_state_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), "utf-8")
+        self._atomic_write_json(self.cloud_state_path, payload)
 
     def load_social_hub(self) -> Dict[str, Any]:
         if not self.social_hub_path.exists():
@@ -92,4 +100,4 @@ class GardenStorage:
         return {"gardens": {}}
 
     def save_social_hub(self, data: Dict[str, Any]) -> None:
-        self.social_hub_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), "utf-8")
+        self._atomic_write_json(self.social_hub_path, data)

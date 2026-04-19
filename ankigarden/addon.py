@@ -29,6 +29,7 @@ class AnkiGardenApp:
             self._setup_toolbar()
         self._setup_reviewer_button()
         reviewer_did_answer_card.append(self.reviewer_hooks.on_answer)
+        self.engine.rollover_if_needed()
 
     def _setup_menu(self) -> None:
         action = QAction("Anki Garden", mw)
