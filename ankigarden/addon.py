@@ -64,7 +64,11 @@ class AnkiGardenApp:
     def _setup_toolbar(self) -> None:
         action = QAction("Garden", mw)
         action.triggered.connect(self.open_dashboard)
-        mw.form.toolbar.addAction(action)
+        toolbar = getattr(getattr(mw, "form", None), "toolbar", None)
+        if toolbar is None:
+            logger.warning("Anki Garden: toolbar not available on this Anki version; skipping toolbar action")
+            return
+        toolbar.addAction(action)
 
     def _setup_reviewer_button(self) -> None:
         if not self.config.value("show_reviewer_button"):
