@@ -548,18 +548,10 @@ class GardenGameEngine:
 
     def resolve_plant_image(self, species: str, stage: str, rare: bool) -> Optional[str]:
         effective = "rare" if rare else stage
-        query_map = {
-            "seed": "seed in soil macro photography botanical",
-            "sprout": f"{species} sprout close up botanical",
-            "young": f"young {species} potted plant natural light",
-            "mature": f"mature healthy {species} houseplant",
-            "flowering": f"flowering {species} botanical garden",
-            "rare": f"rare variegated {species} plant specimen",
-        }
         path = self.assets.get_or_fetch(
             "plants",
             f"{species}_{effective}",
-            query_map[effective],
+            f"slot:plants:{species}:{effective}",
             theme=self.config.value("visual_theme", "verdant_dusk"),
         )
         return str(path) if path else None
@@ -567,23 +559,12 @@ class GardenGameEngine:
     def resolve_background_image(self) -> Optional[str]:
         seasonal = self.seasonal_theme()
         weather = self.state.selected_weather
-        query = {
-            "winter": "minimal winter japanese courtyard garden",
-            "spring": "serene spring zen garden pathway",
-            "summer": "sunny botanical garden courtyard",
-            "autumn": "autumn courtyard garden warm leaves",
-            "default": "calm minimalist garden courtyard",
-        }[seasonal]
-        if weather == "fireflies":
-            query = "night garden with fireflies calm"
-        elif weather == "gentle_rain":
-            query = "soft rainy garden pathway"
         return (
             str(
                 self.assets.get_or_fetch(
                     "backgrounds",
                     f"bg_{seasonal}_{weather}",
-                    query,
+                    f"slot:backgrounds:{seasonal}:{weather}",
                     theme=self.config.value("visual_theme", "verdant_dusk"),
                 )
                 or ""
@@ -592,28 +573,54 @@ class GardenGameEngine:
         )
 
     def resolve_weather_overlay(self) -> Optional[str]:
-        query = {
-            "sunny": "soft sunlight bokeh transparent background",
-            "cloudy": "light cloud texture overlay",
-            "fireflies": "fireflies night bokeh",
-            "gentle_rain": "gentle rain droplets bokeh",
-            "breeze": "soft floating pollen particles",
-        }.get(self.state.selected_weather, "soft sunlight bokeh")
         path = self.assets.get_or_fetch(
             "weather",
             f"weather_{self.state.selected_weather}",
-            query,
+            f"slot:weather:{self.state.selected_weather}",
             theme=self.config.value("visual_theme", "verdant_dusk"),
         )
         return str(path) if path else None
 
     def resolve_decoration_image(self, decoration: str) -> Optional[str]:
-        query = f"garden decoration {decoration.replace('_', ' ')}"
         path = self.assets.get_or_fetch(
             "decorations",
             f"decor_{decoration}",
-            query,
+            f"slot:decorations:{decoration}",
             theme=self.config.value("visual_theme", "verdant_dusk"),
+        )
+        return str(path) if path else None
+
+    def reroll_asset_slot(self, slot: str) -> Optional[str]:
+        if slot == "background":
+            seasonal = self.seasonal_theme()
+            weather = self.state.selected_weather
+            path = self.assets.get_or_fetch(
+                "backgrounds",
+                f"bg_{seasonal}_{weather}",
+                f"slot:backgrounds:{seasonal}:{weather}",
+                theme=self.config.value("visual_theme", "verdant_dusk"),
+                reroll=True,
+            )
+            return str(path) if path else None
+        if slot == "weather":
+            path = self.assets.get_or_fetch(
+                "weather",
+                f"weather_{self.state.selected_weather}",
+                f"slot:weather:{self.state.selected_weather}",
+                theme=self.config.value("visual_theme", "verdant_dusk"),
+                reroll=True,
+            )
+            return str(path) if path else None
+        first = self.state.plants[0] if self.state.plants else None
+        if not first:
+            return None
+        effective = "rare" if first.rare_variant else first.growth_stage
+        path = self.assets.get_or_fetch(
+            "plants",
+            f"{first.species}_{effective}",
+            f"slot:plants:{first.species}:{effective}",
+            theme=self.config.value("visual_theme", "verdant_dusk"),
+            reroll=True,
         )
         return str(path) if path else None
 

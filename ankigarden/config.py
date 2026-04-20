@@ -29,6 +29,11 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "burnout_detection": True,
     "burnout_volume_threshold": 500,
     "rare_event_frequency": 1.0,
+    "assets": {
+        "mode": "local_only",
+        "quality_preference": "balanced",
+        "allow_fallback_placeholder": True,
+    },
     "image_api": {
         "provider_priority": ["wikimedia"],
         "enable_builtin_no_key_sources": True,

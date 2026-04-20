@@ -26,7 +26,7 @@ The system is designed to support serious learners with calm reinforcement, reco
 - Rare event system (golden bloom, meteor shower, rainfall blessing, etc.).
 - Journal notes and timeline snapshots.
 - Local cloud snapshot readiness + share/export summary.
-- Real online image sourcing + deterministic starter-pack fallback + persistent local caching.
+- Fully offline, manifest-driven local asset catalog with deterministic slot resolution.
 
 ---
 
@@ -113,36 +113,33 @@ Use `sample_config.json` as a full reference.
 
 ---
 
-## Image behavior (no setup required)
+## Asset behavior (local-only catalog)
 
-By default, image rendering works out of the box with **zero API keys**:
+Image rendering is now fully deterministic and local-only:
 
-1. Cache-first reuse of existing image assets.
-2. No-key remote fetch via Wikimedia Commons.
-3. Deterministic fallback to curated local `assets/starter_pack/*` art if network fetch fails.
+1. Slot is resolved from gameplay state (species/stage, season/weather/theme, weather type, decoration id).
+2. Matching candidates are read from `ankigarden/assets/manifest.json`.
+3. Best local candidate is selected by quality preference (`assets.quality_preference`).
+4. Metadata is written to `assets/metadata/asset_metadata.json` with `source_kind: "local_catalog"`.
 
-This default path is deterministic and offline-resilient. Metadata records whether an image came from a remote source or the starter pack for future upgrade/refresh logic.
+### Manifest schema
 
-### Optional advanced providers (opt-in)
+Each manifest row includes:
 
-Unsplash, Pexels, and Pixabay are available but disabled in default first-run behavior unless you explicitly add them to `image_api.provider_priority` and provide keys.
+- `category`
+- `slot` (deterministic selector fields)
+- `file` (path under `ankigarden/assets/...`)
+- `width`, `height`, `format`
+- `source`/`attribution`
+- `quality_tier` and `quality_score`
 
-```json
-"image_api": {
-  "provider_priority": ["wikimedia", "unsplash"],
-  "unsplash_access_key": "YOUR_KEY",
-  "pexels_api_key": "",
-  "pixabay_api_key": ""
-}
-```
+### Local asset quality policy
 
-### Caching behavior
+- `assets.mode` must be `local_only`.
+- `assets.quality_preference`: `ultra` / `balanced` / `performance`.
+- `assets.allow_fallback_placeholder`: allow generated local fallback art when manifest paths are missing.
 
-- First request attempts remote no-key fetch and then stores local copies.
-- File is cached under `assets/<category>/`.
-- Metadata is written to `assets/metadata/asset_metadata.json`.
-- Future requests reuse cached files.
-- If remote fetch is unavailable, curated starter-pack assets are used automatically.
+Legacy `image_api.*` keys are still tolerated in config input but ignored by runtime selection.
 
 ---
 
@@ -181,9 +178,10 @@ Writes are atomic (`NamedTemporaryFile` + replace) for resilience.
 
 ## Troubleshooting
 
-- **No images showing**: starter-pack fallback should always display something even offline; if not, check add-on asset paths and `assets/starter_pack/` contents.
+- **No images showing**: validate `assets/manifest.json` slot coverage and ensure listed files exist on disk.
 - **Config ignored**: reload Anki after editing add-on config.
-- **Slow downloads**: defaults already use bounded retries/timeouts; keep provider list short (Wikimedia-only is recommended for no-key mode).
+- **Wrong art variant chosen**: adjust `assets.quality_preference` or reroll to cycle available local alternatives for that slot.
+- **Packaging issues**: include both `assets/manifest.json` and referenced files in builds.
 - **Import/share unavailable**: ensure `future_features.enable_social_gardens` is true.
 
 ---
@@ -203,4 +201,3 @@ To package as `.ankiaddon`:
 1. Zip the `ankigarden/` folder contents.
 2. Rename resulting zip to `ankigarden.ankiaddon`.
 3. Install via Anki add-on installer or copy into add-ons directory.
-

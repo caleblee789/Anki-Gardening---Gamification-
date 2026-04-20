@@ -1,0 +1,2515 @@
+{
+  "schema_version": 1,
+  "generated_by": "local catalog migration",
+  "assets": [
+    {
+      "asset_id": "plant_bonsai_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/bonsai/seed/bonsai_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/bonsai/sprout/bonsai_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/bonsai/young/bonsai_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/bonsai/mature/bonsai_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/bonsai/flowering/bonsai_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/bonsai/rare/bonsai_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/rose/seed/rose_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/rose/sprout/rose_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/rose/young/rose_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/rose/mature/rose_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/rose/flowering/rose_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/rose/rare/rose_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/cactus/seed/cactus_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/cactus/sprout/cactus_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/cactus/young/cactus_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/cactus/mature/cactus_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/cactus/flowering/cactus_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_cactus_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "cactus",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/cactus/rare/cactus_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/orchid/seed/orchid_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/orchid/sprout/orchid_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/orchid/young/orchid_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/orchid/mature/orchid_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/orchid/flowering/orchid_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_orchid_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "orchid",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/orchid/rare/orchid_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/moonflower/seed/moonflower_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/moonflower/sprout/moonflower_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/moonflower/young/moonflower_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/moonflower/mature/moonflower_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/moonflower/flowering/moonflower_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_moonflower_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "moonflower",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/moonflower/rare/moonflower_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/sunbloom/seed/sunbloom_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/sunbloom/sprout/sunbloom_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/sunbloom/young/sunbloom_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/sunbloom/mature/sunbloom_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/sunbloom/flowering/sunbloom_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_sunbloom_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "sunbloom",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/sunbloom/rare/sunbloom_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/fern/seed/fern_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/fern/sprout/fern_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/fern/young/fern_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/fern/mature/fern_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/fern/flowering/fern_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_fern_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "fern",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/fern/rare/fern_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_seed_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "seed"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/ivy/seed/ivy_seed.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_sprout_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "sprout"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/ivy/sprout/ivy_sprout.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_young_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "young"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/ivy/young/ivy_young.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_mature_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "mature"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/ivy/mature/ivy_mature.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_flowering_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "flowering"
+      },
+      "variants": [
+        "default"
+      ],
+      "file": "assets/plants/ivy/flowering/ivy_flowering.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_rare_v1",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "rare"
+      },
+      "variants": [
+        "rare"
+      ],
+      "file": "assets/plants/ivy/rare/ivy_rare.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.9,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_bonsai_mature_alt",
+      "category": "plants",
+      "slot": {
+        "species": "bonsai",
+        "stage": "mature"
+      },
+      "variants": [
+        "alt"
+      ],
+      "file": "assets/plants/bonsai/mature/bonsai_mature_alt.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.94,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_rose_mature_alt",
+      "category": "plants",
+      "slot": {
+        "species": "rose",
+        "stage": "mature"
+      },
+      "variants": [
+        "alt"
+      ],
+      "file": "assets/plants/rose/mature/rose_mature_alt.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.94,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "plant_ivy_mature_alt",
+      "category": "plants",
+      "slot": {
+        "species": "ivy",
+        "stage": "mature"
+      },
+      "variants": [
+        "alt"
+      ],
+      "file": "assets/plants/ivy/mature/ivy_mature_alt.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.94,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_winter_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "sunny",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/winter_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_winter_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "sunny",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/winter_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_winter_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "sunny",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/winter_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_winter_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "cloudy",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/winter_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_winter_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "cloudy",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/winter_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_winter_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "cloudy",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/winter_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_winter_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "fireflies",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/winter_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_winter_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "fireflies",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/winter_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_winter_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "fireflies",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/winter_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_winter_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "gentle_rain",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/winter_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_winter_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "gentle_rain",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/winter_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_winter_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "gentle_rain",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/winter_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_winter_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "breeze",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/winter_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_winter_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "breeze",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/winter_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_winter_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "winter",
+        "weather": "breeze",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/winter_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_spring_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "sunny",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/spring_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_spring_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "sunny",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/spring_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_spring_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "sunny",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/spring_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_spring_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "cloudy",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/spring_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_spring_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "cloudy",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/spring_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_spring_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "cloudy",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/spring_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_spring_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "fireflies",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/spring_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_spring_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "fireflies",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/spring_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_spring_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "fireflies",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/spring_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_spring_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "gentle_rain",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/spring_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_spring_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "gentle_rain",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/spring_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_spring_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "gentle_rain",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/spring_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_spring_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "breeze",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/spring_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_spring_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "breeze",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/spring_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_spring_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "spring",
+        "weather": "breeze",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/spring_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_summer_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "sunny",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/summer_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_summer_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "sunny",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/summer_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_summer_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "sunny",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/summer_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_summer_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "cloudy",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/summer_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_summer_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "cloudy",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/summer_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_summer_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "cloudy",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/summer_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_summer_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "fireflies",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/summer_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_summer_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "fireflies",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/summer_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_summer_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "fireflies",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/summer_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_summer_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "gentle_rain",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/summer_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_summer_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "gentle_rain",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/summer_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_summer_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "gentle_rain",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/summer_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_summer_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "breeze",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/summer_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_summer_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "breeze",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/summer_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_summer_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "summer",
+        "weather": "breeze",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/summer_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_autumn_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "sunny",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/autumn_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_autumn_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "sunny",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/autumn_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_autumn_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "sunny",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/autumn_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_autumn_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "cloudy",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/autumn_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_autumn_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "cloudy",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/autumn_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_autumn_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "cloudy",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/autumn_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_autumn_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "fireflies",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/autumn_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_autumn_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "fireflies",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/autumn_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_autumn_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "fireflies",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/autumn_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_autumn_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "gentle_rain",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/autumn_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_autumn_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "gentle_rain",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/autumn_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_autumn_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "gentle_rain",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/autumn_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_autumn_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "breeze",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/autumn_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_autumn_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "breeze",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/autumn_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_autumn_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "autumn",
+        "weather": "breeze",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/autumn_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_default_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "sunny",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/default_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_default_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "sunny",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/default_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_default_sunny",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "sunny",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/default_sunny.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_default_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "cloudy",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/default_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_default_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "cloudy",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/default_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_default_cloudy",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "cloudy",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/default_cloudy.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_default_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "fireflies",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/default_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_default_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "fireflies",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/default_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_default_fireflies",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "fireflies",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/default_fireflies.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_default_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "gentle_rain",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/default_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_default_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "gentle_rain",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/default_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_default_gentle_rain",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "gentle_rain",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/default_gentle_rain.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dusk_default_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "breeze",
+        "theme": "verdant_dusk"
+      },
+      "file": "assets/backgrounds/verdant_dusk/default_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_moonlit_study_default_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "breeze",
+        "theme": "moonlit_study"
+      },
+      "file": "assets/backgrounds/moonlit_study/default_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "ultra",
+      "quality_score": 0.91,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "bg_verdant_dawn_default_breeze",
+      "category": "backgrounds",
+      "slot": {
+        "season": "default",
+        "weather": "breeze",
+        "theme": "verdant_dawn"
+      },
+      "file": "assets/backgrounds/verdant_dawn/default_breeze.svg",
+      "width": 1920,
+      "height": 1080,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.88,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_sunny_performance",
+      "category": "weather",
+      "slot": {
+        "weather": "sunny"
+      },
+      "quality_profile": "performance",
+      "file": "assets/weather/sunny/sunny_performance.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "performance",
+      "quality_score": 0.76,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_sunny_balanced",
+      "category": "weather",
+      "slot": {
+        "weather": "sunny"
+      },
+      "quality_profile": "balanced",
+      "file": "assets/weather/sunny/sunny_balanced.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.86,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_cloudy_performance",
+      "category": "weather",
+      "slot": {
+        "weather": "cloudy"
+      },
+      "quality_profile": "performance",
+      "file": "assets/weather/cloudy/cloudy_performance.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "performance",
+      "quality_score": 0.76,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_cloudy_balanced",
+      "category": "weather",
+      "slot": {
+        "weather": "cloudy"
+      },
+      "quality_profile": "balanced",
+      "file": "assets/weather/cloudy/cloudy_balanced.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.86,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_fireflies_performance",
+      "category": "weather",
+      "slot": {
+        "weather": "fireflies"
+      },
+      "quality_profile": "performance",
+      "file": "assets/weather/fireflies/fireflies_performance.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "performance",
+      "quality_score": 0.76,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_fireflies_balanced",
+      "category": "weather",
+      "slot": {
+        "weather": "fireflies"
+      },
+      "quality_profile": "balanced",
+      "file": "assets/weather/fireflies/fireflies_balanced.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.86,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_gentle_rain_performance",
+      "category": "weather",
+      "slot": {
+        "weather": "gentle_rain"
+      },
+      "quality_profile": "performance",
+      "file": "assets/weather/gentle_rain/gentle_rain_performance.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "performance",
+      "quality_score": 0.76,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_gentle_rain_balanced",
+      "category": "weather",
+      "slot": {
+        "weather": "gentle_rain"
+      },
+      "quality_profile": "balanced",
+      "file": "assets/weather/gentle_rain/gentle_rain_balanced.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.86,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_breeze_performance",
+      "category": "weather",
+      "slot": {
+        "weather": "breeze"
+      },
+      "quality_profile": "performance",
+      "file": "assets/weather/breeze/breeze_performance.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "performance",
+      "quality_score": 0.76,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "weather_breeze_balanced",
+      "category": "weather",
+      "slot": {
+        "weather": "breeze"
+      },
+      "quality_profile": "balanced",
+      "file": "assets/weather/breeze/breeze_balanced.svg",
+      "width": 1280,
+      "height": 720,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.86,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "decor_stone_path",
+      "category": "decorations",
+      "slot": {
+        "decoration_id": "stone_path"
+      },
+      "file": "assets/decorations/stone_path/stone_path.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.84,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "decor_bench_corner",
+      "category": "decorations",
+      "slot": {
+        "decoration_id": "bench_corner"
+      },
+      "file": "assets/decorations/bench_corner/bench_corner.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.84,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "decor_lantern",
+      "category": "decorations",
+      "slot": {
+        "decoration_id": "lantern"
+      },
+      "file": "assets/decorations/lantern/lantern.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.84,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "decor_butterflies",
+      "category": "decorations",
+      "slot": {
+        "decoration_id": "butterflies"
+      },
+      "file": "assets/decorations/butterflies/butterflies.svg",
+      "width": 1024,
+      "height": 1024,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.84,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "ui_panel_frame",
+      "category": "ui",
+      "slot": {
+        "ui_id": "panel_frame"
+      },
+      "file": "assets/ui/panel_frame/panel_frame.svg",
+      "width": 512,
+      "height": 512,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.82,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "ui_growth_meter",
+      "category": "ui",
+      "slot": {
+        "ui_id": "growth_meter"
+      },
+      "file": "assets/ui/growth_meter/growth_meter.svg",
+      "width": 512,
+      "height": 512,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.82,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    },
+    {
+      "asset_id": "ui_seed_badge",
+      "category": "ui",
+      "slot": {
+        "ui_id": "seed_badge"
+      },
+      "file": "assets/ui/seed_badge/seed_badge.svg",
+      "width": 512,
+      "height": 512,
+      "format": "svg",
+      "quality_tier": "balanced",
+      "quality_score": 0.82,
+      "source": "starter_pack remix",
+      "attribution": "CC0 bundled vector"
+    }
+  ]
+}
