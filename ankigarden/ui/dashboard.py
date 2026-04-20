@@ -28,6 +28,7 @@ from aqt.qt import (
     QFontMetrics,
     QListWidgetItem,
     QSizePolicy,
+    QGuiApplication,
 )
 from .garden_studio import GardenStudioWidget
 from .scene import GardenSceneWidget
@@ -115,7 +116,8 @@ class GardenSettingsDialog(QDialog):
         self.engine = engine
         self.config = config
         self.setWindowTitle(UI_TEXT["settings_window_title"])
-        self.setMinimumSize(760, 520)
+        self.setMinimumSize(640, 460)
+        self.resize(*self._recommended_window_size(920, 640, width_ratio=0.72, height_ratio=0.72))
         self.setStyleSheet(_button_stylesheet())
         root = QHBoxLayout(self)
         tabs = QTabWidget()
@@ -168,6 +170,17 @@ class GardenSettingsDialog(QDialog):
         tabs.addTab(behavior, UI_TEXT["tab_behavior"])
         tabs.addTab(advanced, UI_TEXT["tab_advanced"])
 
+    def _recommended_window_size(
+        self, default_width: int, default_height: int, *, width_ratio: float, height_ratio: float
+    ) -> tuple[int, int]:
+        screen = QGuiApplication.primaryScreen()
+        if screen is None:
+            return default_width, default_height
+        available = screen.availableGeometry()
+        width = min(default_width, max(self.minimumWidth(), int(available.width() * width_ratio)))
+        height = min(default_height, max(self.minimumHeight(), int(available.height() * height_ratio)))
+        return width, height
+
     def _apply_mode(self) -> None:
         self.engine.set_garden_mode(str(self.mode_combo.currentData()))
         QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["garden_mode_updated"])
@@ -211,6 +224,10 @@ class GardenDashboard(QDialog):
     CHIP_BG = "#213847"
     LIST_ELIDE_WIDTH = 340
     LIST_MAX_LENGTH = 170
+    MIN_WINDOW_WIDTH = 860
+    MIN_WINDOW_HEIGHT = 620
+    DEFAULT_WINDOW_WIDTH = 1240
+    DEFAULT_WINDOW_HEIGHT = 840
 
     def __init__(self, mw_window: Any, engine: Any, storage: Any, config: Any) -> None:
         super().__init__(mw_window)
@@ -219,9 +236,18 @@ class GardenDashboard(QDialog):
         self.config = config
         self.settings_dialog: GardenSettingsDialog | None = None
         self.setWindowTitle(UI_TEXT["app_title"])
-        self.setMinimumSize(1080, 720)
-        self.resize(1240, 840)
+        self.setMinimumSize(self.MIN_WINDOW_WIDTH, self.MIN_WINDOW_HEIGHT)
+        self.resize(*self._recommended_window_size())
         self._build_ui()
+
+    def _recommended_window_size(self) -> tuple[int, int]:
+        screen = QGuiApplication.primaryScreen()
+        if screen is None:
+            return self.DEFAULT_WINDOW_WIDTH, self.DEFAULT_WINDOW_HEIGHT
+        available = screen.availableGeometry()
+        width = min(self.DEFAULT_WINDOW_WIDTH, max(self.MIN_WINDOW_WIDTH, int(available.width() * 0.92)))
+        height = min(self.DEFAULT_WINDOW_HEIGHT, max(self.MIN_WINDOW_HEIGHT, int(available.height() * 0.9)))
+        return width, height
 
     def _build_ui(self) -> None:
         self.setStyleSheet(
