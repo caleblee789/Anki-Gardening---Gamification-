@@ -30,6 +30,27 @@ The system is designed to support serious learners with calm reinforcement, reco
 
 ---
 
+
+## Development runtime
+
+To keep local tooling aligned with requested non-default versions, this repo now pins:
+
+- **Node.js**: `20.19.6` (default was 22)
+- **Swift**: `6.1.3` (default was 6.2.3)
+- **PHP**: `8.4snapshot` (default was 8.5)
+- **Java**: `21` (default was 25)
+
+Version files included:
+
+- `.nvmrc` (Node via `nvm`)
+- `.node-version` (Node via `nodenv`/IDEs)
+- `.swift-version` (Swift toolchain selectors that honor this file)
+- `.php-version` (PHP version managers/IDEs that honor this file)
+- `.java-version` (Java version managers/IDEs that honor this file)
+- `.tool-versions` (single source for `asdf`/`mise`)
+
+---
+
 ## Installation
 
 1. Copy `ankigarden/` into your Anki add-ons directory.
