@@ -155,14 +155,25 @@ class AnkiGardenApp:
             if "ag-home-root" not in content.table:
                 content.table += html
 
+    def _context_name(self, context: object) -> str:
+        cls = type(context)
+        module = getattr(cls, "__module__", "")
+        qualname = getattr(cls, "__qualname__", cls.__name__)
+        return f"{module}.{qualname}".lower()
+
     def _is_main_screen_context(self, context: object) -> bool:
-        context_name = type(context).__name__.lower()
-        return any(name in context_name for name in ("deckbrowser", "overview", "main", "homescreen"))
+        context_name = self._context_name(context)
+        is_primary_home_context = any(name in context_name for name in ("deckbrowser", "overview", "homescreen"))
+        is_lower_bar_context = any(name in context_name for name in ("bottom", "toolbar", "statusbar", "footer"))
+        return is_primary_home_context and not is_lower_bar_context
 
     def _inject_home_garden_webview(self, web_content: object, context: object) -> None:
+        context_name = self._context_name(context)
         if not self._is_main_screen_context(context):
+            logger.debug("Anki Garden: skipping home injection for non-primary context %s", context_name)
             return
 
+        logger.debug("Anki Garden: injecting home garden into context %s", context_name)
         self.engine.rollover_if_needed()
         self._apply_retrospective_growth()
         html = self._build_home_garden_html()

@@ -256,3 +256,30 @@ def test_cards_today_uses_collection_revlog_count(monkeypatch):
 
     assert "42" in html
     assert "999" not in html
+
+
+def test_webview_injection_skips_bottom_bar_context(monkeypatch):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+
+    web_content = SimpleNamespace(body="<main></main>")
+    bottom_ctx = type("DeckBrowserBottomBar", (), {})()
+
+    app._inject_home_garden_webview(web_content, bottom_ctx)
+
+    assert "ag-home-root" not in web_content.body
+
+
+def test_main_screen_context_detection_excludes_lower_bars(monkeypatch):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+
+    deck_ctx = type("DeckBrowser", (), {})()
+    overview_ctx = type("Overview", (), {})()
+    bottom_ctx = type("OverviewBottomToolbar", (), {})()
+
+    assert app._is_main_screen_context(deck_ctx) is True
+    assert app._is_main_screen_context(overview_ctx) is True
+    assert app._is_main_screen_context(bottom_ctx) is False
