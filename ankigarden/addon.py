@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Optional
 
 from aqt import mw
@@ -13,6 +14,8 @@ from .hooks.reviewer import ReviewerHookHandler
 from .storage import GardenStorage
 from .ui.dashboard import GardenDashboard
 
+logger = logging.getLogger(__name__)
+
 
 class AnkiGardenApp:
     def __init__(self) -> None:
@@ -22,6 +25,7 @@ class AnkiGardenApp:
         self.reviewer_hooks = ReviewerHookHandler(self.engine, self.storage)
         self.dashboard: Optional[GardenDashboard] = None
         self._reviewer_button: Optional[QPushButton] = None
+        self._menu_action: Optional[QAction] = None
 
     def setup(self) -> None:
         self._setup_menu()
@@ -35,9 +39,27 @@ class AnkiGardenApp:
         self.engine.rollover_if_needed()
 
     def _setup_menu(self) -> None:
+        if self._menu_action is not None:
+            return
+
+        existing_actions = []
+        menu_tools = getattr(getattr(mw, "form", None), "menuTools", None)
+        if menu_tools is not None and hasattr(menu_tools, "actions"):
+            try:
+                existing_actions = list(menu_tools.actions())
+            except Exception:
+                existing_actions = []
+
+        for action in existing_actions:
+            if getattr(action, "text", lambda: "")() == "Anki Garden":
+                self._menu_action = action
+                logger.debug("Anki Garden menu action already registered.")
+                return
+
         action = QAction("Anki Garden", mw)
         action.triggered.connect(self.open_dashboard)
         mw.form.menuTools.addAction(action)
+        self._menu_action = action
 
     def _setup_toolbar(self) -> None:
         action = QAction("Garden", mw)
@@ -81,58 +103,74 @@ class AnkiGardenApp:
             if hasattr(gui_hooks, "sync_did_finish"):
                 gui_hooks.sync_did_finish.append(lambda *_args, **_kwargs: self._apply_retrospective_growth())
         except Exception:
-            pass
+            logger.exception("Anki Garden: failed to attach sync hooks")
 
     def _setup_home_screen_widget(self) -> None:
         try:
             from aqt import gui_hooks
-
-            if hasattr(gui_hooks, "deck_browser_will_render_content"):
-                gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
-            if hasattr(gui_hooks, "overview_will_render_content"):
-                gui_hooks.overview_will_render_content.append(self._inject_home_garden)
-            if hasattr(gui_hooks, "webview_will_set_content"):
-                gui_hooks.webview_will_set_content.append(self._inject_home_garden_webview)
         except Exception:
-            pass
+            logger.exception("Anki Garden: unable to import gui_hooks for home-screen injection")
+            return
+
+        attached_hooks: list[str] = []
+
+        if hasattr(gui_hooks, "deck_browser_will_render_content"):
+            gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
+            attached_hooks.append("deck_browser_will_render_content")
+        if hasattr(gui_hooks, "overview_will_render_content"):
+            gui_hooks.overview_will_render_content.append(self._inject_home_garden)
+            attached_hooks.append("overview_will_render_content")
+        if hasattr(gui_hooks, "webview_will_set_content"):
+            gui_hooks.webview_will_set_content.append(self._inject_home_garden_webview)
+            attached_hooks.append("webview_will_set_content")
+
+        if attached_hooks:
+            logger.info("Anki Garden attached home-screen hooks: %s", ", ".join(attached_hooks))
+        else:
+            logger.warning("Anki Garden: no supported home-screen hooks available on this Anki version")
 
     def _inject_home_garden(self, _page: object, content: object) -> None:
         self.engine.rollover_if_needed()
+        self._apply_retrospective_growth()
+
         html = self._build_home_garden_html()
         if hasattr(content, "stats") and isinstance(content.stats, str):
             if "ag-home-root" not in content.stats:
                 content.stats += html
             return
+
         if hasattr(content, "table") and isinstance(content.table, str):
             if "ag-home-root" not in content.table:
                 content.table += html
 
-    def _inject_home_garden_webview(self, web_content: object, context: object) -> None:
+    def _is_main_screen_context(self, context: object) -> bool:
         context_name = type(context).__name__.lower()
-        if "deckbrowser" not in context_name and "overview" not in context_name:
+        return any(name in context_name for name in ("deckbrowser", "overview", "main", "homescreen"))
+
+    def _inject_home_garden_webview(self, web_content: object, context: object) -> None:
+        if not self._is_main_screen_context(context):
             return
+
+        self.engine.rollover_if_needed()
+        self._apply_retrospective_growth()
         html = self._build_home_garden_html()
+
         body = getattr(web_content, "body", None)
         if isinstance(body, str) and "ag-home-root" not in body:
             web_content.body = body + html
 
     def _build_home_garden_html(self) -> str:
-        except Exception:
-            pass
-
-    def _inject_home_garden(self, _deck_browser: object, content: object) -> None:
-        self.engine.rollover_if_needed()
-        self._apply_retrospective_growth()
-        state = self.storage.state
-        stats = state.daily_stats
-        health_pct = int(self.engine.garden_health_index() * 100)
-        growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
-        growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
-        weather = str(state.selected_weather).replace("_", " ").title()
-        plants = state.plants[:3]
-        plant_visual = " ".join(self._plant_emoji_for_stage(p.growth_stage, p.rare_variant) for p in plants) or "🌱"
-        event = self.engine.get_weekly_event_summary()
-        html = f"""
+        try:
+            state = self.storage.state
+            stats = state.daily_stats
+            health_pct = int(self.engine.garden_health_index() * 100)
+            growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
+            growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
+            weather = str(state.selected_weather).replace("_", " ").title()
+            plants = state.plants[:3]
+            plant_visual = " ".join(self._plant_emoji_for_stage(p.growth_stage, p.rare_variant) for p in plants) or "🌱"
+            event = self.engine.get_weekly_event_summary()
+            return f"""
 <style>
 .ag-home {{
   margin: 12px 0;
@@ -193,25 +231,24 @@ class AnkiGardenApp:
   box-shadow: 0 0 16px rgba(168, 255, 173, 0.75);
 }}
 </style>
-<div id="ag-home-root" class="ag-home">
-<div class="ag-home">
-  <div class="ag-home__head">
+<div id=\"ag-home-root\" class=\"ag-home\">
+  <div class=\"ag-home__head\">
     <span>🌿 Anki Garden</span>
     <span>{state.streak_days}d streak</span>
   </div>
-  <div class="ag-home__plants">{plant_visual}</div>
-  <div class="ag-home__stats">
-    <div class="ag-home__pill"><div class="ag-home__label">Cards Today</div><div class="ag-home__value">{stats.reviewed}</div></div>
-    <div class="ag-home__pill"><div class="ag-home__label">Garden Health</div><div class="ag-home__value">{health_pct}%</div></div>
-    <div class="ag-home__pill"><div class="ag-home__label">Weather</div><div class="ag-home__value">{weather}</div></div>
+  <div class=\"ag-home__plants\">{plant_visual}</div>
+  <div class=\"ag-home__stats\">
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{stats.reviewed}</div></div>
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Garden Health</div><div class=\"ag-home__value\">{health_pct}%</div></div>
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Weather</div><div class=\"ag-home__value\">{weather}</div></div>
   </div>
-  <div class="ag-home__bar"><span></span></div>
-  <div class="ag-home__event">Growth today: {stats.growth_earned}/{growth_cap} • Event: {event}</div>
+  <div class=\"ag-home__bar\"><span></span></div>
+  <div class=\"ag-home__event\">Growth today: {stats.growth_earned}/{growth_cap} • Event: {event}</div>
 </div>
 """
-        return html
-        if hasattr(content, "stats") and isinstance(content.stats, str):
-            content.stats += html
+        except Exception:
+            logger.exception("Anki Garden: failed to build home garden html")
+            return '<div id="ag-home-root" class="ag-home"><div class="ag-home__event">Anki Garden</div></div>'
 
     def _plant_emoji_for_stage(self, stage: str, rare: bool) -> str:
         if rare:

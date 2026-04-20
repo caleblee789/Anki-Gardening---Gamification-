@@ -1,0 +1,207 @@
+import importlib
+import logging
+import sys
+import types
+from pathlib import Path
+from types import SimpleNamespace
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+
+class _Signal:
+    def __init__(self):
+        self._callbacks = []
+
+    def connect(self, callback):
+        self._callbacks.append(callback)
+
+    def emit(self):
+        for callback in self._callbacks:
+            callback()
+
+
+class _Action:
+    def __init__(self, text, _parent):
+        self._text = text
+        self.triggered = _Signal()
+
+    def text(self):
+        return self._text
+
+
+class _Menu:
+    def __init__(self):
+        self._actions = []
+
+    def addAction(self, action):
+        self._actions.append(action)
+
+    def actions(self):
+        return list(self._actions)
+
+
+class _Button:
+    def __init__(self, *_args, **_kwargs):
+        self.clicked = _Signal()
+
+    def setToolTip(self, _tip):
+        return None
+
+
+class _Hooks:
+    def __init__(self):
+        self.deck_browser_will_render_content = []
+        self.overview_will_render_content = []
+        self.webview_will_set_content = []
+        self.sync_did_finish = []
+        self.reviewer_did_answer_card = []
+        self.reviewer_did_show_question = []
+
+
+def _install_fake_aqt(monkeypatch):
+    hooks = _Hooks()
+    menu_tools = _Menu()
+    toolbar = _Menu()
+    warnings = []
+    infos = []
+
+    aqt_mod = types.ModuleType("aqt")
+    aqt_mod.mw = SimpleNamespace(form=SimpleNamespace(menuTools=menu_tools, toolbar=toolbar), reviewer=None)
+    aqt_mod.gui_hooks = hooks
+
+    qt_mod = types.ModuleType("aqt.qt")
+    qt_mod.QAction = _Action
+    qt_mod.QPushButton = _Button
+
+    utils_mod = types.ModuleType("aqt.utils")
+    utils_mod.showWarning = lambda msg: warnings.append(msg)
+    utils_mod.showInfo = lambda msg: infos.append(msg)
+
+    dashboard_mod = types.ModuleType("ankigarden.ui.dashboard")
+
+    class _Dashboard:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        def refresh_all(self):
+            return None
+
+        def show(self):
+            return None
+
+        def raise_(self):
+            return None
+
+        def show_retrospective_feedback(self, *_args, **_kwargs):
+            return None
+
+    dashboard_mod.GardenDashboard = _Dashboard
+
+
+    monkeypatch.setitem(sys.modules, "aqt", aqt_mod)
+    monkeypatch.setitem(sys.modules, "aqt.qt", qt_mod)
+    monkeypatch.setitem(sys.modules, "aqt.utils", utils_mod)
+    monkeypatch.setitem(sys.modules, "aqt.gui_hooks", hooks)
+    monkeypatch.setitem(sys.modules, "ankigarden.ui.dashboard", dashboard_mod)
+
+    return aqt_mod, hooks, warnings, infos
+
+
+def _new_app(addon_module):
+    app = addon_module.AnkiGardenApp.__new__(addon_module.AnkiGardenApp)
+    app._menu_action = None
+    app.dashboard = None
+    app._reviewer_button = None
+    app._apply_retrospective_growth = lambda: None
+    app.engine = SimpleNamespace(
+        rollover_if_needed=lambda: None,
+        garden_health_index=lambda: 0.73,
+        get_weekly_event_summary=lambda: "Calm weather",
+    )
+    app.storage = SimpleNamespace(
+        state=SimpleNamespace(
+            daily_stats=SimpleNamespace(reviewed=14, growth_earned=28),
+            selected_weather="sunny",
+            plants=[],
+            streak_days=5,
+            retrospective_last_revlog_id=0,
+        )
+    )
+    app.config = SimpleNamespace(value=lambda key, default=None: 220 if key == "daily_growth_cap" else default)
+    app.open_dashboard = lambda: setattr(app, "_opened", True)
+    return app
+
+
+def test_startup_path_logs_errors(monkeypatch, caplog):
+    _install_fake_aqt(monkeypatch)
+    ankigarden = importlib.reload(importlib.import_module("ankigarden"))
+
+    caplog.set_level(logging.ERROR)
+
+    def _boom():
+        raise RuntimeError("broken setup")
+
+    ok = ankigarden._initialize_addon(_boom)
+
+    assert ok is False
+    assert "failed to start" in caplog.text.lower()
+    assert "traceback" in caplog.text.lower()
+
+
+def test_setup_menu_registers_single_action_and_callback(monkeypatch):
+    aqt_mod, _hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    addon.mw = aqt_mod.mw
+
+    app = _new_app(addon)
+    app._setup_menu()
+    app._setup_menu()
+
+    actions = aqt_mod.mw.form.menuTools.actions()
+    assert len([a for a in actions if a.text() == "Anki Garden"]) == 1
+
+    action = actions[0]
+    app._opened = False
+    action.triggered.emit()
+    assert app._opened is True
+
+
+def test_home_html_contains_root_id(monkeypatch):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+
+    html = app._build_home_garden_html()
+
+    assert "ag-home-root" in html
+
+
+def test_injection_idempotent_for_render_and_webview(monkeypatch):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+
+    content = SimpleNamespace(stats="<div>stats</div>")
+    app._inject_home_garden(object(), content)
+    first = content.stats
+    app._inject_home_garden(object(), content)
+    assert first == content.stats
+
+    web_content = SimpleNamespace(body="<main></main>")
+    deck_ctx = type("DeckBrowser", (), {})()
+    app._inject_home_garden_webview(web_content, deck_ctx)
+    first_body = web_content.body
+    app._inject_home_garden_webview(web_content, deck_ctx)
+    assert first_body == web_content.body
+
+
+def test_setup_home_widget_registers_available_hooks(monkeypatch):
+    _aqt_mod, hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+
+    app._setup_home_screen_widget()
+
+    assert app._inject_home_garden in hooks.deck_browser_will_render_content
+    assert app._inject_home_garden in hooks.overview_will_render_content
+    assert app._inject_home_garden_webview in hooks.webview_will_set_content
