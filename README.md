@@ -1,75 +1,50 @@
 # Anki Garden 🌿
 
-Anki Garden is a production-oriented Anki add-on that turns review consistency into long-term visual progress.
+Anki Garden is an Anki add-on that rewards consistent reviews with a calm, visual gardening loop.
 
 Core loop:
 
-> study cards consistently → earn growth energy → grow plants and garden layers → unlock new cosmetics/species.
+> review cards → earn growth energy → advance plant stages → unlock more garden expression.
 
-The system is designed to support serious learners with calm reinforcement, recovery-friendly streak handling, and quality-aware growth (not raw grinding).
-
----
-
-## Features
-
-- Multi-slot garden with unlockable plant slots.
-- Growth stages per plant: seed, sprout, young, mature, flowering, rare.
-- Adaptive species personalities (bonsai, rose, cactus, orchid, moonflower, sunbloom, ivy, fern).
-- Deck-to-plant mapping (optional) and deck difficulty weighting hooks.
-- Daily quests with adaptive generation.
-- Achievement system (streak, volume, accuracy, recovery, deep-work, exam mode).
-- Focus/deep work sessions (25/45/60 min).
-- Recovery momentum logic after missed days.
-- Burnout detection and lightweight guidance.
-- Garden health index.
-- Seasonal visuals and time-of-day bonuses.
-- Rare event system (golden bloom, meteor shower, rainfall blessing, etc.).
-- Journal notes and timeline snapshots.
-- Local cloud snapshot readiness + share/export summary.
-- Fully offline, manifest-driven local asset catalog with deterministic slot resolution.
+The add-on is fully local-first: state, assets, and metadata are all stored on disk in the add-on folder.
 
 ---
 
+## What’s currently implemented
 
-## Development runtime
-
-To keep local tooling aligned with requested non-default versions, this repo now pins:
-
-- **Node.js**: `20.19.6` (default was 22)
-- **Swift**: `6.1.3` (default was 6.2.3)
-- **PHP**: `8.4snapshot` (default was 8.5)
-- **Java**: `21` (default was 25)
-
-Version files included:
-
-- `.nvmrc` (Node via `nvm`)
-- `.node-version` (Node via `nodenv`/IDEs)
-- `.swift-version` (Swift toolchain selectors that honor this file)
-- `.php-version` (PHP version managers/IDEs that honor this file)
-- `.java-version` (Java version managers/IDEs that honor this file)
-- `.tool-versions` (single source for `asdf`/`mise`)
-
----
-
-## Installation
-
-1. Copy `ankigarden/` into your Anki add-ons directory.
-2. Restart Anki.
-3. Open **Tools → Anki Garden**.
-4. Start reviewing cards; garden progress updates automatically.
-
-Optional entries:
-- Toolbar button (`show_toolbar_button`)
-- Reviewer button (`show_reviewer_button`)
+- **Core progression engine**
+  - Daily growth economy with configurable caps, weights, and penalties.
+  - Plant lifecycle stages: `seed`, `sprout`, `young`, `mature`, `flowering`, `rare`.
+  - Multi-slot garden progression with unlockable slots.
+- **Habit and motivation systems**
+  - Daily quests and achievement tracking.
+  - Streak/recovery-aware growth logic.
+  - Burnout detection and adaptive feedback.
+  - Focus mode and exam mode multipliers.
+- **UI integrations**
+  - Tools menu entry (**Tools → Anki Garden**).
+  - Optional toolbar action and optional reviewer button.
+  - Home-screen garden widget injection (Deck Browser / Overview webview contexts).
+  - Dashboard and Garden Studio UI modules.
+- **Asset pipeline (new local SVG workflow)**
+  - Manifest-driven deterministic local asset selection.
+  - Versioned SVG catalog under `assets/v2_cozy_handpainted/...`.
+  - Seasonal backgrounds, weather variants, decorations, and per-stage plant SVGs.
+  - Migration manifest and migration scripts for SVG/background variant expansion.
+- **Persistence and reliability**
+  - JSON-based local persistence with atomic writes.
+  - Metadata cache for resolved visual assets.
+  - Local snapshot files for future sync/export flows.
 
 ---
 
-## Folder tree
+## Repository layout
 
 ```text
 ankigarden/
   addon.py
   asset_manager.py
+  config.py
   game.py
   storage.py
   hooks/
@@ -83,9 +58,14 @@ ankigarden/
   assets/
     manifest.json
     migration_manifest_v2.json
+    v2_cozy_handpainted/
 
 docs/
   README.md
+  asset_migration_checklist.md
+  svg_asset_migration.md
+  asset_visual_diff_report.md
+  background_adequacy_report.md
   ui/
     entrypoint_matrix.md
     state_scenarios.md
@@ -96,7 +76,12 @@ scripts/
 
 tests/
   test_engine.py
+  test_addon_startup_and_home.py
   test_asset_selection.py
+  test_svg_guardrails.py
+
+anki_garden_cozy_handpainted_v2/
+  starter_pack/
 
 sample_config.json
 README.md
@@ -106,9 +91,11 @@ README.md
 
 ## Configuration
 
-Primary config keys include:
+Configuration is loaded through `ConfigManager` and merged with user config overrides at runtime.
 
-- Gameplay balance:
+High-impact keys:
+
+- **Growth tuning**
   - `daily_growth_cap`
   - `points_per_card`
   - `correct_answer_bonus`
@@ -116,114 +103,87 @@ Primary config keys include:
   - `difficulty_weight`
   - `recovery_weight`
   - `session_quality_weight`
-- Habit tuning:
+- **Engagement systems**
   - `streak_grace_period_days`
-  - `vitality_decay_sensitivity`
   - `burnout_detection`
   - `burnout_volume_threshold`
-- Visual systems:
-  - `seasonal_visuals`
-  - `time_of_day_bonus`
-  - `enable_animations`
-- Advanced systems:
+  - `rare_event_frequency`
   - `focus_mode`
   - `exam_mode`
-  - `rare_event_frequency`
-  - `daily_snapshot`
-  - `snapshot_frequency_days`
-- Default no-setup images:
-  - `image_api.provider_priority` (defaults to Wikimedia only)
-  - `image_api.enable_builtin_no_key_sources`
+- **UI toggles**
+  - `show_toolbar_button`
+  - `show_reviewer_button`
+  - `enable_animations`
+  - `seasonal_visuals`
+  - `time_of_day_bonus`
+- **Assets**
+  - `assets.mode` (`local_only`)
+  - `assets.quality_preference` (`ultra` / `balanced` / `performance`)
+  - `assets.allow_fallback_placeholder`
 
-Use `sample_config.json` as a full reference.
-
----
-
-## Asset behavior (local-only catalog)
-
-Image rendering is now fully deterministic and local-only:
-
-1. Slot is resolved from gameplay state (species/stage, season/weather/theme, weather type, decoration id).
-2. Matching candidates are read from `ankigarden/assets/manifest.json`.
-3. Best local candidate is selected by quality preference (`assets.quality_preference`).
-4. Metadata is written to `assets/metadata/asset_metadata.json` with `source_kind: "local_catalog"`.
-
-### Manifest schema
-
-Each manifest row includes:
-
-- `category`
-- `slot` (deterministic selector fields)
-- `file` (path under `ankigarden/assets/...`)
-- `width`, `height`, `format`
-- `source`/`attribution`
-- `quality_tier` and `quality_score`
-
-### Local asset quality policy
-
-- `assets.mode` must be `local_only`.
-- `assets.quality_preference`: `ultra` / `balanced` / `performance`.
-- `assets.allow_fallback_placeholder`: allow generated local fallback art when manifest paths are missing.
-
-Legacy `image_api.*` keys are still tolerated in config input but ignored by runtime selection.
+Use `sample_config.json` as a practical editing template.
 
 ---
 
-## Deck mapping
+## Local asset behavior
 
-When `deck_specific_growth_mode` is enabled:
-- Each review contributes only to mapped plant(s).
-- Configure mapping from dashboard (`Map Deck → Plant`).
+Asset rendering is deterministic and local-only:
 
-If disabled, growth is shared across all active plants.
+1. A gameplay/UI slot is resolved (e.g., plant species+stage, weather, background theme).
+2. Candidate files are looked up in `ankigarden/assets/manifest.json`.
+3. A best-fit local candidate is selected using quality preference and slot matching.
+4. Resolution metadata is persisted to `ankigarden/assets/metadata/asset_metadata.json`.
 
----
+Guardrails in tests verify:
 
-## Exam mode
-
-Dashboard exam panel supports setting/clearing exam date.
-
-Exam mode:
-- Tracks countdown.
-- Optionally emphasizes target decks.
-- Applies configurable deck weight boost during growth calculation.
+- all manifest SVG paths exist,
+- manifest refs are versioned (`assets/v2_cozy_handpainted/...`),
+- no duplicate file refs,
+- SVGs retain required shape metadata (e.g., `viewBox`) and avoid unwanted comments.
 
 ---
 
-## Persistence and safety
+## Development runtime pins
 
-Local files:
-- `garden_state.json` (primary state)
-- `cloud_state.json` (optional snapshot sync simulation)
-- `social_hub.json` (local social/share hub)
-- `assets/metadata/asset_metadata.json` (asset attribution/cache metadata)
+This repo includes version-pin files to keep local tooling aligned:
 
-Writes are atomic (`NamedTemporaryFile` + replace) for resilience.
+- `.nvmrc`
+- `.node-version`
+- `.swift-version`
+- `.php-version`
+- `.java-version`
+- `.tool-versions`
 
 ---
 
-## Troubleshooting
+## Installation (Anki)
 
-- **No images showing**: validate `assets/manifest.json` slot coverage and ensure listed files exist on disk.
-- **Config ignored**: reload Anki after editing add-on config.
-- **Wrong art variant chosen**: adjust `assets.quality_preference` or reroll to cycle available local alternatives for that slot.
-- **Packaging issues**: include both `assets/manifest.json` and referenced files in builds.
-- **Import/share unavailable**: ensure `future_features.enable_social_gardens` is true.
+1. Copy `ankigarden/` to your Anki add-ons directory.
+2. Restart Anki.
+3. Open **Tools → Anki Garden**.
+4. Review cards to drive growth progression.
+
+---
+
+## Testing
+
+From the repository root:
+
+```bash
+pytest -q
+```
+
+Targeted suites:
+
+```bash
+pytest -q tests/test_engine.py tests/test_asset_selection.py
+pytest -q tests/test_addon_startup_and_home.py tests/test_svg_guardrails.py
+```
 
 ---
 
 ## Known limitations
 
-- Cloud sync is local snapshot architecture (not remote SaaS sync).
-- Export is JSON summary (not a rendered garden screenshot image yet).
-- Micro-animations are intentionally minimal for review performance.
-
----
-
-## Packaging
-
-To package as `.ankiaddon`:
-
-1. Zip the `ankigarden/` folder contents.
-2. Rename resulting zip to `ankigarden.ankiaddon`.
-3. Install via Anki add-on installer or copy into add-ons directory.
+- Sync/export flows are still local-file oriented (no remote sync service).
+- Home-screen widget injection depends on available Anki hook surfaces by version.
+- Visual polish is intentionally performance-conscious over heavy animation.
