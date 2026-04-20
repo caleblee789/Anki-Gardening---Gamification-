@@ -62,5 +62,10 @@
   },
   "future_features": {
     "enable_weekly_events": true
+  },
+  "assets": {
+    "mode": "local_only",
+    "quality_preference": "balanced",
+    "allow_fallback_placeholder": true
   }
 }

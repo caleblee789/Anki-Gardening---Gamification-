@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 
@@ -9,13 +10,9 @@ from ankigarden.config import DEFAULT_CONFIG, ConfigManager
 
 class DummyConfig:
     def __init__(self, overrides=None):
-        self.cfg = DEFAULT_CONFIG.copy()
+        self.cfg = json.loads(json.dumps(DEFAULT_CONFIG))
         if overrides:
-            for k, v in overrides.items():
-                if isinstance(v, dict) and isinstance(self.cfg.get(k), dict):
-                    self.cfg[k] = {**self.cfg[k], **v}
-                else:
-                    self.cfg[k] = v
+            self.cfg = ConfigManager._merge(self.cfg, overrides)
 
     def value(self, key, default=None):
         return self.cfg.get(key, default)
@@ -45,118 +42,186 @@ class DummyStorage:
         self._meta = data
 
 
-def test_rejects_too_small_candidate(tmp_path):
-    manager = AssetManager(DummyConfig(), DummyStorage(tmp_path))
-    scored = manager.score_asset_candidate({"url": "x", "width": 100, "height": 120}, "backgrounds", theme="verdant_dusk")
-    assert scored["accepted"] is False
-    assert scored["reason"] == "dimensions"
+def _build_manifest(storage: DummyStorage, assets: list[dict]):
+    manifest = storage.assets_root / "manifest.json"
+    manifest.write_text(json.dumps({"schema_version": 1, "assets": assets}, indent=2), encoding="utf-8")
 
 
-def test_background_quality_thresholds_are_stricter(tmp_path):
-    manager = AssetManager(DummyConfig(), DummyStorage(tmp_path))
-    weak_detail = manager.score_asset_candidate(
-        {"url": "x", "width": 1920, "height": 1080, "detail_score": 0.34, "compression_penalty": 0.2},
-        "backgrounds",
-    )
-    acceptable_plant = manager.score_asset_candidate(
-        {"url": "x", "width": 1024, "height": 1024, "detail_score": 0.34, "compression_penalty": 0.2},
-        "plants",
-    )
-    assert weak_detail["accepted"] is False
-    assert weak_detail["reason"] == "detail"
-    assert acceptable_plant["accepted"] is True
+def _touch_asset(storage: DummyStorage, rel_path: str):
+    p = storage.addon_dir / rel_path
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("<svg></svg>", encoding="utf-8")
 
 
-def test_prefers_high_resolution_and_aspect_fit(tmp_path):
-    manager = AssetManager(DummyConfig(), DummyStorage(tmp_path))
-    good = manager.score_asset_candidate(
-        {"url": "x", "width": 1920, "height": 1080, "style_tags": ["natural"], "detail_score": 0.8, "compression_penalty": 0.2},
-        "backgrounds",
-    )
-    meh = manager.score_asset_candidate(
-        {"url": "y", "width": 1800, "height": 1000, "style_tags": ["stock"], "detail_score": 0.65, "compression_penalty": 0.25},
-        "backgrounds",
-    )
-    assert good["accepted"]
-    assert meh["accepted"]
-    assert good["quality_score"] > meh["quality_score"]
-
-
-def test_empty_keys_no_key_provider_still_succeeds(tmp_path, monkeypatch):
+def test_local_selection_is_deterministic(tmp_path):
     storage = DummyStorage(tmp_path)
-    starter = storage.assets_root / "starter_pack" / "backgrounds"
-    starter.mkdir(parents=True, exist_ok=True)
-    (starter / "verdant_dusk_hill.svg").write_text("<svg></svg>", encoding="utf-8")
+    assets = [
+        {
+            "asset_id": "bg_a",
+            "category": "backgrounds",
+            "slot": {"season": "spring", "weather": "breeze", "theme": "verdant_dusk"},
+            "file": "assets/backgrounds/verdant_dusk/spring_breeze_a.svg",
+            "width": 1920,
+            "height": 1080,
+            "quality_tier": "balanced",
+            "quality_score": 0.82,
+        },
+        {
+            "asset_id": "bg_b",
+            "category": "backgrounds",
+            "slot": {"season": "spring", "weather": "breeze", "theme": "verdant_dusk"},
+            "file": "assets/backgrounds/verdant_dusk/spring_breeze_b.svg",
+            "width": 1920,
+            "height": 1080,
+            "quality_tier": "balanced",
+            "quality_score": 0.81,
+        },
+    ]
+    _build_manifest(storage, assets)
+    for row in assets:
+        _touch_asset(storage, row["file"])
 
     manager = AssetManager(DummyConfig(), storage)
-
-    monkeypatch.setattr(manager, "_from_wikimedia", lambda query: [])
-    path = manager.get_or_fetch("backgrounds", "bg_main", "forest trail")
-
-    assert path is not None
-    assert path.exists()
-    meta = storage._meta["backgrounds:bg_main"]
-    assert meta["source_kind"] == "starter_pack"
-
-
-def test_no_key_provider_fetches_remote_end_to_end(tmp_path, monkeypatch):
-    storage = DummyStorage(tmp_path)
-    manager = AssetManager(DummyConfig(), storage)
-
-    monkeypatch.setattr(
-        manager,
-        "_from_wikimedia",
-        lambda query: [
-            {
-                "url": "https://example.com/image.jpg",
-                "provider": "wikimedia",
-                "width": 1920,
-                "height": 1080,
-                "style_tags": ["natural"],
-                "detail_score": 0.9,
-                "compression_penalty": 0.1,
-            }
-        ],
-    )
-
-    def fake_download(category, key, url):
-        target = storage.assets_root / category / f"{key}.jpg"
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(b"fake")
-        return target
-
-    monkeypatch.setattr(manager, "_download", fake_download)
-    monkeypatch.setattr(manager, "_generate_derivatives", lambda original, category, key: {"preview": original, "thumbnail": original, "full": original})
-
-    path = manager.get_or_fetch("backgrounds", "bg_remote", "forest trail")
-
-    assert path is not None
-    assert path.exists()
-    meta = storage._meta["backgrounds:bg_remote"]
-    assert meta["source_kind"] == "remote"
-    assert meta["provider"] == "wikimedia"
-
-
-def test_remote_failure_falls_back_deterministically(tmp_path, monkeypatch):
-    storage = DummyStorage(tmp_path)
-    curated = storage.assets_root / "starter_pack" / "decorations"
-    curated.mkdir(parents=True, exist_ok=True)
-    (curated / "stone_path.svg").write_text("<svg id='stone'></svg>", encoding="utf-8")
-    (curated / "bench_corner.svg").write_text("<svg id='bench'></svg>", encoding="utf-8")
-
-    manager = AssetManager(DummyConfig(), storage)
-    monkeypatch.setattr(manager, "_from_wikimedia", lambda query: [])
-
-    first = manager.get_or_fetch("decorations", "d1", "cozy bench", reroll=True)
-    second = manager.get_or_fetch("decorations", "d1", "cozy bench", reroll=True)
+    first = manager.get_or_fetch("backgrounds", "bg_spring_breeze", "ignored", theme="verdant_dusk")
+    second = manager.get_or_fetch("backgrounds", "bg_spring_breeze", "ignored", theme="verdant_dusk")
 
     assert first is not None and second is not None
     assert first == second
-    assert storage._meta["decorations:d1"]["source_kind"] == "starter_pack"
+    assert storage._meta["backgrounds:bg_spring_breeze"]["source_kind"] == "local_catalog"
+
+
+def test_missing_file_uses_placeholder_when_enabled(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "decor_missing",
+            "category": "decorations",
+            "slot": {"decoration_id": "bench_corner"},
+            "file": "assets/decorations/bench_corner/missing.svg",
+            "width": 1024,
+            "height": 1024,
+            "quality_tier": "balanced",
+            "quality_score": 0.8,
+        }
+    ]
+    _build_manifest(storage, assets)
+
+    manager = AssetManager(DummyConfig(), storage)
+    picked = manager.get_or_fetch("decorations", "decor_bench_corner", "ignored")
+
+    assert picked is not None
+    assert picked.name == "fallback_placeholder.svg"
+
+
+def test_quality_preference_prefers_higher_tier(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "weather_perf",
+            "category": "weather",
+            "slot": {"weather": "breeze"},
+            "file": "assets/weather/breeze/perf.svg",
+            "width": 1280,
+            "height": 720,
+            "quality_tier": "performance",
+            "quality_score": 0.7,
+        },
+        {
+            "asset_id": "weather_ultra",
+            "category": "weather",
+            "slot": {"weather": "breeze"},
+            "file": "assets/weather/breeze/ultra.svg",
+            "width": 1280,
+            "height": 720,
+            "quality_tier": "ultra",
+            "quality_score": 0.95,
+        },
+    ]
+    _build_manifest(storage, assets)
+    for row in assets:
+        _touch_asset(storage, row["file"])
+
+    manager = AssetManager(DummyConfig({"assets": {"quality_preference": "ultra"}}), storage)
+    picked = manager.get_or_fetch("weather", "weather_breeze", "ignored")
+
+    assert picked is not None
+    assert picked.name == "ultra.svg"
+
+
+def test_reroll_cycles_through_local_alternatives(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "plant1",
+            "category": "plants",
+            "slot": {"species": "bonsai", "stage": "mature"},
+            "file": "assets/plants/bonsai/mature/a.svg",
+            "width": 1024,
+            "height": 1024,
+            "quality_tier": "balanced",
+            "quality_score": 0.85,
+        },
+        {
+            "asset_id": "plant2",
+            "category": "plants",
+            "slot": {"species": "bonsai", "stage": "mature"},
+            "file": "assets/plants/bonsai/mature/b.svg",
+            "width": 1024,
+            "height": 1024,
+            "quality_tier": "balanced",
+            "quality_score": 0.84,
+        },
+    ]
+    _build_manifest(storage, assets)
+    for row in assets:
+        _touch_asset(storage, row["file"])
+
+    manager = AssetManager(DummyConfig(), storage)
+    first = manager.get_or_fetch("plants", "bonsai_mature", "ignored", reroll=True)
+    second = manager.get_or_fetch("plants", "bonsai_mature", "ignored", reroll=True)
+
+    assert first is not None and second is not None
+    assert first != second
+
+
+def test_legacy_remote_metadata_is_migrated_and_not_selected(tmp_path):
+    storage = DummyStorage(tmp_path)
+    old = storage.addon_dir / "assets/backgrounds/legacy_remote.jpg"
+    old.parent.mkdir(parents=True, exist_ok=True)
+    old.write_bytes(b"legacy")
+    storage._meta = {
+        "backgrounds:bg_spring_breeze": {
+            "source_kind": "remote",
+            "local_path": "assets/backgrounds/legacy_remote.jpg",
+            "provider": "wikimedia",
+        }
+    }
+    assets = [
+        {
+            "asset_id": "bg_local",
+            "category": "backgrounds",
+            "slot": {"season": "spring", "weather": "breeze", "theme": "verdant_dusk"},
+            "file": "assets/backgrounds/verdant_dusk/spring_breeze.svg",
+            "width": 1920,
+            "height": 1080,
+            "quality_tier": "balanced",
+            "quality_score": 0.85,
+        }
+    ]
+    _build_manifest(storage, assets)
+    _touch_asset(storage, assets[0]["file"])
+
+    manager = AssetManager(DummyConfig(), storage)
+    picked = manager.get_or_fetch("backgrounds", "bg_spring_breeze", "ignored", theme="verdant_dusk")
+
+    assert picked is not None
+    assert picked.name == "spring_breeze.svg"
+    assert storage._meta["backgrounds:bg_spring_breeze"]["legacy_remote_preserved"] is True
+    assert storage._meta["backgrounds:bg_spring_breeze"]["source_kind"] == "local_catalog"
 
 
 def test_config_merge_keeps_new_visual_defaults():
     merged = ConfigManager._merge(DEFAULT_CONFIG.copy(), {"enable_sounds": True})
     assert merged["enable_sounds"] is True
-    assert merged["visual_theme"] == "verdant_dusk"
+    assert merged["assets"]["mode"] == "local_only"
     assert "weather_particle_density" in merged["theme_overrides"]

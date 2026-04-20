@@ -83,3 +83,13 @@ def test_exam_countdown_off_by_default():
     st = FakeStorage()
     engine = GardenGameEngine(cfg, st)
     assert engine.exam_countdown_days() is None
+
+
+def test_reroll_asset_slot_uses_local_catalog_cycle():
+    cfg = FakeConfig()
+    st = FakeStorage()
+    engine = GardenGameEngine(cfg, st)
+    first = engine.reroll_asset_slot("plant")
+    second = engine.reroll_asset_slot("plant")
+    assert first is not None
+    assert second is not None

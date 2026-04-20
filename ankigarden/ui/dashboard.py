@@ -186,14 +186,7 @@ class GardenSettingsDialog(QDialog):
 
     def _reroll_asset_slot(self, slot: str) -> None:
         try:
-            if slot == "background":
-                self.engine.resolve_background_image()
-            elif slot == "weather":
-                self.engine.resolve_weather_overlay()
-            else:
-                first = self.engine.state.plants[0] if self.engine.state.plants else None
-                if first:
-                    self.engine.resolve_plant_image(first.species, first.growth_stage, first.rare_variant)
+            self.engine.reroll_asset_slot(slot)
             QMessageBox.information(self, UI_TEXT["app_title"], UI_TEXT["reroll_success"])
         except Exception:
             QMessageBox.warning(self, UI_TEXT["app_title"], "Unable to refresh asset right now.")
