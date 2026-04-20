@@ -176,6 +176,19 @@ def test_home_html_contains_root_id(monkeypatch):
     assert "ag-home-root" in html
 
 
+def test_setup_toolbar_skips_when_toolbar_unavailable(monkeypatch, caplog):
+    aqt_mod, _hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
+    delattr(aqt_mod.mw.form, "toolbar")
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    addon.mw = aqt_mod.mw
+    app = _new_app(addon)
+
+    caplog.set_level(logging.WARNING)
+    app._setup_toolbar()
+
+    assert "toolbar not available" in caplog.text
+
+
 def test_injection_idempotent_for_render_and_webview(monkeypatch):
     _install_fake_aqt(monkeypatch)
     addon = importlib.reload(importlib.import_module("ankigarden.addon"))
