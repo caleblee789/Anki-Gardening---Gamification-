@@ -68,31 +68,36 @@ Optional entries:
 
 ```text
 ankigarden/
-  __init__.py
   addon.py
   asset_manager.py
-  config.py
-  config.json
   game.py
   storage.py
-  meta.json
   hooks/
-    __init__.py
     reviewer.py
   models/
-    __init__.py
     state.py
   ui/
-    __init__.py
     dashboard.py
+    garden_studio.py
+    scene.py
   assets/
-    plants/
-    backgrounds/
-    decorations/
-    weather/
-    ui/
-    cache/
-    metadata/
+    manifest.json
+    migration_manifest_v2.json
+
+docs/
+  README.md
+  ui/
+    entrypoint_matrix.md
+    state_scenarios.md
+
+scripts/
+  migrate_svg_assets.py
+  enhance_background_variants.py
+
+tests/
+  test_engine.py
+  test_asset_selection.py
+
 sample_config.json
 README.md
 ```

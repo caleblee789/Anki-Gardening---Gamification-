@@ -7,6 +7,7 @@
 - [x] All mapped SVGs normalized (viewBox, width/height, id prefixing).
 - [x] Accessibility defaults applied (`title`, `aria-hidden`, `focusable`).
 - [x] Deprecated directories removed after remap (plants/backgrounds/decorations/weather/ui except fallback).
+- [x] Redundant legacy source bundle removed (`anki_garden_cozy_handpainted_v2/assets`) to avoid duplicated assets.
 - [x] Guardrail tests added for broken refs, duplicate names, and optimization.
 
 ## Visual verification
