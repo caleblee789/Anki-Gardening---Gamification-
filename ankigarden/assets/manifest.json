@@ -12,13 +12,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/bonsai/seed/bonsai_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/seed/bonsai_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -31,13 +31,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/bonsai/sprout/bonsai_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/sprout/bonsai_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -50,13 +50,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/bonsai/young/bonsai_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/young/bonsai_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -69,13 +69,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/bonsai/mature/bonsai_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/mature/bonsai_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -88,13 +88,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/bonsai/flowering/bonsai_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/flowering/bonsai_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -107,13 +107,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/bonsai/rare/bonsai_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/rare/bonsai_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -126,13 +126,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/rose/seed/rose_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/seed/rose_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -145,13 +145,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/rose/sprout/rose_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/sprout/rose_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -164,13 +164,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/rose/young/rose_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/young/rose_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -183,13 +183,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/rose/mature/rose_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/mature/rose_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -202,13 +202,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/rose/flowering/rose_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/flowering/rose_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -221,13 +221,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/rose/rare/rose_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/rare/rose_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -240,13 +240,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/cactus/seed/cactus_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/seed/cactus_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -259,13 +259,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/cactus/sprout/cactus_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/sprout/cactus_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -278,13 +278,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/cactus/young/cactus_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/young/cactus_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -297,13 +297,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/cactus/mature/cactus_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/mature/cactus_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -316,13 +316,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/cactus/flowering/cactus_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/flowering/cactus_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -335,13 +335,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/cactus/rare/cactus_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/cactus/rare/cactus_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -354,13 +354,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/orchid/seed/orchid_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/seed/orchid_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -373,13 +373,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/orchid/sprout/orchid_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/sprout/orchid_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -392,13 +392,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/orchid/young/orchid_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/young/orchid_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -411,13 +411,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/orchid/mature/orchid_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/mature/orchid_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -430,13 +430,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/orchid/flowering/orchid_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/flowering/orchid_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -449,13 +449,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/orchid/rare/orchid_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/orchid/rare/orchid_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -468,13 +468,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/moonflower/seed/moonflower_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/seed/moonflower_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -487,13 +487,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/moonflower/sprout/moonflower_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/sprout/moonflower_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -506,13 +506,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/moonflower/young/moonflower_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/young/moonflower_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -525,13 +525,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/moonflower/mature/moonflower_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/mature/moonflower_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -544,13 +544,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/moonflower/flowering/moonflower_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/flowering/moonflower_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -563,13 +563,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/moonflower/rare/moonflower_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/moonflower/rare/moonflower_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -582,13 +582,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/sunbloom/seed/sunbloom_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/seed/sunbloom_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -601,13 +601,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/sunbloom/sprout/sunbloom_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/sprout/sunbloom_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -620,13 +620,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/sunbloom/young/sunbloom_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/young/sunbloom_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -639,13 +639,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/sunbloom/mature/sunbloom_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/mature/sunbloom_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -658,13 +658,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/sunbloom/flowering/sunbloom_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/flowering/sunbloom_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -677,13 +677,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/sunbloom/rare/sunbloom_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/sunbloom/rare/sunbloom_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -696,13 +696,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/fern/seed/fern_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/seed/fern_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -715,13 +715,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/fern/sprout/fern_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/sprout/fern_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -734,13 +734,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/fern/young/fern_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/young/fern_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -753,13 +753,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/fern/mature/fern_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/mature/fern_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -772,13 +772,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/fern/flowering/fern_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/flowering/fern_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -791,13 +791,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/fern/rare/fern_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/fern/rare/fern_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -810,13 +810,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/ivy/seed/ivy_seed.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/seed/ivy_seed.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -829,13 +829,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/ivy/sprout/ivy_sprout.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/sprout/ivy_sprout.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -848,13 +848,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/ivy/young/ivy_young.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/young/ivy_young.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -867,13 +867,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/ivy/mature/ivy_mature.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/mature/ivy_mature.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -886,13 +886,13 @@
       "variants": [
         "default"
       ],
-      "file": "assets/plants/ivy/flowering/ivy_flowering.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/flowering/ivy_flowering.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -905,13 +905,13 @@
       "variants": [
         "rare"
       ],
-      "file": "assets/plants/ivy/rare/ivy_rare.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/rare/ivy_rare.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.9,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -924,13 +924,13 @@
       "variants": [
         "alt"
       ],
-      "file": "assets/plants/bonsai/mature/bonsai_mature_alt.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/bonsai/mature/bonsai_mature_alt.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.94,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -943,13 +943,13 @@
       "variants": [
         "alt"
       ],
-      "file": "assets/plants/rose/mature/rose_mature_alt.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/rose/mature/rose_mature_alt.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.94,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -962,13 +962,13 @@
       "variants": [
         "alt"
       ],
-      "file": "assets/plants/ivy/mature/ivy_mature_alt.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/plants/ivy/mature/ivy_mature_alt.svg",
+      "width": 256,
+      "height": 256,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.94,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -979,13 +979,13 @@
         "weather": "sunny",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/winter_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/winter_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -996,13 +996,13 @@
         "weather": "sunny",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/winter_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/winter_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1013,13 +1013,13 @@
         "weather": "sunny",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/winter_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/winter_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1030,13 +1030,13 @@
         "weather": "cloudy",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/winter_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/winter_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1047,13 +1047,13 @@
         "weather": "cloudy",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/winter_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/winter_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1064,13 +1064,13 @@
         "weather": "cloudy",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/winter_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/winter_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1081,13 +1081,13 @@
         "weather": "fireflies",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/winter_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/winter_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1098,13 +1098,13 @@
         "weather": "fireflies",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/winter_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/winter_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1115,13 +1115,13 @@
         "weather": "fireflies",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/winter_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/winter_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1132,13 +1132,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/winter_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/winter_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1149,13 +1149,13 @@
         "weather": "gentle_rain",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/winter_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/winter_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1166,13 +1166,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/winter_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/winter_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1183,13 +1183,13 @@
         "weather": "breeze",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/winter_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/winter_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1200,13 +1200,13 @@
         "weather": "breeze",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/winter_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/winter_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1217,13 +1217,13 @@
         "weather": "breeze",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/winter_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/winter_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1234,13 +1234,13 @@
         "weather": "sunny",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/spring_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/spring_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1251,13 +1251,13 @@
         "weather": "sunny",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/spring_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/spring_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1268,13 +1268,13 @@
         "weather": "sunny",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/spring_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1285,13 +1285,13 @@
         "weather": "cloudy",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/spring_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/spring_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1302,13 +1302,13 @@
         "weather": "cloudy",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/spring_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/spring_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1319,13 +1319,13 @@
         "weather": "cloudy",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/spring_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1336,13 +1336,13 @@
         "weather": "fireflies",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/spring_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/spring_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1353,13 +1353,13 @@
         "weather": "fireflies",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/spring_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/spring_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1370,13 +1370,13 @@
         "weather": "fireflies",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/spring_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1387,13 +1387,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/spring_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/spring_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1404,13 +1404,13 @@
         "weather": "gentle_rain",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/spring_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/spring_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1421,13 +1421,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/spring_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1438,13 +1438,13 @@
         "weather": "breeze",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/spring_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/spring_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1455,13 +1455,13 @@
         "weather": "breeze",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/spring_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/spring_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1472,13 +1472,13 @@
         "weather": "breeze",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/spring_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1489,13 +1489,13 @@
         "weather": "sunny",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/summer_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/summer_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1506,13 +1506,13 @@
         "weather": "sunny",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/summer_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/summer_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1523,13 +1523,13 @@
         "weather": "sunny",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/summer_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/summer_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1540,13 +1540,13 @@
         "weather": "cloudy",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/summer_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/summer_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1557,13 +1557,13 @@
         "weather": "cloudy",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/summer_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/summer_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1574,13 +1574,13 @@
         "weather": "cloudy",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/summer_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/summer_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1591,13 +1591,13 @@
         "weather": "fireflies",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/summer_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/summer_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1608,13 +1608,13 @@
         "weather": "fireflies",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/summer_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/summer_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1625,13 +1625,13 @@
         "weather": "fireflies",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/summer_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/summer_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1642,13 +1642,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/summer_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/summer_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1659,13 +1659,13 @@
         "weather": "gentle_rain",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/summer_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/summer_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1676,13 +1676,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/summer_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/summer_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1693,13 +1693,13 @@
         "weather": "breeze",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/summer_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/summer_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1710,13 +1710,13 @@
         "weather": "breeze",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/summer_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/summer_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1727,13 +1727,13 @@
         "weather": "breeze",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/summer_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/summer_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1744,13 +1744,13 @@
         "weather": "sunny",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/autumn_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/autumn_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1761,13 +1761,13 @@
         "weather": "sunny",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/autumn_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/autumn_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1778,13 +1778,13 @@
         "weather": "sunny",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/autumn_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/autumn_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1795,13 +1795,13 @@
         "weather": "cloudy",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/autumn_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/autumn_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1812,13 +1812,13 @@
         "weather": "cloudy",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/autumn_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/autumn_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1829,13 +1829,13 @@
         "weather": "cloudy",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/autumn_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/autumn_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1846,13 +1846,13 @@
         "weather": "fireflies",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/autumn_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/autumn_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1863,13 +1863,13 @@
         "weather": "fireflies",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/autumn_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/autumn_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1880,13 +1880,13 @@
         "weather": "fireflies",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/autumn_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/autumn_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1897,13 +1897,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/autumn_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/autumn_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1914,13 +1914,13 @@
         "weather": "gentle_rain",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/autumn_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/autumn_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1931,13 +1931,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/autumn_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/autumn_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1948,13 +1948,13 @@
         "weather": "breeze",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/autumn_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/autumn_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1965,13 +1965,13 @@
         "weather": "breeze",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/autumn_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/autumn_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1982,13 +1982,13 @@
         "weather": "breeze",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/autumn_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/autumn_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -1999,13 +1999,13 @@
         "weather": "sunny",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/default_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/default_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2016,13 +2016,13 @@
         "weather": "sunny",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/default_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/default_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2033,13 +2033,13 @@
         "weather": "sunny",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/default_sunny.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/default_sunny.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2050,13 +2050,13 @@
         "weather": "cloudy",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/default_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/default_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2067,13 +2067,13 @@
         "weather": "cloudy",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/default_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/default_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2084,13 +2084,13 @@
         "weather": "cloudy",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/default_cloudy.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/default_cloudy.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2101,13 +2101,13 @@
         "weather": "fireflies",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/default_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/default_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2118,13 +2118,13 @@
         "weather": "fireflies",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/default_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/default_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2135,13 +2135,13 @@
         "weather": "fireflies",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/default_fireflies.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/default_fireflies.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2152,13 +2152,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/default_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/default_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2169,13 +2169,13 @@
         "weather": "gentle_rain",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/default_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/default_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2186,13 +2186,13 @@
         "weather": "gentle_rain",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/default_gentle_rain.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/default_gentle_rain.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2203,13 +2203,13 @@
         "weather": "breeze",
         "theme": "verdant_dusk"
       },
-      "file": "assets/backgrounds/verdant_dusk/default_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dusk/default_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2220,13 +2220,13 @@
         "weather": "breeze",
         "theme": "moonlit_study"
       },
-      "file": "assets/backgrounds/moonlit_study/default_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/moonlit_study/default_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "ultra",
       "quality_score": 0.91,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2237,13 +2237,13 @@
         "weather": "breeze",
         "theme": "verdant_dawn"
       },
-      "file": "assets/backgrounds/verdant_dawn/default_breeze.svg",
-      "width": 1920,
-      "height": 1080,
+      "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/default_breeze.svg",
+      "width": 512,
+      "height": 384,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.88,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2253,13 +2253,13 @@
         "weather": "sunny"
       },
       "quality_profile": "performance",
-      "file": "assets/weather/sunny/sunny_performance.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/sunny/sunny_performance.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "performance",
       "quality_score": 0.76,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2269,13 +2269,13 @@
         "weather": "sunny"
       },
       "quality_profile": "balanced",
-      "file": "assets/weather/sunny/sunny_balanced.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/sunny/sunny_balanced.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.86,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2285,13 +2285,13 @@
         "weather": "cloudy"
       },
       "quality_profile": "performance",
-      "file": "assets/weather/cloudy/cloudy_performance.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/cloudy/cloudy_performance.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "performance",
       "quality_score": 0.76,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2301,13 +2301,13 @@
         "weather": "cloudy"
       },
       "quality_profile": "balanced",
-      "file": "assets/weather/cloudy/cloudy_balanced.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/cloudy/cloudy_balanced.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.86,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2317,13 +2317,13 @@
         "weather": "fireflies"
       },
       "quality_profile": "performance",
-      "file": "assets/weather/fireflies/fireflies_performance.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/fireflies/fireflies_performance.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "performance",
       "quality_score": 0.76,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2333,13 +2333,13 @@
         "weather": "fireflies"
       },
       "quality_profile": "balanced",
-      "file": "assets/weather/fireflies/fireflies_balanced.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/fireflies/fireflies_balanced.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.86,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2349,13 +2349,13 @@
         "weather": "gentle_rain"
       },
       "quality_profile": "performance",
-      "file": "assets/weather/gentle_rain/gentle_rain_performance.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/gentle_rain/gentle_rain_performance.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "performance",
       "quality_score": 0.76,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2365,13 +2365,13 @@
         "weather": "gentle_rain"
       },
       "quality_profile": "balanced",
-      "file": "assets/weather/gentle_rain/gentle_rain_balanced.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/gentle_rain/gentle_rain_balanced.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.86,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2381,13 +2381,13 @@
         "weather": "breeze"
       },
       "quality_profile": "performance",
-      "file": "assets/weather/breeze/breeze_performance.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/breeze/breeze_performance.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "performance",
       "quality_score": 0.76,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2397,13 +2397,13 @@
         "weather": "breeze"
       },
       "quality_profile": "balanced",
-      "file": "assets/weather/breeze/breeze_balanced.svg",
-      "width": 1280,
-      "height": 720,
+      "file": "assets/v2_cozy_handpainted/weather/breeze/breeze_balanced.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.86,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2412,13 +2412,13 @@
       "slot": {
         "decoration_id": "stone_path"
       },
-      "file": "assets/decorations/stone_path/stone_path.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/decorations/stone_path/stone_path.svg",
+      "width": 256,
+      "height": 224,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.84,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2427,13 +2427,13 @@
       "slot": {
         "decoration_id": "bench_corner"
       },
-      "file": "assets/decorations/bench_corner/bench_corner.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/decorations/bench_corner/bench_corner.svg",
+      "width": 256,
+      "height": 192,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.84,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2442,13 +2442,13 @@
       "slot": {
         "decoration_id": "lantern"
       },
-      "file": "assets/decorations/lantern/lantern.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/decorations/lantern/lantern.svg",
+      "width": 192,
+      "height": 256,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.84,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2457,13 +2457,13 @@
       "slot": {
         "decoration_id": "butterflies"
       },
-      "file": "assets/decorations/butterflies/butterflies.svg",
-      "width": 1024,
-      "height": 1024,
+      "file": "assets/v2_cozy_handpainted/decorations/butterflies/butterflies.svg",
+      "width": 128,
+      "height": 128,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.84,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2472,13 +2472,13 @@
       "slot": {
         "ui_id": "panel_frame"
       },
-      "file": "assets/ui/panel_frame/panel_frame.svg",
+      "file": "assets/v2_cozy_handpainted/ui/panel_frame/panel_frame.svg",
       "width": 512,
-      "height": 512,
+      "height": 320,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.82,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2487,13 +2487,13 @@
       "slot": {
         "ui_id": "growth_meter"
       },
-      "file": "assets/ui/growth_meter/growth_meter.svg",
-      "width": 512,
-      "height": 512,
+      "file": "assets/v2_cozy_handpainted/ui/growth_meter/growth_meter.svg",
+      "width": 320,
+      "height": 96,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.82,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     },
     {
@@ -2502,13 +2502,13 @@
       "slot": {
         "ui_id": "seed_badge"
       },
-      "file": "assets/ui/seed_badge/seed_badge.svg",
-      "width": 512,
-      "height": 512,
+      "file": "assets/v2_cozy_handpainted/ui/seed_badge/seed_badge.svg",
+      "width": 128,
+      "height": 128,
       "format": "svg",
       "quality_tier": "balanced",
       "quality_score": 0.82,
-      "source": "starter_pack remix",
+      "source": "cozy_handpainted_v2 migration",
       "attribution": "CC0 bundled vector"
     }
   ]
