@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <defs><filter id="paint"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="1" seed="12"/><feDisplacementMap in="SourceGraphic" scale="0.9"/></filter></defs>
+    <path d="M64 34 C61 18, 56 12, 50 8" stroke="#3c3030" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M64 34 C67 18, 72 12, 78 8" stroke="#3c3030" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="64" cy="62" rx="6" ry="18" fill="#4a3f35"/>
+    <path d="M58 56 C40 30, 18 28, 14 56 C12 74, 30 82, 54 68 Z" fill="#f0da7d" stroke="#5c7a59" stroke-width="2" filter="url(#paint)"/>
+    <path d="M70 56 C88 30, 110 28, 114 56 C116 74, 98 82, 74 68 Z" fill="#8ed39a" stroke="#5c7a59" stroke-width="2" filter="url(#paint)"/>
+    <path d="M58 64 C40 82, 30 94, 38 108 C46 118, 60 106, 64 80 Z" fill="#8ed39a" stroke="#5c7a59" stroke-width="2" filter="url(#paint)"/>
+    <path d="M70 64 C88 82, 98 94, 90 108 C82 118, 68 106, 64 80 Z" fill="#f0da7d" stroke="#5c7a59" stroke-width="2" filter="url(#paint)"/>
+    <circle cx="41" cy="56" r="3" fill="#fff5d4" opacity="0.7"/><circle cx="87" cy="55" r="3" fill="#fff5d4" opacity="0.7"/>
+    </svg>
