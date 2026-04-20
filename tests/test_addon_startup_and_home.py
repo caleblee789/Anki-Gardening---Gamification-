@@ -65,8 +65,19 @@ def _install_fake_aqt(monkeypatch):
     warnings = []
     infos = []
 
+    class _DB:
+        def __init__(self):
+            self.return_value = 0
+
+        def scalar(self, _query, _cutoff):
+            return self.return_value
+
     aqt_mod = types.ModuleType("aqt")
-    aqt_mod.mw = SimpleNamespace(form=SimpleNamespace(menuTools=menu_tools, toolbar=toolbar), reviewer=None)
+    aqt_mod.mw = SimpleNamespace(
+        form=SimpleNamespace(menuTools=menu_tools, toolbar=toolbar),
+        reviewer=None,
+        col=SimpleNamespace(db=_DB(), sched=SimpleNamespace(day_cutoff=123)),
+    )
     aqt_mod.gui_hooks = hooks
 
     qt_mod = types.ModuleType("aqt.qt")
@@ -112,6 +123,7 @@ def _new_app(addon_module):
     app._menu_action = None
     app.dashboard = None
     app._reviewer_button = None
+    app._home_widget_hooked = False
     app._apply_retrospective_growth = lambda: None
     app.engine = SimpleNamespace(
         rollover_if_needed=lambda: None,
@@ -215,6 +227,32 @@ def test_setup_home_widget_registers_available_hooks(monkeypatch):
 
     app._setup_home_screen_widget()
 
-    assert app._inject_home_garden in hooks.deck_browser_will_render_content
-    assert app._inject_home_garden in hooks.overview_will_render_content
     assert app._inject_home_garden_webview in hooks.webview_will_set_content
+    assert app._inject_home_garden not in hooks.deck_browser_will_render_content
+    assert app._inject_home_garden not in hooks.overview_will_render_content
+
+
+def test_setup_home_widget_is_idempotent(monkeypatch):
+    _aqt_mod, hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+    app._home_widget_hooked = False
+
+    app._setup_home_screen_widget()
+    app._setup_home_screen_widget()
+
+    assert hooks.webview_will_set_content.count(app._inject_home_garden_webview) == 1
+
+
+def test_cards_today_uses_collection_revlog_count(monkeypatch):
+    aqt_mod, _hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    addon.mw = aqt_mod.mw
+    app = _new_app(addon)
+    app.storage.state.daily_stats.reviewed = 999
+    aqt_mod.mw.col.db.return_value = 42
+
+    html = app._build_home_garden_html()
+
+    assert "42" in html
+    assert "999" not in html

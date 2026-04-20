@@ -26,6 +26,7 @@ class AnkiGardenApp:
         self.dashboard: Optional[GardenDashboard] = None
         self._reviewer_button: Optional[QPushButton] = None
         self._menu_action: Optional[QAction] = None
+        self._home_widget_hooked = False
 
     def setup(self) -> None:
         self._setup_menu()
@@ -110,6 +111,9 @@ class AnkiGardenApp:
             logger.exception("Anki Garden: failed to attach sync hooks")
 
     def _setup_home_screen_widget(self) -> None:
+        if self._home_widget_hooked:
+            return
+
         try:
             from aqt import gui_hooks
         except Exception:
@@ -118,17 +122,21 @@ class AnkiGardenApp:
 
         attached_hooks: list[str] = []
 
-        if hasattr(gui_hooks, "deck_browser_will_render_content"):
-            gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
-            attached_hooks.append("deck_browser_will_render_content")
-        if hasattr(gui_hooks, "overview_will_render_content"):
-            gui_hooks.overview_will_render_content.append(self._inject_home_garden)
-            attached_hooks.append("overview_will_render_content")
+        # Prefer the modern webview hook to avoid duplicate rendering on versions
+        # where both legacy render hooks and webview hook fire for the same screen.
         if hasattr(gui_hooks, "webview_will_set_content"):
             gui_hooks.webview_will_set_content.append(self._inject_home_garden_webview)
             attached_hooks.append("webview_will_set_content")
+        else:
+            if hasattr(gui_hooks, "deck_browser_will_render_content"):
+                gui_hooks.deck_browser_will_render_content.append(self._inject_home_garden)
+                attached_hooks.append("deck_browser_will_render_content")
+            if hasattr(gui_hooks, "overview_will_render_content"):
+                gui_hooks.overview_will_render_content.append(self._inject_home_garden)
+                attached_hooks.append("overview_will_render_content")
 
         if attached_hooks:
+            self._home_widget_hooked = True
             logger.info("Anki Garden attached home-screen hooks: %s", ", ".join(attached_hooks))
         else:
             logger.warning("Anki Garden: no supported home-screen hooks available on this Anki version")
@@ -167,12 +175,12 @@ class AnkiGardenApp:
         try:
             state = self.storage.state
             stats = state.daily_stats
+            cards_today = self._cards_reviewed_today()
             health_pct = int(self.engine.garden_health_index() * 100)
             growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
             growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
             weather = str(state.selected_weather).replace("_", " ").title()
-            plants = state.plants[:3]
-            plant_visual = " ".join(self._plant_emoji_for_stage(p.growth_stage, p.rare_variant) for p in plants) or "🌱"
+            plant_badges = self._plant_badges_html()
             event = self.engine.get_weekly_event_summary()
             return f"""
 <style>
@@ -194,11 +202,29 @@ class AnkiGardenApp:
   font-weight: 700;
 }}
 .ag-home__plants {{
-  font-size: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px 0;
+}}
+.ag-home__plant {{
+  min-width: 110px;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: rgba(8, 24, 31, 0.35);
+  border: 1px solid rgba(154, 251, 177, 0.22);
   text-align: center;
-  letter-spacing: 6px;
-  padding: 8px 12px 0;
-  text-shadow: 0 0 12px rgba(154, 251, 177, 0.4);
+}}
+.ag-home__plant-emoji {{
+  font-size: 22px;
+  text-shadow: 0 0 10px rgba(154, 251, 177, 0.35);
+}}
+.ag-home__plant-name {{
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+  opacity: 0.9;
 }}
 .ag-home__stats {{
   display: grid;
@@ -240,9 +266,9 @@ class AnkiGardenApp:
     <span>🌿 Anki Garden</span>
     <span>{state.streak_days}d streak</span>
   </div>
-  <div class=\"ag-home__plants\">{plant_visual}</div>
+  <div class=\"ag-home__plants\">{plant_badges}</div>
   <div class=\"ag-home__stats\">
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{stats.reviewed}</div></div>
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{cards_today:,}</div></div>
     <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Garden Health</div><div class=\"ag-home__value\">{health_pct}%</div></div>
     <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Weather</div><div class=\"ag-home__value\">{weather}</div></div>
   </div>
@@ -253,6 +279,37 @@ class AnkiGardenApp:
         except Exception:
             logger.exception("Anki Garden: failed to build home garden html")
             return '<div id="ag-home-root" class="ag-home"><div class="ag-home__event">Anki Garden</div></div>'
+
+    def _plant_badges_html(self) -> str:
+        plants = self.storage.state.plants[:4]
+        if not plants:
+            return '<div class="ag-home__plant"><div class="ag-home__plant-emoji">🌱</div><div class="ag-home__plant-name">Seedling</div></div>'
+        badges = []
+        for plant in plants:
+            emoji = self._plant_emoji_for_stage(plant.growth_stage, plant.rare_variant)
+            badges.append(
+                f'<div class="ag-home__plant"><div class="ag-home__plant-emoji">{emoji}</div>'
+                f'<div class="ag-home__plant-name">{plant.name}</div></div>'
+            )
+        return "".join(badges)
+
+    def _cards_reviewed_today(self) -> int:
+        fallback = int(getattr(self.storage.state.daily_stats, "reviewed", 0))
+        try:
+            collection = getattr(mw, "col", None)
+            if collection is None or getattr(collection, "db", None) is None:
+                return fallback
+            sched = getattr(collection, "sched", None)
+            day_cutoff = getattr(sched, "day_cutoff", None)
+            if day_cutoff is None:
+                day_cutoff = getattr(sched, "dayCutoff", None)
+            if day_cutoff is None:
+                return fallback
+            cutoff_ms = int(day_cutoff) * 1000
+            count = collection.db.scalar("select count(distinct cid) from revlog where id > ?", cutoff_ms)
+            return max(0, int(count or 0))
+        except Exception:
+            return fallback
 
     def _plant_emoji_for_stage(self, stage: str, rare: bool) -> str:
         if rare:
