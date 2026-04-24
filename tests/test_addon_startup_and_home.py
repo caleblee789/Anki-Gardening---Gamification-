@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from ankigarden.ui.home_widget import HomeWidgetStateController
 
 
 class _Signal:
@@ -124,6 +125,7 @@ def _new_app(addon_module):
     app.dashboard = None
     app._reviewer_button = None
     app._home_widget_hooked = False
+    app._home_widget_controller = HomeWidgetStateController()
     app._apply_retrospective_growth = lambda: None
     app.engine = SimpleNamespace(
         rollover_if_needed=lambda: None,

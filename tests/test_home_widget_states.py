@@ -1,0 +1,111 @@
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from ankigarden.ui.home_widget import (
+    HomeWidgetData,
+    HomeWidgetSnapshot,
+    HomeWidgetStateController,
+    render_home_widget,
+)
+
+
+def _sample_data(cards_today: int = 12, growth_earned: int = 30, weather: str = "sunny") -> HomeWidgetData:
+    return HomeWidgetData(
+        cards_today=cards_today,
+        health_ratio=0.84,
+        growth_earned=growth_earned,
+        growth_cap=220,
+        streak_days=7,
+        weather=weather,
+        event="Calm weather",
+        plants_html='<div data-testid="plant">Bonsai</div>',
+    )
+
+
+def test_loading_state_renders_spinner_placeholder() -> None:
+    html = render_home_widget(HomeWidgetSnapshot(request_id=1, phase="loading"))
+
+    assert 'data-state="loading"' in html
+    assert 'data-testid="home-loading"' in html
+
+
+def test_empty_state_renders_empty_message() -> None:
+    html = render_home_widget(HomeWidgetSnapshot(request_id=0, phase="empty"))
+
+    assert 'data-state="empty"' in html
+    assert 'data-testid="home-empty"' in html
+
+
+def test_recoverable_error_renders_retry_action() -> None:
+    html = render_home_widget(HomeWidgetSnapshot(request_id=2, phase="error", error_message="Network timeout"))
+
+    assert 'data-state="error"' in html
+    assert "Network timeout" in html
+    assert 'data-testid="home-retry"' in html
+
+
+def test_partial_state_renders_available_data_and_error_banner() -> None:
+    html = render_home_widget(
+        HomeWidgetSnapshot(
+            request_id=3,
+            phase="partial",
+            data=_sample_data(cards_today=5, weather="cloudy"),
+            error_message="Achievements are temporarily unavailable",
+        )
+    )
+
+    assert 'data-state="partial"' in html
+    assert 'data-testid="home-partial-error"' in html
+    assert "Cards Today: 5" in html
+    assert "Weather: Cloudy" in html
+
+
+def test_success_state_renders_key_fields() -> None:
+    html = render_home_widget(HomeWidgetSnapshot(request_id=4, phase="success", data=_sample_data()))
+
+    assert 'data-state="success"' in html
+    assert 'data-testid="home-cards">Cards Today: 12' in html
+    assert 'data-testid="home-health">Garden Health: 84%' in html
+    assert 'data-testid="home-growth">Growth today: 30/220' in html
+    assert 'data-testid="home-event">Event: Calm weather' in html
+
+
+def test_state_transitions_ignore_stale_requests_and_replace_displayed_data() -> None:
+    controller = HomeWidgetStateController()
+
+    request_1 = controller.begin_request()
+    request_2 = controller.begin_request()
+
+    stale_applied = controller.resolve_success(request_1, _sample_data(cards_today=99, growth_earned=99, weather="sunny"))
+    fresh_applied = controller.resolve_success(request_2, _sample_data(cards_today=7, growth_earned=14, weather="breeze"))
+
+    html = render_home_widget(controller.snapshot)
+
+    assert stale_applied is False
+    assert fresh_applied is True
+    assert "Cards Today: 7" in html
+    assert "Growth today: 14/220" in html
+    assert "Cards Today: 99" not in html
+
+
+def test_retry_and_refresh_flow_replaces_previous_error_view() -> None:
+    controller = HomeWidgetStateController()
+
+    first = controller.begin_request()
+    controller.resolve_error(first, "Temporary backend failure")
+    error_html = render_home_widget(controller.snapshot)
+    assert "Temporary backend failure" in error_html
+
+    retry_request = controller.begin_request()
+    loading_html = render_home_widget(controller.snapshot)
+    assert 'data-state="loading"' in loading_html
+    assert "Temporary backend failure" not in loading_html
+
+    controller.resolve_success(retry_request, _sample_data(cards_today=21, growth_earned=33, weather="gentle_rain"))
+    success_html = render_home_widget(controller.snapshot)
+
+    assert 'data-state="success"' in success_html
+    assert "Cards Today: 21" in success_html
+    assert "Temporary backend failure" not in success_html

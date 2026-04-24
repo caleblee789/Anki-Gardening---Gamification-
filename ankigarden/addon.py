@@ -13,7 +13,11 @@ from .game import GardenGameEngine
 from .hooks.reviewer import ReviewerHookHandler
 from .storage import GardenStorage
 from .ui.dashboard import GardenDashboard
-from .ui.formatters import format_integer, format_percent, format_status_label
+from .ui.home_widget import (
+    HomeWidgetStateController,
+    build_home_widget_success_data,
+    render_home_widget,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +32,7 @@ class AnkiGardenApp:
         self._reviewer_button: Optional[QPushButton] = None
         self._menu_action: Optional[QAction] = None
         self._home_widget_hooked = False
+        self._home_widget_controller = HomeWidgetStateController()
 
     def setup(self) -> None:
         self._setup_menu()
@@ -184,113 +189,22 @@ class AnkiGardenApp:
             web_content.body = body + html
 
     def _build_home_garden_html(self) -> str:
+        request_id = self._home_widget_controller.begin_request()
         try:
             state = self.storage.state
-            stats = state.daily_stats
-            cards_today = self._cards_reviewed_today()
-            health_pct = format_percent(self.engine.garden_health_index(), places=0)
-            growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
-            growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
-            weather = format_status_label(state.selected_weather)
-            plant_badges = self._plant_badges_html()
-            event = self.engine.get_weekly_event_summary()
-            return f"""
-<style>
-.ag-home {{
-  margin: 12px 0;
-  border-radius: 16px;
-  border: 1px solid #2f4652;
-  background: linear-gradient(135deg, #0f1e2c 0%, #143b2f 65%, #1f4737 100%);
-  color: #ecf8ef;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  overflow: hidden;
-}}
-.ag-home__head {{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: rgba(0,0,0,0.2);
-  font-weight: 700;
-}}
-.ag-home__plants {{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 12px 0;
-}}
-.ag-home__plant {{
-  min-width: 110px;
-  border-radius: 10px;
-  padding: 6px 10px;
-  background: rgba(8, 24, 31, 0.35);
-  border: 1px solid rgba(154, 251, 177, 0.22);
-  text-align: center;
-}}
-.ag-home__plant-emoji {{
-  font-size: 22px;
-  text-shadow: 0 0 10px rgba(154, 251, 177, 0.35);
-}}
-.ag-home__plant-name {{
-  font-size: 11px;
-  font-weight: 700;
-  margin-top: 2px;
-  opacity: 0.9;
-}}
-.ag-home__stats {{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  padding: 8px 12px 12px;
-}}
-.ag-home__pill {{
-  border-radius: 12px;
-  background: rgba(255,255,255,0.08);
-  padding: 8px 10px;
-}}
-.ag-home__label {{ font-size: 11px; opacity: 0.76; text-transform: uppercase; }}
-.ag-home__value {{ font-size: 18px; font-weight: 700; margin-top: 2px; }}
-.ag-home__event {{
-  font-size: 12px;
-  opacity: 0.9;
-  padding: 0 12px 12px;
-  word-break: break-word;
-}}
-.ag-home__bar {{
-  height: 10px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.14);
-  margin: 2px 12px 12px;
-  overflow: hidden;
-}}
-.ag-home__bar span {{
-  display: block;
-  height: 100%;
-  width: {growth_pct}%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #61d984 0%, #cbff8e 100%);
-  box-shadow: 0 0 16px rgba(168, 255, 173, 0.75);
-}}
-</style>
-<div id=\"ag-home-root\" class=\"ag-home\">
-  <div class=\"ag-home__head\">
-    <span>🌿 Anki Garden</span>
-    <span>{state.streak_days}d streak</span>
-  </div>
-  <div class=\"ag-home__plants\">{plant_badges}</div>
-  <div class=\"ag-home__stats\">
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{format_integer(cards_today)}</div></div>
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Garden Health</div><div class=\"ag-home__value\">{health_pct}</div></div>
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Weather</div><div class=\"ag-home__value\">{weather}</div></div>
-  </div>
-  <div class=\"ag-home__bar\"><span></span></div>
-  <div class=\"ag-home__event\">Growth today: {stats.growth_earned}/{growth_cap} • Event: {event}</div>
-</div>
-"""
+            data = build_home_widget_success_data(
+                state=state,
+                cards_today=self._cards_reviewed_today(),
+                health_ratio=self.engine.garden_health_index(),
+                growth_cap=max(1, int(self.config.value("daily_growth_cap", 220))),
+                plants_html=self._plant_badges_html(),
+                event=self.engine.get_weekly_event_summary(),
+            )
+            self._home_widget_controller.resolve_success(request_id, data)
         except Exception:
             logger.exception("Anki Garden: failed to build home garden html")
-            return '<div id="ag-home-root" class="ag-home"><div class="ag-home__event">Anki Garden</div></div>'
+            self._home_widget_controller.resolve_error(request_id, "Unable to load garden stats right now. Retry to refresh.")
+        return render_home_widget(self._home_widget_controller.snapshot)
 
     def _plant_badges_html(self) -> str:
         plants = self.storage.state.plants[:4]
