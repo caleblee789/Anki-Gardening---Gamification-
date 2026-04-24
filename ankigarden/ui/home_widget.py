@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from html import escape
 from typing import Any
 
+from ..display_telemetry import DISPLAY_TELEMETRY
 from .formatters import format_integer, format_percent, format_status_label
 
 
@@ -68,6 +69,7 @@ DEFAULT_ERROR_MESSAGE = "Unable to load garden stats right now. Retry to refresh
 
 
 def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
+    DISPLAY_TELEMETRY.track_render("home_widget")
     phase = snapshot.phase
     if phase == "loading":
         return (
@@ -92,11 +94,21 @@ def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
 
     data = snapshot.data
     if data is None:
+        DISPLAY_TELEMETRY.record_missing_or_invalid_field(
+            route="home_widget",
+            field="payload",
+            reason="snapshot_data_missing",
+            required=True,
+        )
         return (
             '<div id="ag-home-root" data-state="error">'
             '<div data-testid="home-error">Invalid home widget payload.</div>'
             "</div>"
         )
+    if not data.event:
+        DISPLAY_TELEMETRY.track_fallback(route="home_widget", field="event")
+    if not data.weather:
+        DISPLAY_TELEMETRY.track_fallback(route="home_widget", field="weather")
 
     growth_cap = max(1, data.growth_cap)
     growth_pct = int(min(100, (data.growth_earned / growth_cap) * 100))
@@ -123,13 +135,27 @@ def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
 
 def build_home_widget_success_data(*, state: Any, cards_today: int, health_ratio: float, growth_cap: int, plants_html: str, event: str) -> HomeWidgetData:
     stats = state.daily_stats
+    if getattr(state, "selected_weather", None) in (None, ""):
+        DISPLAY_TELEMETRY.record_missing_or_invalid_field(
+            route="home_widget",
+            field="selected_weather",
+            reason="missing_or_empty",
+            value=getattr(state, "selected_weather", None),
+        )
+    if event in (None, ""):
+        DISPLAY_TELEMETRY.record_missing_or_invalid_field(
+            route="home_widget",
+            field="event",
+            reason="missing_or_empty",
+            value=event,
+        )
     return HomeWidgetData(
         cards_today=cards_today,
         health_ratio=health_ratio,
         growth_earned=int(stats.growth_earned),
         growth_cap=int(growth_cap),
         streak_days=int(state.streak_days),
-        weather=str(state.selected_weather),
-        event=event,
+        weather=str(state.selected_weather or "N/A"),
+        event=event or "N/A",
         plants_html=plants_html,
     )

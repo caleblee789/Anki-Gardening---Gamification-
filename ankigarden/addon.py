@@ -9,6 +9,7 @@ from aqt.qt import QAction, QPushButton
 from aqt.utils import showInfo
 
 from .config import ConfigManager
+from .display_telemetry import DISPLAY_TELEMETRY
 from .game import GardenGameEngine
 from .hooks.reviewer import ReviewerHookHandler
 from .storage import GardenStorage
@@ -224,17 +225,33 @@ class AnkiGardenApp:
         try:
             collection = getattr(mw, "col", None)
             if collection is None or getattr(collection, "db", None) is None:
+                DISPLAY_TELEMETRY.record_missing_or_invalid_field(
+                    route="home_widget",
+                    field="collection.db",
+                    reason="missing_collection_db",
+                    required=True,
+                )
+                DISPLAY_TELEMETRY.track_fallback(route="home_widget", field="cards_today")
                 return fallback
             sched = getattr(collection, "sched", None)
             day_cutoff = getattr(sched, "day_cutoff", None)
             if day_cutoff is None:
                 day_cutoff = getattr(sched, "dayCutoff", None)
             if day_cutoff is None:
+                DISPLAY_TELEMETRY.record_missing_or_invalid_field(
+                    route="home_widget",
+                    field="scheduler.day_cutoff",
+                    reason="missing_day_cutoff",
+                    required=True,
+                )
+                DISPLAY_TELEMETRY.track_fallback(route="home_widget", field="cards_today")
                 return fallback
             cutoff_ms = int(day_cutoff) * 1000
             count = collection.db.scalar("select count(distinct cid) from revlog where id > ?", cutoff_ms)
             return max(0, int(count or 0))
-        except Exception:
+        except Exception as exc:
+            DISPLAY_TELEMETRY.track_parsing_exception(route="home_widget", field="cards_today", exc=exc)
+            DISPLAY_TELEMETRY.track_fallback(route="home_widget", field="cards_today")
             return fallback
 
     def _plant_emoji_for_stage(self, stage: str, rare: bool) -> str:
