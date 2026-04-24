@@ -21,6 +21,7 @@ from aqt.qt import (
     QPushButton,
     QScrollArea,
     QTabWidget,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
     Qt,
@@ -33,6 +34,7 @@ from aqt.qt import (
 from .formatters import format_integer, format_percent, format_points, format_status_label, pluralize
 from .garden_studio import GardenStudioWidget
 from .scene import GardenSceneWidget
+from ..display_telemetry import DISPLAY_TELEMETRY
 
 UI_TEXT = {
     "settings_window_title": "Anki Garden Settings",
@@ -164,12 +166,24 @@ class GardenSettingsDialog(QDialog):
         advanced = QWidget()
         a_layout = QVBoxLayout(advanced)
         a_layout.addWidget(QLabel(UI_TEXT["advanced_hint"]))
+        self.debug_report = QTextEdit()
+        self.debug_report.setReadOnly(True)
+        self.debug_report.setPlaceholderText("Display telemetry report appears here.")
+        refresh_debug = QPushButton("Refresh Debug Report")
+        _set_button_variant(refresh_debug, BUTTON_VARIANT_SECONDARY)
+        refresh_debug.clicked.connect(self._refresh_debug_report)
+        a_layout.addWidget(refresh_debug)
+        a_layout.addWidget(self.debug_report)
+        self._refresh_debug_report()
         a_layout.addStretch(1)
 
         tabs.addTab(general, UI_TEXT["tab_general"])
         tabs.addTab(mapping, UI_TEXT["tab_mapping"])
         tabs.addTab(behavior, UI_TEXT["tab_behavior"])
         tabs.addTab(advanced, UI_TEXT["tab_advanced"])
+
+    def _refresh_debug_report(self) -> None:
+        self.debug_report.setPlainText("\\n".join(DISPLAY_TELEMETRY.report_lines()))
 
     def _recommended_window_size(
         self, default_width: int, default_height: int, *, width_ratio: float, height_ratio: float
@@ -436,6 +450,7 @@ class GardenDashboard(QDialog):
         widget.addItem(item)
 
     def refresh_all(self) -> None:
+        DISPLAY_TELEMETRY.track_render("dashboard")
         state = self.storage.state
         stats = state.daily_stats
         health = self.engine.garden_health_index()
@@ -477,6 +492,7 @@ class GardenDashboard(QDialog):
                 f"{marker} {quest.description}  {quest.progress}/{quest.target}",
             )
         if self.quest_list.count() == 0:
+            DISPLAY_TELEMETRY.track_empty_state(route="dashboard", view="quest_list", expected_non_empty=bool(state.daily_quests))
             self._add_list_entry(self.quest_list, UI_TEXT["no_quests"], empty_state=True)
 
         self.achievement_list.clear()
@@ -484,6 +500,7 @@ class GardenDashboard(QDialog):
             marker = "🏅" if ach.unlocked else "🔒"
             self._add_list_entry(self.achievement_list, f"{marker} {ach.name}")
         if self.achievement_list.count() == 0:
+            DISPLAY_TELEMETRY.track_empty_state(route="dashboard", view="achievement_list", expected_non_empty=bool(state.achievements))
             self._add_list_entry(self.achievement_list, UI_TEXT["no_achievements"], empty_state=True)
 
         self.inventory_list.clear()
@@ -491,6 +508,10 @@ class GardenDashboard(QDialog):
             if items:
                 self._add_list_entry(self.inventory_list, f"{category}: {', '.join(items[:3])}")
         if self.inventory_list.count() == 0:
+            expected_non_empty_inventory = any(items for items in state.inventory.values())
+            DISPLAY_TELEMETRY.track_empty_state(
+                route="dashboard", view="inventory_list", expected_non_empty=expected_non_empty_inventory
+            )
             self._add_list_entry(self.inventory_list, UI_TEXT["no_boosts"], empty_state=True)
 
         self.exam_date_input.setText(state.exam_mode.exam_date or "")
@@ -515,6 +536,7 @@ class GardenDashboard(QDialog):
         state = self.storage.state
         self.roster_title.setText("Garden Regions" if state.garden_mode == "unified" else "Deck-Mapped Plants")
         if not state.plants:
+            DISPLAY_TELEMETRY.track_empty_state(route="dashboard", view="roster_grid", expected_non_empty=False)
             empty = QLabel(UI_TEXT["no_roster"])
             self._apply_typography(empty, "muted-body")
             empty.setWordWrap(True)

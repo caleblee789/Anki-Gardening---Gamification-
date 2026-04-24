@@ -5,6 +5,8 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from ..display_telemetry import DISPLAY_TELEMETRY
+
 
 def _to_decimal(value: Any, *, default: Decimal = Decimal("0")) -> Decimal:
     try:
@@ -14,20 +16,32 @@ def _to_decimal(value: Any, *, default: Decimal = Decimal("0")) -> Decimal:
 
 
 def format_integer(value: Any) -> str:
-    return f"{int(_to_decimal(value)):,}"
+    try:
+        return f"{int(_to_decimal(value)):,}"
+    except Exception as exc:
+        DISPLAY_TELEMETRY.track_parsing_exception(route="shared.formatters", field="integer", exc=exc)
+        return "N/A"
 
 
 def format_decimal(value: Any, places: int = 2) -> str:
-    quantizer = Decimal("1") if places <= 0 else Decimal("1").scaleb(-places)
-    rounded = _to_decimal(value).quantize(quantizer, rounding=ROUND_HALF_UP)
-    return f"{rounded:,.{max(0, places)}f}"
+    try:
+        quantizer = Decimal("1") if places <= 0 else Decimal("1").scaleb(-places)
+        rounded = _to_decimal(value).quantize(quantizer, rounding=ROUND_HALF_UP)
+        return f"{rounded:,.{max(0, places)}f}"
+    except Exception as exc:
+        DISPLAY_TELEMETRY.track_parsing_exception(route="shared.formatters", field="decimal", exc=exc)
+        return "N/A"
 
 
 def format_percent(value: Any, places: int = 0) -> str:
-    percent_value = _to_decimal(value) * Decimal("100")
-    quantizer = Decimal("1") if places <= 0 else Decimal("1").scaleb(-places)
-    rounded = percent_value.quantize(quantizer, rounding=ROUND_HALF_UP)
-    return f"{rounded:,.{max(0, places)}f}%"
+    try:
+        percent_value = _to_decimal(value) * Decimal("100")
+        quantizer = Decimal("1") if places <= 0 else Decimal("1").scaleb(-places)
+        rounded = percent_value.quantize(quantizer, rounding=ROUND_HALF_UP)
+        return f"{rounded:,.{max(0, places)}f}%"
+    except Exception as exc:
+        DISPLAY_TELEMETRY.track_parsing_exception(route="shared.formatters", field="percent", exc=exc)
+        return "N/A"
 
 
 def format_points(value: Any, label: str = "GP") -> str:
