@@ -190,6 +190,39 @@ def test_home_html_contains_root_id(monkeypatch):
     assert "ag-home-root" in html
 
 
+def test_home_badges_use_resolved_svg_thumbnail_when_available(monkeypatch, tmp_path):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+    plant_svg = tmp_path / "rose.svg"
+    plant_svg.write_text('<svg viewBox="0 0 10 10"></svg>', encoding="utf-8")
+    app.storage.state.plants = [
+        SimpleNamespace(name="Rose", species="rose", growth_stage="young", rare_variant=False),
+    ]
+    app.engine.resolve_plant_image = lambda *_args: str(plant_svg)
+
+    html = app._plant_badges_html()
+
+    assert 'class="ag-home__plant-thumb"' in html
+    assert plant_svg.resolve().as_uri() in html
+    assert "ag-home__plant-emoji" not in html
+
+
+def test_home_badges_fall_back_to_emoji_when_svg_unavailable(monkeypatch):
+    _install_fake_aqt(monkeypatch)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    app = _new_app(addon)
+    app.storage.state.plants = [
+        SimpleNamespace(name="Rose", species="rose", growth_stage="young", rare_variant=False),
+    ]
+    app.engine.resolve_plant_image = lambda *_args: None
+
+    html = app._plant_badges_html()
+
+    assert "ag-home__plant-emoji" in html
+    assert "ag-home__plant-thumb" not in html
+
+
 def test_setup_toolbar_skips_when_toolbar_unavailable(monkeypatch, caplog):
     aqt_mod, _hooks, _warnings, _infos = _install_fake_aqt(monkeypatch)
     delattr(aqt_mod.mw.form, "toolbar")

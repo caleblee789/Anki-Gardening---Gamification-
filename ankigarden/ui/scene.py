@@ -133,8 +133,10 @@ class GardenSceneWidget(QWidget):
                     painter.drawEllipse(QRectF(x - 26, base_y - 130, 52, 52))
 
             weather = self.scene.get("weather", "breeze")
-            self._draw_weather_asset(painter, r)
+            weather_overlay_drawn = self._draw_weather_asset(painter, r)
             density = self._clamp(self._coerce_float(self.scene.get("weather_particle_density", 1.0), 1.0), 0.2, 1.25)
+            if weather_overlay_drawn:
+                density *= 0.55
             if weather in ("gentle_rain", "cloudy"):
                 weather_alpha = int(56 + (26 * density))
                 pen = QPen(QColor(170, 205, 255, weather_alpha), 1)
@@ -230,7 +232,7 @@ class GardenSceneWidget(QWidget):
         path = self._asset_path("weather")
         if not path:
             return False
-        return self._draw_svg_cover(painter, path, QRectF(rect), opacity=0.38)
+        return self._draw_svg_cover(painter, path, QRectF(rect), opacity=0.26)
 
     def _draw_plant_asset(self, painter: QPainter, x: float, y: float, plant: dict[str, Any]) -> bool:
         path = plant.get("image_path") or self._asset_path("plant")

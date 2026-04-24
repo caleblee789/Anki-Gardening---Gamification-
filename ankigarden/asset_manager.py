@@ -8,14 +8,15 @@ from typing import Any, Optional
 
 class AssetManager:
     MIN_DIMENSIONS = {
-        "plants": (640, 640),
-        "backgrounds": (1280, 720),
-        "decorations": (512, 512),
-        "weather": (512, 512),
-        "ui": (256, 256),
+        "plants": (128, 128),
+        "backgrounds": (512, 384),
+        "decorations": (128, 128),
+        "weather": (256, 192),
+        "ui": (128, 96),
     }
 
     QUALITY_ORDER = {"performance": 0, "balanced": 1, "ultra": 2}
+    THEME_ALIASES = {"morning_bloom": "verdant_dawn"}
 
     def __init__(self, config: Any, storage: Any) -> None:
         self.config = config
@@ -32,11 +33,16 @@ class AssetManager:
         provider_hint: Optional[str] = None,
         theme: Optional[str] = None,
         reroll: bool = False,
+        quality_preference: Optional[str] = None,
     ) -> Optional[Path]:
         del query, provider_hint
         cache_key = f"{category}:{key}"
         slot = self._slot_for(category, key, theme)
-        quality_pref = str(self.config.nested("assets", "quality_preference", default="balanced") or "balanced")
+        quality_pref = str(
+            quality_preference
+            or self.config.nested("assets", "quality_preference", default="balanced")
+            or "balanced"
+        )
 
         candidates = self._select_candidates(category, slot, quality_pref)
         if not candidates:
@@ -108,7 +114,8 @@ class AssetManager:
             return {"species": species, "stage": stage}
         if category == "backgrounds":
             _, season, weather = (key.split("_", 2) + ["default", "breeze"])[0:3]
-            return {"season": season, "weather": weather, "theme": theme or str(self.config.value("visual_theme", "verdant_dusk"))}
+            configured_theme = theme or str(self.config.value("visual_theme", "verdant_dusk"))
+            return {"season": season, "weather": weather, "theme": self.normalize_theme(configured_theme)}
         if category == "weather":
             weather = key.replace("weather_", "", 1)
             return {"weather": weather}
@@ -117,6 +124,9 @@ class AssetManager:
         if category == "ui":
             return {"ui_id": key.replace("ui_", "", 1)}
         return {"key": key}
+
+    def normalize_theme(self, theme: str) -> str:
+        return self.THEME_ALIASES.get(str(theme), str(theme))
 
     def _select_candidates(self, category: str, slot: dict[str, str], quality_pref: str) -> list[dict[str, Any]]:
         entries = self._catalog.get(category, [])
@@ -133,9 +143,16 @@ class AssetManager:
             preferred = [e for e in entries if (e.get("slot", {}) or {}).get(k) == slot.get(k)]
 
         target_rank = self.QUALITY_ORDER.get(quality_pref, self.QUALITY_ORDER["balanced"])
+
+        def quality_distance(entry: dict[str, Any]) -> tuple[int, int]:
+            rank = self.QUALITY_ORDER.get(str(entry.get("quality_tier", "balanced")), self.QUALITY_ORDER["balanced"])
+            if rank <= target_rank:
+                return (0, target_rank - rank)
+            return (1, rank - target_rank)
+
         preferred.sort(
             key=lambda e: (
-                -min(self.QUALITY_ORDER.get(str(e.get("quality_tier", "balanced")), 1), target_rank),
+                quality_distance(e),
                 -float(e.get("quality_score", 0.0)),
                 str(e.get("file", "")),
             )

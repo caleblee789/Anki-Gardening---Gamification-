@@ -41,10 +41,17 @@ class GardenStudioWidget(QWidget):
     ATTRIBUTION_MAX_CHARS = 210
     ATTRIBUTION_ELIDE_WIDTH = 760
 
-    def __init__(self, config: Any, on_reroll: Callable[[str], None] | None = None, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        config: Any,
+        on_reroll: Callable[[str], None] | None = None,
+        asset_resolver: Callable[[str, str, str, str], dict[str, str | None]] | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.config = config
         self.on_reroll = on_reroll
+        self.asset_resolver = asset_resolver
         self.preview = self._default_preview()
         self.scene = GardenSceneWidget()
         self.attribution_cards: dict[str, QLabel] = {}
@@ -54,7 +61,7 @@ class GardenStudioWidget(QWidget):
     def _default_preview(self) -> dict[str, Any]:
         palette = deepcopy(self.config.nested("theme_overrides", "palette", default={}))
         return {
-            "theme": self.config.value("visual_theme", "verdant_dusk"),
+            "theme": self._normalize_theme(str(self.config.value("visual_theme", "verdant_dusk"))),
             "weather": "breeze",
             "growth_stage": "young",
             "night_mode": False,
@@ -73,18 +80,25 @@ class GardenStudioWidget(QWidget):
 
         self.theme_combo = QComboBox()
         self.theme_combo.addItem("Verdant Dusk", "verdant_dusk")
-        self.theme_combo.addItem("Morning Bloom", "morning_bloom")
+        self.theme_combo.addItem("Morning Bloom", "verdant_dawn")
         self.theme_combo.addItem("Moonlit Study", "moonlit_study")
-        self.theme_combo.setCurrentText(self.config.value("visual_theme", "verdant_dusk").replace("_", " ").title())
+        current_theme = self._normalize_theme(str(self.config.value("visual_theme", "verdant_dusk")))
+        theme_idx = max(0, self.theme_combo.findData(current_theme))
+        self.theme_combo.setCurrentIndex(theme_idx)
         self.theme_combo.currentIndexChanged.connect(self._on_theme_changed)
 
         self.asset_quality_combo = QComboBox()
         self.asset_quality_combo.addItem("Balanced", "balanced")
         self.asset_quality_combo.addItem("Performance", "performance")
         self.asset_quality_combo.addItem("Ultra", "ultra")
-        current_quality = self.config.value("asset_quality", "balanced")
+        current_quality = self.config.nested(
+            "assets",
+            "quality_preference",
+            default=self.config.value("asset_quality", "balanced"),
+        )
         idx = max(0, self.asset_quality_combo.findData(current_quality))
         self.asset_quality_combo.setCurrentIndex(idx)
+        self.asset_quality_combo.currentIndexChanged.connect(self._apply_preview)
 
         self.day_night = QCheckBox(STUDIO_TEXT["night_mode_preview"])
         self.day_night.toggled.connect(self._on_preview_toggle)
@@ -139,7 +153,7 @@ class GardenStudioWidget(QWidget):
         root.addWidget(attribution_frame)
 
     def _on_theme_changed(self) -> None:
-        self.preview["theme"] = str(self.theme_combo.currentData())
+        self.preview["theme"] = self._normalize_theme(str(self.theme_combo.currentData()))
         self._apply_preview()
 
     def _on_preview_toggle(self) -> None:
@@ -157,6 +171,18 @@ class GardenStudioWidget(QWidget):
         growth = 0.85 if self.preview["growth_stage"] in ("flowering", "rare") else 0.45
         if self.preview["growth_stage"] in ("seed", "sprout"):
             growth = 0.15
+        quality = str(self.asset_quality_combo.currentData() or "balanced")
+        asset_paths: dict[str, str | None] = {}
+        if self.asset_resolver:
+            try:
+                asset_paths = self.asset_resolver(
+                    self._normalize_theme(str(self.preview["theme"])),
+                    str(self.preview["weather"]),
+                    str(self.preview["growth_stage"]),
+                    quality,
+                )
+            except Exception:
+                asset_paths = {}
         scene_payload = {
             "weather": self.preview["weather"],
             "growth": growth,
@@ -165,12 +191,17 @@ class GardenStudioWidget(QWidget):
             "night_mode": self.preview["night_mode"],
             "animation_intensity": self.preview["animation_intensity"],
             "weather_particle_density": self.preview["weather_particle_density"],
+            "asset_paths": {
+                "background": asset_paths.get("background"),
+                "weather": asset_paths.get("weather"),
+            },
             "plants": [
                 {
                     "name": STUDIO_TEXT["preview_plant_name"],
                     "species": "rose",
                     "stage": self.preview["growth_stage"],
                     "vitality": 0.95,
+                    "image_path": asset_paths.get("plant"),
                 }
             ],
         }
@@ -200,9 +231,13 @@ class GardenStudioWidget(QWidget):
             self.on_reroll(slot)
 
     def build_theme_payload(self) -> dict[str, Any]:
+        quality = str(self.asset_quality_combo.currentData())
         return {
-            "visual_theme": str(self.theme_combo.currentData()),
-            "asset_quality": str(self.asset_quality_combo.currentData()),
+            "visual_theme": self._normalize_theme(str(self.theme_combo.currentData())),
+            "asset_quality": quality,
+            "assets": {
+                "quality_preference": quality,
+            },
             "theme_overrides": {
                 "animation_intensity": self.anim_slider.value() / 100.0,
                 "weather_particle_density": self.particle_slider.value() / 100.0,
@@ -210,3 +245,6 @@ class GardenStudioWidget(QWidget):
                 "typography_scale": 1.0,
             },
         }
+
+    def _normalize_theme(self, theme: str) -> str:
+        return {"morning_bloom": "verdant_dawn"}.get(str(theme), str(theme))

@@ -105,6 +105,12 @@ HOME_WIDGET_STYLE = """
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
 }
+.ag-home__plant-thumb {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
+}
 .ag-home__plant-name {
   overflow: hidden;
   text-overflow: ellipsis;

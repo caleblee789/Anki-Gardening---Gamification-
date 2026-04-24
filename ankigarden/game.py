@@ -556,6 +556,36 @@ class GardenGameEngine:
         )
         return str(path) if path else None
 
+    def resolve_preview_assets(self, theme: str, weather: str, stage: str, quality_preference: str) -> dict[str, Optional[str]]:
+        seasonal = self.seasonal_theme()
+        normalized_theme = self.assets.normalize_theme(theme)
+        background = self.assets.get_or_fetch(
+            "backgrounds",
+            f"bg_{seasonal}_{weather}",
+            f"slot:backgrounds:{seasonal}:{weather}",
+            theme=normalized_theme,
+            quality_preference=quality_preference,
+        )
+        weather_overlay = self.assets.get_or_fetch(
+            "weather",
+            f"weather_{weather}",
+            f"slot:weather:{weather}",
+            theme=normalized_theme,
+            quality_preference=quality_preference,
+        )
+        plant = self.assets.get_or_fetch(
+            "plants",
+            f"rose_{stage}",
+            f"slot:plants:rose:{stage}",
+            theme=normalized_theme,
+            quality_preference=quality_preference,
+        )
+        return {
+            "background": str(background) if background else None,
+            "weather": str(weather_overlay) if weather_overlay else None,
+            "plant": str(plant) if plant else None,
+        }
+
     def resolve_background_image(self) -> Optional[str]:
         seasonal = self.seasonal_theme()
         weather = self.state.selected_weather

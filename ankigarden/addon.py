@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from html import escape
+from pathlib import Path
 from typing import Optional
 
 from aqt import mw
@@ -216,11 +217,35 @@ class AnkiGardenApp:
         for plant in plants:
             emoji = self._plant_emoji_for_stage(plant.growth_stage, plant.rare_variant)
             plant_name = escape(str(plant.name))
+            image_html = self._plant_badge_image_html(plant)
+            if not image_html:
+                image_html = f'<div class="ag-home__plant-emoji">{emoji}</div>'
             badges.append(
-                f'<div class="ag-home__plant"><div class="ag-home__plant-emoji">{emoji}</div>'
+                f'<div class="ag-home__plant">{image_html}'
                 f'<div class="ag-home__plant-name">{plant_name}</div></div>'
             )
         return "".join(badges)
+
+    def _plant_badge_image_html(self, plant: object) -> str:
+        resolver = getattr(self.engine, "resolve_plant_image", None)
+        if resolver is None:
+            return ""
+        try:
+            path = resolver(plant.species, plant.growth_stage, plant.rare_variant)
+        except Exception:
+            logger.debug("Anki Garden: unable to resolve home widget plant image", exc_info=True)
+            return ""
+        if not path:
+            return ""
+        try:
+            image_path = Path(str(path)).expanduser()
+            if not image_path.exists() or not image_path.is_file() or image_path.suffix.lower() != ".svg":
+                return ""
+            src = escape(image_path.resolve().as_uri(), quote=True)
+        except Exception:
+            return ""
+        plant_name = escape(str(getattr(plant, "name", "Plant")), quote=True)
+        return f'<img class="ag-home__plant-thumb" src="{src}" alt="{plant_name}">'
 
     def _cards_reviewed_today(self) -> int:
         fallback = int(getattr(self.storage.state.daily_stats, "reviewed", 0))

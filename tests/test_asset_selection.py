@@ -148,6 +148,89 @@ def test_quality_preference_prefers_higher_tier(tmp_path):
     assert picked.name == "ultra.svg"
 
 
+def test_catalog_svg_manifest_dimensions_are_accepted(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "plant_svg",
+            "category": "plants",
+            "slot": {"species": "rose", "stage": "young"},
+            "file": "assets/v2_cozy_handpainted/plants/rose/young/rose_young.svg",
+            "width": 256,
+            "height": 256,
+            "quality_tier": "balanced",
+            "quality_score": 0.9,
+        }
+    ]
+    _build_manifest(storage, assets)
+    _touch_asset(storage, assets[0]["file"])
+
+    manager = AssetManager(DummyConfig(), storage)
+    picked = manager.get_or_fetch("plants", "rose_young", "ignored")
+
+    assert picked is not None
+    assert picked.name == "rose_young.svg"
+
+
+def test_morning_bloom_theme_alias_selects_verdant_dawn_assets(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "bg_dawn",
+            "category": "backgrounds",
+            "slot": {"season": "spring", "weather": "breeze", "theme": "verdant_dawn"},
+            "file": "assets/v2_cozy_handpainted/backgrounds/verdant_dawn/spring_breeze.svg",
+            "width": 512,
+            "height": 384,
+            "quality_tier": "balanced",
+            "quality_score": 0.9,
+        }
+    ]
+    _build_manifest(storage, assets)
+    _touch_asset(storage, assets[0]["file"])
+
+    manager = AssetManager(DummyConfig(), storage)
+    picked = manager.get_or_fetch("backgrounds", "bg_spring_breeze", "ignored", theme="morning_bloom")
+
+    assert picked is not None
+    assert "verdant_dawn" in picked.as_posix()
+
+
+def test_explicit_preview_quality_overrides_config_preference(tmp_path):
+    storage = DummyStorage(tmp_path)
+    assets = [
+        {
+            "asset_id": "weather_perf",
+            "category": "weather",
+            "slot": {"weather": "sunny"},
+            "file": "assets/v2_cozy_handpainted/weather/sunny/sunny_performance.svg",
+            "width": 256,
+            "height": 192,
+            "quality_tier": "performance",
+            "quality_score": 0.7,
+        },
+        {
+            "asset_id": "weather_balanced",
+            "category": "weather",
+            "slot": {"weather": "sunny"},
+            "file": "assets/v2_cozy_handpainted/weather/sunny/sunny_balanced.svg",
+            "width": 256,
+            "height": 192,
+            "quality_tier": "balanced",
+            "quality_score": 0.9,
+        },
+    ]
+    _build_manifest(storage, assets)
+    for row in assets:
+        _touch_asset(storage, row["file"])
+
+    manager = AssetManager(DummyConfig({"assets": {"quality_preference": "performance"}}), storage)
+    picked = manager.get_or_fetch("weather", "weather_sunny", "ignored", quality_preference="balanced")
+
+    assert picked is not None
+    assert picked.name == "sunny_balanced.svg"
+
+
 def test_reroll_cycles_through_local_alternatives(tmp_path):
     storage = DummyStorage(tmp_path)
     assets = [

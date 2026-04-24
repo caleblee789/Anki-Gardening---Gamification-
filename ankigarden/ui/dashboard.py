@@ -161,7 +161,7 @@ class GardenSettingsDialog(QDialog):
         m_layout.addWidget(map_btn)
         m_layout.addStretch(1)
 
-        behavior = GardenStudioWidget(config, on_reroll=self._reroll_asset_slot)
+        behavior = GardenStudioWidget(config, on_reroll=self._reroll_asset_slot, asset_resolver=engine.resolve_preview_assets)
 
         advanced = QWidget()
         a_layout = QVBoxLayout(advanced)
