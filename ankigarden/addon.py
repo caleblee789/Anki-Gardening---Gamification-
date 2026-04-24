@@ -13,6 +13,7 @@ from .game import GardenGameEngine
 from .hooks.reviewer import ReviewerHookHandler
 from .storage import GardenStorage
 from .ui.dashboard import GardenDashboard
+from .ui.formatters import format_integer, format_percent, format_status_label
 
 logger = logging.getLogger(__name__)
 
@@ -187,10 +188,10 @@ class AnkiGardenApp:
             state = self.storage.state
             stats = state.daily_stats
             cards_today = self._cards_reviewed_today()
-            health_pct = int(self.engine.garden_health_index() * 100)
+            health_pct = format_percent(self.engine.garden_health_index(), places=0)
             growth_cap = max(1, int(self.config.value("daily_growth_cap", 220)))
             growth_pct = int(min(100, (stats.growth_earned / growth_cap) * 100))
-            weather = str(state.selected_weather).replace("_", " ").title()
+            weather = format_status_label(state.selected_weather)
             plant_badges = self._plant_badges_html()
             event = self.engine.get_weekly_event_summary()
             return f"""
@@ -279,8 +280,8 @@ class AnkiGardenApp:
   </div>
   <div class=\"ag-home__plants\">{plant_badges}</div>
   <div class=\"ag-home__stats\">
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{cards_today:,}</div></div>
-    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Garden Health</div><div class=\"ag-home__value\">{health_pct}%</div></div>
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Cards Today</div><div class=\"ag-home__value\">{format_integer(cards_today)}</div></div>
+    <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Garden Health</div><div class=\"ag-home__value\">{health_pct}</div></div>
     <div class=\"ag-home__pill\"><div class=\"ag-home__label\">Weather</div><div class=\"ag-home__value\">{weather}</div></div>
   </div>
   <div class=\"ag-home__bar\"><span></span></div>

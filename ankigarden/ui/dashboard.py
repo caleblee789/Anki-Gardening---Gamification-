@@ -30,6 +30,7 @@ from aqt.qt import (
     QSizePolicy,
     QGuiApplication,
 )
+from .formatters import format_integer, format_percent, format_points, format_status_label, pluralize
 from .garden_studio import GardenStudioWidget
 from .scene import GardenSceneWidget
 
@@ -438,12 +439,13 @@ class GardenDashboard(QDialog):
         state = self.storage.state
         stats = state.daily_stats
         health = self.engine.garden_health_index()
-        self.streak_chip.setText(f"Streak {state.streak_days}d")
-        self.progress_chip.setText(f"Today {stats.reviewed} • {int(stats.accuracy * 100)}%")
-        self.health_chip.setText(f"Health {int(health * 100)}")
+        streak_unit = pluralize(state.streak_days, "day")
+        self.streak_chip.setText(f"Streak {format_integer(state.streak_days)} {streak_unit}")
+        self.progress_chip.setText(f"Today {format_integer(stats.reviewed)} • {format_percent(stats.accuracy)}")
+        self.health_chip.setText(f"Health {format_percent(health)}")
         mode_text = "Unified all-decks" if state.garden_mode == "unified" else "Deck-by-deck"
         self.hero_summary.setText(
-            f"{mode_text} mode • Weather: {state.selected_weather} • Event: {self.engine.get_weekly_event_summary()}\n"
+            f"{mode_text} mode • Weather: {format_status_label(state.selected_weather)} • Event: {self.engine.get_weekly_event_summary()}\n"
             f"Keep accuracy high and complete quests to unlock flowering and rare forms. Every review visibly powers your garden."
         )
         growth_pct = int(min(100, (stats.growth_earned / max(1, self.config.value('daily_growth_cap', 220))) * 100))
@@ -536,13 +538,13 @@ class GardenDashboard(QDialog):
                     break
             title = QLabel(f"{plant.name} • {plant.species.title()}")
             self._apply_typography(title, "section-title")
-            stage = QLabel(f"Stage: {plant.growth_stage.title()} {'✨' if plant.rare_variant else ''}")
+            stage = QLabel(f"Stage: {format_status_label(plant.growth_stage)} {'✨' if plant.rare_variant else ''}")
             self._apply_typography(stage, "muted-body")
             vit = QProgressBar()
             vit.setMaximum(100)
             vit.setValue(int(plant.vitality * 100))
             vit.setFormat("Vitality %p%")
-            growth = QLabel(f"Growth Source: {plant.personality} • GP {plant.growth_points}")
+            growth = QLabel(f"Growth Source: {format_status_label(plant.personality)} • {format_points(plant.growth_points)}")
             self._apply_typography(growth, "muted-body")
             map_info = QLabel(deck_label)
             self._apply_typography(map_info, "muted-body")
