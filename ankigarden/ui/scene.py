@@ -5,9 +5,11 @@ from typing import Any
 
 from aqt.qt import QLinearGradient, QPainter, QPainterPath, QPen, QRectF, QTimer, QWidget, Qt, QColor
 
+from .formatters import format_percent
+
 SCENE_TEXT = {
     "live_garden_label": "Your live study garden",
-    "growth_energy_label": "Daily growth energy: {growth}%",
+    "growth_energy_label": "Daily growth energy: {growth}",
     "fallback_message": (
         "We couldn't render the animated garden view.\n"
         "Your study progress, growth updates, and rewards are still being tracked."
@@ -135,10 +137,11 @@ class GardenSceneWidget(QWidget):
             text_outline = QColor(6, 18, 15, 185 if night else 165)
             painter.setPen(QPen(text_outline, 2.2))
             painter.drawText(18, 32, SCENE_TEXT["live_garden_label"])
-            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=int(growth * 100)))
+            growth_label = format_percent(growth)
+            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=growth_label))
             painter.setPen(QColor(222, 249, 233, glow))
             painter.drawText(18, 32, SCENE_TEXT["live_garden_label"])
-            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=int(growth * 100)))
+            painter.drawText(18, 52, SCENE_TEXT["growth_energy_label"].format(growth=growth_label))
         except Exception:
             self._draw_fallback_scene(painter, r)
 
