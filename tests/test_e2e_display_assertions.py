@@ -1,0 +1,196 @@
+import importlib
+import sys
+import types
+from pathlib import Path
+from types import SimpleNamespace
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from ankigarden.models.state import DailyStats, GardenState, Plant
+
+
+class _Signal:
+    def __init__(self):
+        self._callbacks = []
+
+    def connect(self, callback):
+        self._callbacks.append(callback)
+
+    def emit(self):
+        for callback in self._callbacks:
+            callback()
+
+
+class _Action:
+    def __init__(self, text, _parent):
+        self._text = text
+        self.triggered = _Signal()
+
+    def text(self):
+        return self._text
+
+
+class _Button:
+    def __init__(self, *_args, **_kwargs):
+        self.clicked = _Signal()
+
+    def setToolTip(self, _tip):
+        return None
+
+
+class _Hooks:
+    def __init__(self):
+        self.deck_browser_will_render_content = []
+        self.overview_will_render_content = []
+        self.webview_will_set_content = []
+        self.sync_did_finish = []
+        self.reviewer_did_answer_card = []
+        self.reviewer_did_show_question = []
+
+
+class _DB:
+    def __init__(self, return_value=0):
+        self.return_value = return_value
+
+    def scalar(self, _query, _cutoff):
+        return self.return_value
+
+
+def _install_fake_aqt(monkeypatch, *, review_count: int):
+    hooks = _Hooks()
+
+    aqt_mod = types.ModuleType("aqt")
+    aqt_mod.mw = SimpleNamespace(
+        form=SimpleNamespace(menuTools=SimpleNamespace(addAction=lambda _a: None), toolbar=SimpleNamespace(addAction=lambda _a: None)),
+        reviewer=None,
+        col=SimpleNamespace(db=_DB(return_value=review_count), sched=SimpleNamespace(day_cutoff=123)),
+    )
+
+    qt_mod = types.ModuleType("aqt.qt")
+    qt_mod.QAction = _Action
+    qt_mod.QPushButton = _Button
+
+    utils_mod = types.ModuleType("aqt.utils")
+    utils_mod.showWarning = lambda _msg: None
+    utils_mod.showInfo = lambda _msg: None
+
+    dashboard_mod = types.ModuleType("ankigarden.ui.dashboard")
+
+    class _Dashboard:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        def refresh_all(self):
+            return None
+
+        def show(self):
+            return None
+
+        def raise_(self):
+            return None
+
+    dashboard_mod.GardenDashboard = _Dashboard
+
+    monkeypatch.setitem(sys.modules, "aqt", aqt_mod)
+    monkeypatch.setitem(sys.modules, "aqt.qt", qt_mod)
+    monkeypatch.setitem(sys.modules, "aqt.utils", utils_mod)
+    monkeypatch.setitem(sys.modules, "aqt.gui_hooks", hooks)
+    monkeypatch.setitem(sys.modules, "ankigarden.ui.dashboard", dashboard_mod)
+
+    return aqt_mod
+
+
+def _seed_state() -> GardenState:
+    return GardenState(
+        streak_days=8,
+        selected_weather="gentle_rain",
+        daily_stats=DailyStats(reviewed=12, growth_earned=36),
+        plants=[
+            Plant(plant_id="p-1", species="bonsai", name="Aster", slot_index=0, growth_points=250),
+            Plant(plant_id="p-2", species="ivy", name="Clover", slot_index=1, growth_points=90, rare_variant=True),
+        ],
+    )
+
+
+def _build_seeded_app(monkeypatch, *, review_count: int, growth_cap: int = 220, event: str = "Weekly bloom"):
+    aqt_mod = _install_fake_aqt(monkeypatch, review_count=review_count)
+    addon = importlib.reload(importlib.import_module("ankigarden.addon"))
+    addon.mw = aqt_mod.mw
+
+    app = addon.AnkiGardenApp.__new__(addon.AnkiGardenApp)
+    app._menu_action = None
+    app.dashboard = None
+    app._reviewer_button = None
+    app._home_widget_hooked = False
+    app._home_widget_controller = addon.HomeWidgetStateController()
+    app._apply_retrospective_growth = lambda: None
+    app.engine = SimpleNamespace(
+        rollover_if_needed=lambda: None,
+        garden_health_index=lambda: 0.86,
+        get_weekly_event_summary=lambda: event,
+    )
+    app.storage = SimpleNamespace(state=_seed_state())
+    app.config = SimpleNamespace(value=lambda key, default=None: growth_cap if key == "daily_growth_cap" else default)
+    return app
+
+
+def test_journey_load_home_to_dashboard_displays_exact_seeded_kpis(monkeypatch):
+    app = _build_seeded_app(monkeypatch, review_count=27, growth_cap=240, event="Weekly bloom")
+
+    html = app._build_home_garden_html()
+
+    assert 'data-state="success"' in html
+    assert 'data-testid="home-cards">Cards Today: 27' in html
+    assert 'data-testid="home-health">Garden Health: 86%' in html
+    assert 'data-testid="home-growth">Growth today: 36/240' in html
+    assert 'data-testid="home-weather">Weather: Gentle Rain' in html
+    assert 'data-testid="home-event">Event: Weekly bloom' in html
+    assert 'data-testid="home-growth-bar" style="width:15%"' in html
+
+
+def test_journey_review_session_then_refresh_persists_exact_values(monkeypatch):
+    app = _build_seeded_app(monkeypatch, review_count=18, growth_cap=240, event="Calm weather")
+
+    before = app._build_home_garden_html()
+    assert 'Cards Today: 18' in before
+    assert 'Growth today: 36/240' in before
+
+    app.storage.state.daily_stats.growth_earned = 60
+    app.storage.state.streak_days = 9
+    app.storage.state.selected_weather = "cloudy"
+    app.engine.get_weekly_event_summary = lambda: "Recovery week"
+
+    updated = app._build_home_garden_html()
+    refreshed = app._build_home_garden_html()
+
+    assert 'data-testid="home-streak">9d streak' in updated
+    assert 'data-testid="home-growth">Growth today: 60/240' in updated
+    assert 'data-testid="home-weather">Weather: Cloudy' in updated
+    assert 'data-testid="home-event">Event: Recovery week' in updated
+
+    assert 'data-testid="home-streak">9d streak' in refreshed
+    assert 'data-testid="home-growth">Growth today: 60/240' in refreshed
+    assert 'data-testid="home-weather">Weather: Cloudy' in refreshed
+    assert 'data-testid="home-event">Event: Recovery week' in refreshed
+
+
+def test_journey_navigation_between_home_contexts_keeps_values_without_duplication(monkeypatch):
+    app = _build_seeded_app(monkeypatch, review_count=42, growth_cap=210, event="Focus bonus")
+
+    deck_content = SimpleNamespace(body="<main>Deck Browser</main>")
+    overview_content = SimpleNamespace(body="<main>Overview</main>")
+    deck_ctx = type("DeckBrowser", (), {})()
+    overview_ctx = type("Overview", (), {})()
+
+    app._inject_home_garden_webview(deck_content, deck_ctx)
+    app._inject_home_garden_webview(overview_content, overview_ctx)
+    app._inject_home_garden_webview(deck_content, deck_ctx)
+
+    assert deck_content.body.count("ag-home-root") == 1
+    assert overview_content.body.count("ag-home-root") == 1
+
+    for rendered in (deck_content.body, overview_content.body):
+        assert 'Cards Today: 42' in rendered
+        assert 'Garden Health: 86%' in rendered
+        assert 'Growth today: 36/210' in rendered
+        assert 'Event: Focus bonus' in rendered
