@@ -471,6 +471,10 @@ class GardenDashboard(QDialog):
                 "weather": state.selected_weather,
                 "health": health,
                 "growth": min(1.0, stats.growth_earned / max(1, self.config.value("daily_growth_cap", 220))),
+                "asset_paths": {
+                    "background": self.engine.resolve_background_image(),
+                    "weather": self.engine.resolve_weather_overlay(),
+                },
                 "plants": [
                     {
                         "name": p.name,
@@ -478,6 +482,7 @@ class GardenDashboard(QDialog):
                         "stage": p.growth_stage,
                         "vitality": p.vitality,
                         "rare_variant": p.rare_variant,
+                        "image_path": self.engine.resolve_plant_image(p.species, p.growth_stage, p.rare_variant),
                     }
                     for p in state.plants
                 ],

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from html import escape
 from typing import Optional
 
 from aqt import mw
@@ -214,9 +215,10 @@ class AnkiGardenApp:
         badges = []
         for plant in plants:
             emoji = self._plant_emoji_for_stage(plant.growth_stage, plant.rare_variant)
+            plant_name = escape(str(plant.name))
             badges.append(
                 f'<div class="ag-home__plant"><div class="ag-home__plant-emoji">{emoji}</div>'
-                f'<div class="ag-home__plant-name">{plant.name}</div></div>'
+                f'<div class="ag-home__plant-name">{plant_name}</div></div>'
             )
         return "".join(badges)
 

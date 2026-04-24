@@ -76,10 +76,15 @@ class AssetManager:
         manifest = self.storage.assets_root / "manifest.json"
         if not manifest.exists():
             return {}
-        payload = json.loads(manifest.read_text("utf-8"))
+        try:
+            payload = json.loads(manifest.read_text("utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {}
         entries = payload.get("assets", [])
         by_category: dict[str, list[dict[str, Any]]] = {}
         for row in entries:
+            if not isinstance(row, dict):
+                continue
             category = str(row.get("category", ""))
             if not category:
                 continue
@@ -162,9 +167,21 @@ class AssetManager:
         return 0.75
 
     def _valid_local_asset(self, path: Path, category: str) -> bool:
-        if not path.exists() or not path.is_file():
+        try:
+            resolved = path.resolve()
+            addon_root = self.storage.addon_dir.resolve()
+            resolved.relative_to(addon_root)
+        except (OSError, ValueError):
             return False
-        dims = self._manifest_dimensions_for(str(path.relative_to(self.storage.addon_dir)))
+        if not resolved.exists() or not resolved.is_file():
+            return False
+        if resolved.suffix.lower() != ".svg":
+            return False
+        try:
+            rel_path = str(resolved.relative_to(self.storage.addon_dir.resolve()))
+        except ValueError:
+            return False
+        dims = self._manifest_dimensions_for(rel_path)
         min_w, min_h = self.MIN_DIMENSIONS.get(category, (1, 1))
         return int(dims.get("width", 0)) >= min_w and int(dims.get("height", 0)) >= min_h
 

@@ -68,17 +68,101 @@ class HomeWidgetStateController:
 DEFAULT_ERROR_MESSAGE = "Unable to load garden stats right now. Retry to refresh." 
 
 
+HOME_WIDGET_STYLE = """
+<style>
+#ag-home-root {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(75, 117, 90, 0.36);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #182a25 0%, #10201d 100%);
+  color: #e9f5ee;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.ag-home__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.ag-home__title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.ag-home__plants [data-testid="home-plants"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+.ag-home__plant {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 180px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.ag-home__plant-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ag-home__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 8px;
+}
+.ag-home__metric {
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(8, 18, 16, 0.42);
+}
+.ag-home__bar-track {
+  height: 8px;
+  margin: 8px 0 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+#ag-home-root [data-testid="home-growth-bar"] {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #55c77c, #d6f58f);
+}
+.ag-home__event {
+  color: #c4d7d0;
+}
+#ag-home-root button {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: 1px solid #49725a;
+  border-radius: 8px;
+  background: #244735;
+  color: #eef9f0;
+  font-weight: 600;
+}
+</style>
+"""
+
+
 def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
     DISPLAY_TELEMETRY.track_render("home_widget")
     phase = snapshot.phase
     if phase == "loading":
         return (
+            HOME_WIDGET_STYLE
+            +
             '<div id="ag-home-root" data-state="loading">'
             '<div data-testid="home-loading">Loading garden…</div>'
             "</div>"
         )
     if phase == "empty":
         return (
+            HOME_WIDGET_STYLE
+            +
             '<div id="ag-home-root" data-state="empty">'
             '<div data-testid="home-empty">No garden data yet. Start reviewing to grow your first plant.</div>'
             "</div>"
@@ -86,6 +170,8 @@ def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
     if phase == "error":
         message = escape(snapshot.error_message or DEFAULT_ERROR_MESSAGE)
         return (
+            HOME_WIDGET_STYLE
+            +
             '<div id="ag-home-root" data-state="error">'
             f'<div data-testid="home-error">{message}</div>'
             '<button data-testid="home-retry" type="button">Retry</button>'
@@ -101,6 +187,8 @@ def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
             required=True,
         )
         return (
+            HOME_WIDGET_STYLE
+            +
             '<div id="ag-home-root" data-state="error">'
             '<div data-testid="home-error">Invalid home widget payload.</div>'
             "</div>"
@@ -117,17 +205,22 @@ def render_home_widget(snapshot: HomeWidgetSnapshot) -> str:
         partial_error = escape(snapshot.error_message or "Some details are temporarily unavailable.")
         partial_banner = f'<div data-testid="home-partial-error">{partial_error}</div>'
 
-    return f"""
+    return f"""{HOME_WIDGET_STYLE}
 <div id=\"ag-home-root\" data-state=\"{escape(phase)}\">
   {partial_banner}
-  <div data-testid=\"home-streak\">{format_integer(data.streak_days)}d streak</div>
-  <div data-testid=\"home-plants\">{data.plants_html}</div>
-  <div data-testid=\"home-cards\">Cards Today: {format_integer(data.cards_today)}</div>
-  <div data-testid=\"home-health\">Garden Health: {format_percent(data.health_ratio, places=0)}</div>
-  <div data-testid=\"home-weather\">Weather: {format_status_label(data.weather)}</div>
-  <div data-testid=\"home-growth\">Growth today: {format_integer(data.growth_earned)}/{format_integer(growth_cap)}</div>
-  <div data-testid=\"home-growth-bar\" style=\"width:{growth_pct}%\"></div>
-  <div data-testid=\"home-event\">Event: {escape(data.event)}</div>
+  <div class=\"ag-home__header\">
+    <div class=\"ag-home__title\">Anki Garden</div>
+    <div data-testid=\"home-streak\">{format_integer(data.streak_days)}d streak</div>
+  </div>
+  <div class=\"ag-home__plants\"><div data-testid=\"home-plants\">{data.plants_html}</div></div>
+  <div class=\"ag-home__metrics\">
+    <div class=\"ag-home__metric\"><div data-testid=\"home-cards\">Cards Today: {format_integer(data.cards_today)}</div></div>
+    <div class=\"ag-home__metric\"><div data-testid=\"home-health\">Garden Health: {format_percent(data.health_ratio, places=0)}</div></div>
+    <div class=\"ag-home__metric\"><div data-testid=\"home-weather\">Weather: {format_status_label(data.weather)}</div></div>
+    <div class=\"ag-home__metric\"><div data-testid=\"home-growth\">Growth today: {format_integer(data.growth_earned)}/{format_integer(growth_cap)}</div></div>
+  </div>
+  <div class=\"ag-home__bar-track\"><div data-testid=\"home-growth-bar\" style=\"width:{growth_pct}%\"></div></div>
+  <div class=\"ag-home__event\"><div data-testid=\"home-event\">Event: {escape(data.event)}</div></div>
   <button data-testid=\"home-refresh\" type=\"button\">Refresh</button>
 </div>
 """
